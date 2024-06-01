@@ -27,3 +27,9 @@ export interface UserDataType {
   role: string;
   photourl: string;
 }
+
+export interface MemberRowType {
+  regno: string;
+  session: string;
+  email: string;
+}
