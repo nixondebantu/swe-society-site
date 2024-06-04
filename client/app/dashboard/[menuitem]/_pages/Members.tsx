@@ -8,7 +8,7 @@ import React, { useState } from "react";
 const Members: React.FC = () => {
   const [membersOption, setMembersOption] = useState<string>("find");
   return (
-    <div className="flex flex-col items-center space-y-2 ">
+    <div className="flex flex-col items-center space-y-2 pt-16 h-screen">
       <MembersNav
         membersOption={membersOption}
         setMembersOption={setMembersOption}

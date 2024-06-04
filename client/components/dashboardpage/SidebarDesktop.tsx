@@ -19,7 +19,7 @@ interface SidebarDesktopProps {
 function SidebarDesktop(props: SidebarDesktopProps) {
   const pathname = usePathname();
   return (
-    <aside className=" w-[270px] max-w-xs h-screen fixed left-0 top-0 z-50 border-r">
+    <aside className=" w-[270px] max-w-xs h-screen fixed left-0 top-0 z-50 border-r bg-background">
       <div className="h-full px-3 py-4 snap-y">
         <div className="flex flex-col gap-1 overflow-y-auto h-5/6 max-h-5/6">
           {props.sidebarItems.links.map((link, index) => (

@@ -61,7 +61,7 @@ const AddMembers: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center h-screen">
       {members.length ? (
         <>
           <h1 className="font-extrabold text-xl py-2">
@@ -89,13 +89,13 @@ const AddMembers: React.FC = () => {
           ))}
         </>
       ) : (
-        <div className="flex flex-col justify-center h-full items-center text-neutral-500 mt-20">
-          <h1>Add to member upload CSV</h1>
+        <div className="flex flex-col justify-center h-full items-center text-neutral-500 flex-grow">
+          <h1>To add member upload CSV</h1>
           <h1>or</h1>
           <h1>enter information manually</h1>
         </div>
       )}
-      <div className="flex flex-col justify-center space-y-2 mt-20">
+      <div className="flex flex-col justify-center space-y-2 my-2">
         <FileUpload members={members} setMembers={setMembers} />
         <div className="flex justify-center gap-2 items-center mt-4">
           <Dialog open={openDialog} onOpenChange={setOpenDialog}>
