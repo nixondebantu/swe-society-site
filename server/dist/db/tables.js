@@ -136,6 +136,36 @@ function createTables() {
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL
         );
 
+        CREATE TABLE IF NOT EXISTS Elections (
+            electionid SERIAL PRIMARY KEY,
+            year VARCHAR(6),
+            election_type VARCHAR(50),
+            batch VARCHAR(10),
+            election_commissioner INT,
+            assistant_commissioner INT,
+            candidate_form_date DATE,
+            election_date DATE,
+            FOREIGN KEY (election_commissioner) REFERENCES Users(userId) ON DELETE SET NULL,
+            FOREIGN KEY (assistant_commissioner) REFERENCES Users(userId) ON DELETE SET NULL
+        );
+
+
+        CREATE TABLE IF NOT EXISTS Committeeposts (
+            committeepostid SERIAL PRIMARY KEY,
+            post_name VARCHAR(50)
+        );
+
+
+
+        CREATE TABLE IF NOT EXISTS Committee (
+            committeeid SERIAL PRIMARY KEY,
+            userid INT,
+            postid INT,
+            electionid INT,
+            FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL,
+            FOREIGN KEY (postid) REFERENCES Committeeposts(committeepostid) ON DELETE SET NULL,
+            FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
+        );
         
 
         `);
