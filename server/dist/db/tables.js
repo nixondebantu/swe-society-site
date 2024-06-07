@@ -78,6 +78,66 @@ function createTables() {
             FOREIGN KEY (eventid) REFERENCES Events(eventid) ON DELETE SET NULL
         );
 
+        CREATE TABLE IF NOT EXISTS Skills (
+            skill_id SERIAL PRIMARY KEY,
+            skill VARCHAR(50),
+            area VARCHAR(50)
+        );
+        
+        CREATE TABLE IF NOT EXISTS UserSkills (
+            userskillid SERIAL PRIMARY KEY,
+            userid INT,
+            skill_id INT,
+            FOREIGN KEY (skill_id) REFERENCES Skills(skill_id) ON DELETE CASCADE,
+            FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS Teams (
+            teamid SERIAL PRIMARY KEY,
+            teamname VARCHAR(100),
+            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS TeamMembers (
+            userid INT,
+            teamid INT,
+            PRIMARY KEY (userid, teamid),
+            FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
+            FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
+        );
+        
+        CREATE TABLE IF NOT EXISTS Achievements (
+            achieveid SERIAL PRIMARY KEY,
+            teamid INT,
+            eventname TEXT,
+            organizer VARCHAR(100),
+            venu VARCHAR(100),
+            startdate DATE,
+            enddate DATE,
+            rank VARCHAR(100),
+            rankarea VARCHAR(100),
+            task TEXT,
+            solution TEXT,
+            techstack TEXT,
+            resources TEXT,
+            photos TEXT[],
+            approval_status BOOLEAN,
+            FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Blogs (
+            blogid SERIAL PRIMARY KEY,
+            userid INT,
+            headline TEXT,
+            article TEXT,
+            photos TEXT[],
+            blogtype VARCHAR(200),
+            approval_status BOOLEAN, 
+            FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL
+        );
+
+        
+
         `);
             console.log('Tables created successfully');
         }
