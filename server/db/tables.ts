@@ -151,6 +151,8 @@ export async function createTables() {
             FOREIGN KEY (postid) REFERENCES Committeeposts(committeepostid) ON DELETE SET NULL,
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
+
+  
         
 
         `);

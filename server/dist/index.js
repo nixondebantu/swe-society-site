@@ -23,6 +23,7 @@ const eventUpdate_1 = __importDefault(require("./routes/eventUpdate"));
 const skill_1 = __importDefault(require("./routes/skill"));
 const achievement_1 = __importDefault(require("./routes/achievement"));
 const blogs_1 = __importDefault(require("./routes/blogs"));
+const elections_1 = __importDefault(require("./routes/elections"));
 const cors_1 = __importDefault(require("cors"));
 const PORT = 5050;
 const app = (0, express_1.default)();
@@ -43,6 +44,7 @@ app.use("/eventupdate", eventUpdate_1.default);
 app.use("/skills", skill_1.default);
 app.use("/achievement", achievement_1.default);
 app.use("/blog", blogs_1.default);
+app.use("/election", elections_1.default);
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     // await connectToDB();
     yield (0, dbconnect_1.testDatabaseConnection)();
