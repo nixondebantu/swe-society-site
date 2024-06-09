@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { setLoginCookies } from "@/data/cookies/setCookies";
-import { BACKENDURL } from "@/data/urls";
+import { APIENDPOINTS } from "@/data/urls";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
@@ -52,7 +52,7 @@ export function SignInCard() {
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setFetching(true);
     try {
-      const response = await axios.post(`${BACKENDURL}auth/login`, {
+      const response = await axios.post(APIENDPOINTS.auth.login, {
         regno: values.regno,
         password: values.password,
         longsession: values.longsession,
@@ -68,7 +68,8 @@ export function SignInCard() {
           expirationTime,
           response.data.user.fullname,
           response.data.user.profile_picture,
-          response.data.user.regno
+          response.data.user.regno,
+          response.data.user.userid
         );
         router.push("/dashboard");
       }

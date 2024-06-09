@@ -4,6 +4,7 @@ import { getJWT } from "@/data/cookies/getCookies";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Members from "./_pages/Members";
+import Notice from "./_pages/Notice";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -33,6 +34,8 @@ function Page({ params }: { params: { menuitem: string } }) {
   switch (params.menuitem) {
     case "members":
       return <Members />;
+    case "notice":
+      return <Notice />;
 
     default:
       return (
