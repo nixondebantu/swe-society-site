@@ -16,7 +16,7 @@ exports.connectToDB = exports.testDatabaseConnection = void 0;
 const pg_1 = require("pg");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const connectionString = process.env.DB_URL;
+const connectionString = "postgres://postgres.bhfbufaieuwjkepaoynk:sweSOCIETY$$123@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"; //process.env.DB_URL;
 const pool = new pg_1.Pool({
     connectionString: connectionString
 });
