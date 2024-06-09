@@ -10,7 +10,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <>
       <SideBar />
-      <main className=" lg:ml-[300px] mt-4">{children}</main>
+      <main className=" lg:pl-[300px] h-screen">{children}</main>
       <Toaster />
     </>
   );

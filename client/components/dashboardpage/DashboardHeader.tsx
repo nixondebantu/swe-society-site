@@ -6,7 +6,7 @@ import Link from "next/link";
 
 function DashboardHeader() {
   return (
-    <div className="lg:ml-[270px] border-b p-2 flex justify-around items-center">
+    <div className="lg:pl-[270px] border-b p-2 flex justify-around items-center bg-background fixed top-0 right-0 w-full">
       <Link href="/" className="flex justify-center w-full">
         <Image src={logo} alt="" width={80} height={35} />
       </Link>

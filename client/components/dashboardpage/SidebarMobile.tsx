@@ -8,11 +8,14 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { dummyuser as user } from "@/data/dummy/userdata";
+import { clearCookies } from "@/data/cookies/deleteCookies";
+import { getUserDP, getUserName, getUserReg } from "@/data/cookies/getCookies";
 import { SidebarItems } from "@/data/types";
 import { Home, LogOut, Menu, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useToast } from "../ui/use-toast";
 import SidebarButton from "./SidebarButton";
 
 interface SidebarMobileProps {
@@ -20,6 +23,25 @@ interface SidebarMobileProps {
 }
 function SidebarMobile(props: SidebarMobileProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [name, setName] = useState<string>("SWE Member");
+  const [regNo, setregNo] = useState<string>("2020831000");
+  const [photourl, setphotourl] = useState<string>("");
+  useEffect(() => {
+    setName(getUserName() as string);
+    setregNo(getUserReg() as string);
+    setphotourl(getUserDP() as string);
+  }, []);
+  const handleLogout = () => {
+    clearCookies();
+    toast({
+      title: "Logout Successfully",
+      duration: 3000,
+    });
+    router.push("/signin");
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -50,12 +72,12 @@ function SidebarMobile(props: SidebarMobileProps) {
                 <div className="flex justify-between items-center w-full px-4 py-2 bg-background hover:bg-accent rounded-full border cursor-pointer">
                   <div className="flex gap-2 items-center">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.photourl} />
-                      <AvatarFallback>{user.role}</AvatarFallback>
+                      <AvatarImage src={photourl} />
+                      <AvatarFallback>SWE</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-base font-bold">{user.name}</p>
-                      <p className="text-[11px] text-slate-300">{user.reg}</p>
+                      <p className="text-base font-bold">{name}</p>
+                      <p className="text-[11px] text-slate-300">{regNo}</p>
                     </div>
                   </div>
                   <MoreHorizontal size={20} />
@@ -73,6 +95,7 @@ function SidebarMobile(props: SidebarMobileProps) {
                     Icon={LogOut}
                     variant="default"
                     className="w-full"
+                    onClick={handleLogout}
                   >
                     Log Out
                   </SidebarButton>
