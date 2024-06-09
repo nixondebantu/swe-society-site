@@ -47,6 +47,7 @@ const login = errorWrapper(
         {
           id: rows[0].id,
           role: rows[0].role,
+          regno: rows[0].regno,
         },
         longsession ? "30d" : "1h"
       );
