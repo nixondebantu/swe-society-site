@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MemberDataType } from "@/data/types";
-import { BACKENDURL } from "@/data/urls";
+import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
 import { InfoIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -31,7 +31,7 @@ const FindMembers: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get<MemberDataType[]>(
-          `${BACKENDURL}users`
+          APIENDPOINTS.users.getAllUsers
         );
         console.log(response.data);
         setList(response.data);

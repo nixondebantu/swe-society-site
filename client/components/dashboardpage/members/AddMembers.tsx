@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { MemberRowType } from "@/data/types";
-import { BACKENDURL } from "@/data/urls";
+import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
 import { LoaderCircle, Trash2 } from "lucide-react";
 import React, { useState } from "react";
@@ -33,7 +33,7 @@ const AddMembers: React.FC = () => {
     console.log(members);
     try {
       const response = await axios.post(
-        `${BACKENDURL}auth/multiUserCreate`,
+        APIENDPOINTS.auth.createMultiuser,
         members
       );
       console.log(response);
