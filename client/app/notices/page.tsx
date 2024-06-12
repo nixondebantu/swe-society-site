@@ -1,3 +1,5 @@
 export default function page() {
-  return <div>notices page</div>;
+  return <div className=" ">
+    notices 
+  </div>;
 }
