@@ -121,6 +121,55 @@ const deleteUserSkill = errorWrapper(
     { statusCode: 500, message: `Couldn't delete user skill` }
 );
 
+// custom Apis
+
+const getUserSkills = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { userid } = req.params;
+
+        const { rows } = await pool.query(
+            `SELECT s.skill_id, s.skill 
+             FROM Skills s 
+             JOIN UserSkills us ON s.skill_id = us.skill_id 
+             WHERE us.userid = $1`,
+            [userid]
+        );
+
+        res.json(rows);
+    },
+    { statusCode: 500, message: `Couldn't get user skills` }
+);
+
+const addUserMultipleSkills = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { userid, skills } = req.body;
+
+        // Prepare query to ignore existing (userid, skill_id) pairs
+        const insertQuery = `
+            INSERT INTO UserSkills (userid, skill_id)
+            SELECT $1, unnest($2::int[])
+            ON CONFLICT (userid, skill_id) DO NOTHING
+            RETURNING skill_id;
+        `;
+
+        const { rows: insertedSkills } = await pool.query(insertQuery, [userid, skills]);
+
+        // Fetch the inserted skills to return their details
+        if (insertedSkills.length > 0) {
+            const skillIds = insertedSkills.map(skill => skill.skill_id);
+            const { rows: skillDetails } = await pool.query(
+                'SELECT skill_id, skill FROM Skills WHERE skill_id = ANY($1::int[])',
+                [skillIds]
+            );
+            res.status(201).json(skillDetails);
+        } else {
+            res.status(204).json({ message: 'No new skills were added.' });
+        }
+    },
+    { statusCode: 500, message: `Couldn't add user skills` }
+);
+
+
 export {
     createSkill,
     getAllSkills,
@@ -129,5 +178,7 @@ export {
     createUserSkill,
     getAllUserSkills,
     updateUserSkill,
-    deleteUserSkill
+    deleteUserSkill,
+    getUserSkills,
+    addUserMultipleSkills
 };

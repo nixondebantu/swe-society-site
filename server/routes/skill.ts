@@ -9,7 +9,9 @@ import {
     createUserSkill,
     getAllUserSkills,
     updateUserSkill,
-    deleteUserSkill
+    deleteUserSkill,
+    getUserSkills,
+    addUserMultipleSkills
   } from "../controllers/skills";
 
   router.route("/create").post(createSkill);
@@ -21,5 +23,9 @@ import {
   router.route("/user").get(getAllUserSkills);
   router.route("/user/:userSkillId").put(updateUserSkill);
   router.route("/user/:userSkillId").delete(deleteUserSkill);
+
+  router.route("/individual/:userid").get(getUserSkills);
+  router.route("/individual/multiple").post(addUserMultipleSkills);
+  
 
   export default router;
