@@ -139,6 +139,7 @@ const getUserAchievements = (0, errorWrapper_1.default)((req, res) => __awaiter(
             a.teamid,
             t.teamname,
             a.eventname,
+            a.segment,
             a.organizer,
             a.venu,
             a.startdate,

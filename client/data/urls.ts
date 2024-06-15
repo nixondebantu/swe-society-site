@@ -47,6 +47,7 @@ export const APIENDPOINTS = {
     deleteAchievement: `${BACKENDURL}achievement/post`,
     getAllAchievement: `${BACKENDURL}achievement/post`,
     getAchievementbyID: `${BACKENDURL}achievement/post`,
+    getUsersAllAchievement: `${BACKENDURL}achievement/individual`,
   },
   blogs: {
     createBlog: `${BACKENDURL}blog/create`,

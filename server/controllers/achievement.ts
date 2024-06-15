@@ -208,6 +208,7 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
             a.teamid,
             t.teamname,
             a.eventname,
+            a.segment,
             a.organizer,
             a.venu,
             a.startdate,

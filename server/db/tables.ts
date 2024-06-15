@@ -96,6 +96,7 @@ export async function createTables() {
             achieveid SERIAL PRIMARY KEY,
             teamid INT NOT NULL,
             eventname TEXT NOT NULL,
+            segment TEXT NOT NULL,
             organizer VARCHAR(100),
             venu VARCHAR(100),
             startdate DATE,
