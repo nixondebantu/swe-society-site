@@ -1,5 +1,5 @@
-import jwt, { Secret } from "jsonwebtoken";
 import { Request } from "express";
+import jwt, { Secret } from "jsonwebtoken";
 import CustomError from "./CustomError";
 
 const tokenBlacklist: Set<string> = new Set();
@@ -17,7 +17,7 @@ const generateToken = (info: any, expiry: string | number | undefined) => {
   if (!secret) {
     throw new CustomError("JWT secret is undefined.", 500);
   }
-  return jwt.sign(info, secret, { expiresIn: expiry });
+  return jwt.sign(info, secret, { expiresIn: expiry as string });
 };
 
 const verifyToken = (token: string) => {
@@ -37,4 +37,4 @@ const invalidateToken = (token: string) => {
   return;
 };
 
-export { generateToken, verifyToken, getToken, invalidateToken };
+export { generateToken, getToken, invalidateToken, verifyToken };
