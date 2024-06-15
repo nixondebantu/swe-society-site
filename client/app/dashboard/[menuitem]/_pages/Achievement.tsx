@@ -23,10 +23,12 @@ const Achievement: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center space-y-2 pt-16 h-screen">
-     <div className="w-full  my-4 relative">
+     <div className="w-full  mt-4 ">
          <div className="text-3xl text-center font-bold">Achievements</div>
-         <div className="absolute top-3 right-1 mr-14 bg-red-700 rounded-lg px-4"> + Add New </div>
-         </div>
+      </div>
+         <div className="w-full flex justify-end "> 
+         <button className="bg-red-700 rounded-lg px-4 mr-2">+ Add Achievement</button>
+          </div>
       <AchievementComponent achievements={achievements} />
     </div>
   );

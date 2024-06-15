@@ -134,7 +134,7 @@ function createTables() {
             article TEXT,
             photos TEXT[],
             blogtype VARCHAR(200),
-            approval_status BOOLEAN, 
+            approval_status BOOLEAN DEFAULT FALSE, 
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL
         );
 
