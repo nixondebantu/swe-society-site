@@ -59,3 +59,21 @@ export interface MemberDataType {
   is_alumni: string | null;
   role: string;
 }
+
+
+export interface Achievement {
+  teamid: number;
+  eventname: string | null;
+  organizer: string | null;
+  venu: string | null;
+  startdate: string | null;  
+  enddate: string | null;   
+  rank: string | null;
+  rankarea: string | null;
+  task: string | null;
+  solution: string | null;
+  techstack: string | null;
+  resources: string | null;
+  photos: string[] | null;   
+  approval_status: boolean | null;
+}

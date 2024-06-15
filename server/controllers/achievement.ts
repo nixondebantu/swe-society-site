@@ -196,6 +196,58 @@ const deleteAchievement = errorWrapper(
     { statusCode: 500, message: `Couldn't delete achievement` }
 );
 
+// custom api's
+
+const getUserAchievements = errorWrapper(async (req: Request, res: Response) => {
+    const { userid } = req.params;
+
+    // Query to get achievements of the user
+    const achievementsQuery = `
+        SELECT
+            a.achieveid,
+            a.teamid,
+            t.teamname,
+            a.eventname,
+            a.organizer,
+            a.venu,
+            a.startdate,
+            a.enddate,
+            a.rank,
+            a.rankarea,
+            a.task,
+            a.solution,
+            a.techstack,
+            a.resources,
+            a.photos,
+            a.approval_status,
+            (
+                SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+                FROM TeamMembers tm
+                JOIN Users u ON tm.userid = u.userid
+                WHERE tm.teamid = a.teamid
+            ) AS teamMembers
+        FROM
+            Achievements a
+        JOIN
+            TeamMembers tm ON a.teamid = tm.teamid
+        JOIN
+            Teams t ON a.teamid = t.teamid
+        WHERE
+            tm.userid = $1;
+    `;
+
+    const { rows } = await pool.query(achievementsQuery, [userid]);
+
+    if (rows.length === 0) {
+        throw new CustomError(`No achievements found for user ID ${userid}`, 404);
+    }
+
+    res.json({ achievement: rows });
+}, {
+    statusCode: 500,
+    message: `Couldn't retrieve achievements`
+});
+
 
 export {
     createTeam,
@@ -212,5 +264,6 @@ export {
     getAllAchievements,
     getAchievementById,
     updateAchievement,
-    deleteAchievement
+    deleteAchievement,
+    getUserAchievements
 };

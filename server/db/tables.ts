@@ -94,20 +94,20 @@ export async function createTables() {
         
         CREATE TABLE IF NOT EXISTS Achievements (
             achieveid SERIAL PRIMARY KEY,
-            teamid INT,
-            eventname TEXT,
+            teamid INT NOT NULL,
+            eventname TEXT NOT NULL,
             organizer VARCHAR(100),
             venu VARCHAR(100),
             startdate DATE,
             enddate DATE,
             rank VARCHAR(100),
-            rankarea VARCHAR(100),
+            rankarea VARCHAR(100) NOT NULL,
             task TEXT,
             solution TEXT,
             techstack TEXT,
             resources TEXT,
             photos TEXT[],
-            approval_status BOOLEAN,
+            approval_status BOOLEAN DEFAULT FALSE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE SET NULL
         );
 

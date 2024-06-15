@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAchievement = exports.updateAchievement = exports.getAchievementById = exports.getAllAchievements = exports.createAchievement = exports.removeTeamMember = exports.getTeamMembersByTeamId = exports.getAllTeamMembers = exports.addTeamMember = exports.deleteTeam = exports.updateTeam = exports.getAllTeams = exports.createTeam = void 0;
+exports.getUserAchievements = exports.deleteAchievement = exports.updateAchievement = exports.getAchievementById = exports.getAllAchievements = exports.createAchievement = exports.removeTeamMember = exports.getTeamMembersByTeamId = exports.getAllTeamMembers = exports.addTeamMember = exports.deleteTeam = exports.updateTeam = exports.getAllTeams = exports.createTeam = void 0;
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
@@ -129,3 +129,50 @@ const deleteAchievement = (0, errorWrapper_1.default)((req, res) => __awaiter(vo
     res.json({ message: 'Achievement deleted successfully' });
 }), { statusCode: 500, message: `Couldn't delete achievement` });
 exports.deleteAchievement = deleteAchievement;
+// custom api's
+const getUserAchievements = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userid } = req.params;
+    // Query to get achievements of the user
+    const achievementsQuery = `
+        SELECT
+            a.achieveid,
+            a.teamid,
+            t.teamname,
+            a.eventname,
+            a.organizer,
+            a.venu,
+            a.startdate,
+            a.enddate,
+            a.rank,
+            a.rankarea,
+            a.task,
+            a.solution,
+            a.techstack,
+            a.resources,
+            a.photos,
+            a.approval_status,
+            (
+                SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+                FROM TeamMembers tm
+                JOIN Users u ON tm.userid = u.userid
+                WHERE tm.teamid = a.teamid
+            ) AS teamMembers
+        FROM
+            Achievements a
+        JOIN
+            TeamMembers tm ON a.teamid = tm.teamid
+        JOIN
+            Teams t ON a.teamid = t.teamid
+        WHERE
+            tm.userid = $1;
+    `;
+    const { rows } = yield dbconnect_1.default.query(achievementsQuery, [userid]);
+    if (rows.length === 0) {
+        throw new CustomError_1.default(`No achievements found for user ID ${userid}`, 404);
+    }
+    res.json({ achievement: rows });
+}), {
+    statusCode: 500,
+    message: `Couldn't retrieve achievements`
+});
+exports.getUserAchievements = getUserAchievements;

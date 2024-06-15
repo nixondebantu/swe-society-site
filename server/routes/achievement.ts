@@ -16,7 +16,9 @@ import {
     getAllAchievements,
     getAchievementById,
     updateAchievement,
-    deleteAchievement
+    deleteAchievement,
+
+    getUserAchievements
   } from "../controllers/achievement";
 
   router.route("/team/create").post(createTeam);
@@ -34,6 +36,8 @@ import {
   router.route("/post").get(getAllAchievements);
   router.route("/post/:achieveid").put(updateAchievement);
   router.route("/post/:achieveid").delete(deleteAchievement);
+
+  router.route("/individual/:userid").get(getUserAchievements);
 
 
   export default router;
