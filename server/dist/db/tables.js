@@ -85,9 +85,10 @@ function createTables() {
         );
         
         CREATE TABLE IF NOT EXISTS UserSkills (
-            userskillid SERIAL PRIMARY KEY,
+            userskillid SERIAL,
             userid INT,
             skill_id INT,
+            PRIMARY KEY (userid, skill_id),
             FOREIGN KEY (skill_id) REFERENCES Skills(skill_id) ON DELETE CASCADE,
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE
         );

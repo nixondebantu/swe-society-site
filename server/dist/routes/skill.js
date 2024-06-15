@@ -14,4 +14,6 @@ router.route("/user/create").post(skills_1.createUserSkill);
 router.route("/user").get(skills_1.getAllUserSkills);
 router.route("/user/:userSkillId").put(skills_1.updateUserSkill);
 router.route("/user/:userSkillId").delete(skills_1.deleteUserSkill);
+router.route("/individual/:userid").get(skills_1.getUserSkills);
+router.route("/individual/multiple").post(skills_1.addUserMultipleSkills);
 exports.default = router;
