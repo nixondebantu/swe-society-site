@@ -2,14 +2,19 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { getUserID } from "@/data/cookies/getCookies";
 import { UserProfile } from "@/data/types";
-import { CircleX, Save } from "lucide-react";
+import { APIENDPOINTS } from "@/data/urls";
+import axios from "axios";
+import { CircleX, LoaderIcon, Save } from "lucide-react";
 import React, { useState } from "react";
 import ProfileCard from "./ProfileCard";
 
 interface EditProfileProps {
   values: UserProfile | undefined;
   setUpdating: React.Dispatch<React.SetStateAction<boolean>>;
+  refreshProfileData: () => void;
 }
 
 const defaultUserProfile: UserProfile = {
@@ -40,8 +45,14 @@ const defaultUserProfile: UserProfile = {
 
 const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
+const EditProfile: React.FC<EditProfileProps> = ({
+  values,
+  setUpdating,
+  refreshProfileData,
+}) => {
   const [data, setData] = useState<UserProfile>(values ?? defaultUserProfile);
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
 
   const handleInputChange = (
     field: keyof UserProfile,
@@ -60,7 +71,32 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
 
   const handleSave = () => {
     console.log(data);
-    setUpdating(false);
+    setSaving(true);
+    const updateUserData = async () => {
+      try {
+        const response = await axios.put(
+          `${APIENDPOINTS.users.updateUserbyID}/${getUserID()}`,
+          data
+        );
+        if (response.status === 200) {
+          toast({
+            title: "Profile Updated",
+            duration: 4000,
+          });
+        }
+        refreshProfileData();
+        setSaving(false);
+        setUpdating(false);
+      } catch (error: any) {
+        toast({
+          title: "Failed Updating Profile",
+          variant: "destructive",
+          duration: 4000,
+        });
+      }
+      setSaving(false);
+    };
+    updateUserData();
   };
 
   return (
@@ -123,7 +159,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
             label="Phone Number"
             info={data.phone_number}
             edit={true}
-            placeholder="Phone Number"
+            placeholder="+8801........."
             className="mb-2"
             onChange={(e) => handleInputChange("phone_number", e)}
           />
@@ -139,7 +175,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
         <p className="text-xs font-semibold">Bio</p>
         <Textarea
           value={data.bio}
-          placeholder="Your Bio Here"
+          placeholder="Hi, I am ....."
           onChange={(e) => handleInputChange("bio", e.target.value)}
           className="disabled:cursor-default disabled:opacity-100 mb-2"
         />
@@ -148,7 +184,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
             label="Home Town"
             info={data.hometown}
             edit={true}
-            placeholder="Hometown District"
+            placeholder="District Name"
             className="mb-2"
             onChange={(e) => handleInputChange("hometown", e)}
           />
@@ -220,7 +256,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
         <ProfileCard
           label="Projects"
           info={data.projects as string}
-          edit={true}
+          edit={false}
           className="disabled mb-2"
           onChange={(e) => handleInputChange("projects", e)}
         />
@@ -239,8 +275,21 @@ const EditProfile: React.FC<EditProfileProps> = ({ values, setUpdating }) => {
         >
           <CircleX /> Cancel
         </Button>
-        <Button variant="outline_red" className="gap-2" onClick={handleSave}>
-          <Save /> Save
+        <Button
+          variant="outline_red"
+          className="gap-2"
+          disabled={saving}
+          onClick={handleSave}
+        >
+          {saving ? (
+            <>
+              <LoaderIcon className="animate-spin" /> Saving
+            </>
+          ) : (
+            <>
+              <Save /> Save
+            </>
+          )}
         </Button>
       </div>
     </div>

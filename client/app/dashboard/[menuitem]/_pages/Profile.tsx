@@ -13,36 +13,40 @@ const Profile: React.FC = () => {
   const [updating, setUpdating] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(true);
   const [profileData, setProfileData] = useState<UserProfile>();
-  useEffect(() => {
-    const uid = getUserID();
-    console.log(`${APIENDPOINTS.users.getUserbyID}/${uid}`);
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${APIENDPOINTS.users.getUserbyID}/${uid}`
-        );
-        if (response.status === 200) {
-          setProfileData(response.data);
-        }
-      } catch (error: any) {
-        if (error.response.status === 404) {
-          console.log(error);
-        }
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await axios.get(
+        `${APIENDPOINTS.users.getUserbyID}/${getUserID()}`
+      );
+      if (response.status === 200) {
+        setProfileData(response.data);
+      }
+    } catch (error: any) {
+      if (error.response.status === 404) {
         console.log(error);
       }
-    };
+      console.log(error);
+    }
     setFetching(false);
-    fetchData();
+  };
+
+  useEffect(() => {
+    fetchProfileData();
   }, []);
   return (
     <div className="flex flex-col items-center space-y-2 pt-16 h-screen p-4">
       {updating ? (
         <div className="flex flex-col max-w-screen-sm w-full">
-          <EditProfile values={profileData} setUpdating={setUpdating} />
+          <EditProfile
+            values={profileData}
+            setUpdating={setUpdating}
+            refreshProfileData={fetchProfileData}
+          />
         </div>
       ) : (
         <div className="flex flex-col max-w-screen-sm w-full">
-          <ViewProfile values={profileData} setUpdating={setUpdating} />
+          <ViewProfile values={profileData} />
           <div className="flex w-full justify-end gap-3 mb-3">
             <Button variant="outline_red" className="gap-2">
               <KeyRound /> Change Password

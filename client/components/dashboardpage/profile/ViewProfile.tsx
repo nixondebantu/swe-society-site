@@ -2,6 +2,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import { UserProfile } from "@/data/types";
 import {
   CircleSlash,
@@ -15,10 +16,16 @@ import React from "react";
 import ProfileCard from "./ProfileCard";
 interface ViewProfileProps {
   values: UserProfile | undefined;
-  setUpdating: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
+const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
+  const { toast } = useToast();
+  const NA = () => {
+    toast({
+      title: "Not Available",
+      duration: 1000,
+    });
+  };
   return (
     <div className="w-full py-2">
       <div className="grid grid-cols-3">
@@ -26,6 +33,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
           <ProfileCard
             label="Name"
             info={values?.fullname}
+            placeholder="Full Name"
             edit={false}
             className="col-span-3 mb-2"
           />
@@ -38,6 +46,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
           <ProfileCard
             label="Session"
             info={values?.session}
+            placeholder="2020-21"
             edit={false}
             className="col-span-3 mb-2"
           />
@@ -45,6 +54,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
             label="Email"
             info={values?.email}
             edit={false}
+            placeholder="abc@gmail.com"
             className="col-span-3 mb-2"
           />
         </div>
@@ -56,11 +66,11 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
             />
           </Avatar>
           {values?.is_alumni ? (
-            <p className="px-4 text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">
+            <p className="px-4 text-center text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">
               Alumnus
             </p>
           ) : (
-            <p className="sm:px-4 px-1 text-primary text-xs sm:text-base font-bold rounded-full border border-primary">
+            <p className="sm:px-4 px-[2px] text-center text-primary text-xs sm:text-base font-bold rounded-full border border-primary">
               {values?.role}
             </p>
           )}
@@ -70,6 +80,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
         <ProfileCard
           label="Phone Number"
           info={values?.phone_number}
+          placeholder="+8801........."
           edit={false}
           className="mb-2"
         />
@@ -84,6 +95,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
       <p className="text-xs font-semibold">Bio</p>
       <Textarea
         value={values?.bio}
+        placeholder="Hi, I am ....."
         disabled
         className="disabled:cursor-default disabled:opacity-100 mb-2"
       />
@@ -91,6 +103,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
         <ProfileCard
           label="Home Town"
           info={values?.hometown}
+          placeholder="District Name"
           edit={false}
           className="mb-2"
         />
@@ -105,12 +118,14 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
         <ProfileCard
           label="College"
           info={values?.college}
+          placeholder="College Name"
           edit={false}
           className="mb-2"
         />
         <ProfileCard
           label="High School"
           info={values?.school}
+          placeholder="School Name"
           edit={false}
           className="mb-2"
         />
@@ -126,7 +141,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
                 </Button>
               </Link>
             ) : (
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={NA}>
                 <LinkedinIcon />
               </Button>
             )}
@@ -137,7 +152,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
                 </Button>
               </Link>
             ) : (
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={NA}>
                 <GithubIcon />
               </Button>
             )}
@@ -148,7 +163,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
                 </Button>
               </Link>
             ) : (
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={NA}>
                 <CircleSlash />
               </Button>
             )}
@@ -159,7 +174,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
                 </Button>
               </Link>
             ) : (
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={NA}>
                 <Facebook />
               </Button>
             )}
@@ -170,13 +185,13 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
           {values?.cv ? (
             <Link href={values?.cv}>
               <Button variant={"outline_red"} className="gap-2">
-                CV
+                Download CV
               </Button>
             </Link>
           ) : (
-            <Button variant={"outline"} className="gap-2">
+            <Button variant={"outline"} className="gap-2" onClick={NA}>
               <FileText />
-              CV
+              Download CV
             </Button>
           )}
         </div>
@@ -184,6 +199,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
       <ProfileCard
         label="Projects"
         info={values?.projects as string}
+        placeholder="Your Projects"
         edit={false}
         className="disabled mb-2"
       />
@@ -191,7 +207,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values, setUpdating }) => {
         label="Skills"
         info="Your skills goes here......"
         edit={false}
-        className="disabled mb-2"
+        className="mb-2"
       />
     </div>
   );
