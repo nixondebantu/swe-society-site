@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserSkill = exports.updateUserSkill = exports.getAllUserSkills = exports.createUserSkill = exports.deleteSkill = exports.updateSkill = exports.getAllSkills = exports.createSkill = void 0;
+exports.addUserMultipleSkills = exports.getUserSkills = exports.deleteUserSkill = exports.updateUserSkill = exports.getAllUserSkills = exports.createUserSkill = exports.deleteSkill = exports.updateSkill = exports.getAllSkills = exports.createSkill = void 0;
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
@@ -84,3 +84,34 @@ const deleteUserSkill = (0, errorWrapper_1.default)((req, res) => __awaiter(void
     res.json({ message: 'User skill deleted successfully' });
 }), { statusCode: 500, message: `Couldn't delete user skill` });
 exports.deleteUserSkill = deleteUserSkill;
+// custom Apis
+const getUserSkills = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userid } = req.params;
+    const { rows } = yield dbconnect_1.default.query(`SELECT s.skill_id, s.skill 
+             FROM Skills s 
+             JOIN UserSkills us ON s.skill_id = us.skill_id 
+             WHERE us.userid = $1`, [userid]);
+    res.json(rows);
+}), { statusCode: 500, message: `Couldn't get user skills` });
+exports.getUserSkills = getUserSkills;
+const addUserMultipleSkills = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userid, skills } = req.body;
+    // Prepare query to ignore existing (userid, skill_id) pairs
+    const insertQuery = `
+            INSERT INTO UserSkills (userid, skill_id)
+            SELECT $1, unnest($2::int[])
+            ON CONFLICT (userid, skill_id) DO NOTHING
+            RETURNING skill_id;
+        `;
+    const { rows: insertedSkills } = yield dbconnect_1.default.query(insertQuery, [userid, skills]);
+    // Fetch the inserted skills to return their details
+    if (insertedSkills.length > 0) {
+        const skillIds = insertedSkills.map(skill => skill.skill_id);
+        const { rows: skillDetails } = yield dbconnect_1.default.query('SELECT skill_id, skill FROM Skills WHERE skill_id = ANY($1::int[])', [skillIds]);
+        res.status(201).json(skillDetails);
+    }
+    else {
+        res.status(204).json({ message: 'No new skills were added.' });
+    }
+}), { statusCode: 500, message: `Couldn't add user skills` });
+exports.addUserMultipleSkills = addUserMultipleSkills;
