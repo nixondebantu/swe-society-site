@@ -81,7 +81,7 @@ export interface UserProfile {
   hometown: string;
   cv: string | null;
   experience: string | null;
-  projects: string | null;
+  projects: string[] | null;
   is_alumni: boolean;
   role: string;
 }

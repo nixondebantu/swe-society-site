@@ -10,6 +10,7 @@ import {
   FileText,
   GithubIcon,
   LinkedinIcon,
+  LucideLink,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -196,13 +197,20 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
           )}
         </div>
       </div>
-      <ProfileCard
-        label="Projects"
-        info={values?.projects as string}
-        placeholder="Your Projects"
-        edit={false}
-        className="disabled mb-2"
-      />
+      <p className="text-xs font-semibold">Projects</p>
+      <div className="flex gap-2 mb-2 flex-wrap">
+        {values?.projects && values.projects.length > 0 ? (
+          values.projects.map((url, index) => (
+            <Link href={url} key={index}>
+              <Button variant={"outline_red"} size={"icon"}>
+                <LucideLink />
+              </Button>
+            </Link>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500">N/A</p>
+        )}
+      </div>
       <ProfileCard
         label="Skills"
         info="Your skills goes here......"

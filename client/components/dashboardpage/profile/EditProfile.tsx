@@ -9,6 +9,7 @@ import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import React, { useState } from "react";
+import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
 
 interface EditProfileProps {
@@ -144,11 +145,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
               />
             </Avatar>
             {data.is_alumni ? (
-              <p className="px-4 text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">
+              <p className="px-4 text-center text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">
                 Alumnus
               </p>
             ) : (
-              <p className="sm:px-4 px-1 text-primary text-xs sm:text-base font-bold rounded-full border border-primary">
+              <p className="sm:px-4 px-[2px] text-center text-primary text-xs sm:text-base font-bold rounded-full border border-primary">
                 {data.role}
               </p>
             )}
@@ -252,13 +253,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
             onChange={(e) => handleInputChange("cv", e)}
           />
         </div>
-
-        <ProfileCard
-          label="Projects"
-          info={data.projects as string}
-          edit={false}
-          className="disabled mb-2"
-          onChange={(e) => handleInputChange("projects", e)}
+        <EditProject
+          projects={data.projects}
+          onChange={(projects) => setData({ ...data, projects })}
         />
         <ProfileCard
           label="Skills"
