@@ -5,6 +5,7 @@ export const APIENDPOINTS = {
     login: `${BACKENDURL}auth/login`,
     createMultiuser: `${BACKENDURL}auth/multiUserCreate`,
     updatePassword: `${BACKENDURL}auth/updatePassword`,
+    changePassword: `${BACKENDURL}auth/changePassword`,
   },
   users: {
     getAllUsers: `${BACKENDURL}users`,
