@@ -7,7 +7,8 @@ import { getUserID } from "@/data/cookies/getCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
-import { CircleX, LoaderIcon, Save } from "lucide-react";
+import { CircleX, LoaderIcon, Pencil, Save } from "lucide-react";
+import { CldUploadButton } from "next-cloudinary";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
@@ -54,6 +55,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const [data, setData] = useState<UserProfile>(values ?? defaultUserProfile);
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+
+  const handleProfilePicUpload = (result: any) => {
+    const uploadedURL = result.info.secure_url;
+    setData((prevData) => ({ ...prevData, profile_picture: uploadedURL }));
+  };
 
   const handleInputChange = (
     field: keyof UserProfile,
@@ -137,13 +143,22 @@ const EditProfile: React.FC<EditProfileProps> = ({
               onChange={(e) => handleInputChange("email", e)}
             />
           </div>
-          <div className="flex flex-col w-full items-center -z-10">
-            <Avatar className="w-fit h-fit p-2">
-              <AvatarImage
-                src={data.profile_picture}
-                className="rounded-full border-2 border-white p-2"
-              />
-            </Avatar>
+          <div className="flex flex-col w-full items-center">
+            <div className="relative">
+              <Avatar className="w-fit h-fit p-2">
+                <AvatarImage
+                  src={data?.profile_picture}
+                  className="rounded-full border-2 border-white p-2"
+                />
+              </Avatar>
+              <CldUploadButton
+                onUpload={handleProfilePicUpload}
+                uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET}
+                className="absolute bottom-1 bg-background right-1 text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
+              >
+                <Pencil />
+              </CldUploadButton>
+            </div>
             {data.is_alumni ? (
               <p className="px-4 text-center text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">
                 Alumnus
