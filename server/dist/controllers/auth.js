@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserPassword = exports.login = exports.createUserWithMailSend = exports.createUser = exports.createMultiUsersWithMailSend = void 0;
+exports.updateUserPassword = exports.login = exports.createUserWithMailSend = exports.createUser = exports.createMultiUsersWithMailSend = exports.changePass = void 0;
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
 const Token_1 = require("../services/Token");
@@ -133,3 +133,25 @@ const updateUserPassword = (0, errorWrapper_1.default)((req, res) => __awaiter(v
     }
 }), { statusCode: 500, message: `Couldn't update user's password` });
 exports.updateUserPassword = updateUserPassword;
+const changePass = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { regno, oldpass, newpass } = req.body;
+    const userQueryResult = yield dbconnect_1.default.query("SELECT * FROM Users WHERE regno = $1", [regno]);
+    if (userQueryResult.rows.length === 0) {
+        throw new CustomError_1.default("This regno do not exists", 404);
+    }
+    else {
+        const isPasswordValid = yield bcrypt_1.default.compare(oldpass, userQueryResult.rows[0].password);
+        if (!isPasswordValid) {
+            throw new Error("Old password doesn't match");
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(newpass, 10);
+        yield dbconnect_1.default.query("UPDATE Users SET password = $1 WHERE regno = $2", [
+            hashedPassword,
+            regno,
+        ]);
+        (0, mailService_1.sendMail)(regno, userQueryResult.rows[0].email, `Your Password Has Been Changed`, //mail subject
+        `Your password for the SWE Society account associated with registration number ${regno} has been successfully changed. If you did not initiate this change, please contact our committeee immediately.<br><br>Regards,<br><strong>SWE Society Committee</strong><br><br>`, `<p style="text-align: center;"><span style="font-size: 12px;">This is an automated message. Please do not reply to this email.</span></p>`);
+        res.json({ message: "Password changed successfully" });
+    }
+}), { statusCode: 500, message: `Can't changed password` });
+exports.changePass = changePass;
