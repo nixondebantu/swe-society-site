@@ -7,8 +7,16 @@ import { getUserID } from "@/data/cookies/getCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
-import { CircleX, LoaderIcon, Pencil, Save } from "lucide-react";
+import {
+  CircleX,
+  LoaderIcon,
+  Pencil,
+  Save,
+  Trash2,
+  UploadCloud,
+} from "lucide-react";
 import { CldUploadButton } from "next-cloudinary";
+import Link from "next/link";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
@@ -59,6 +67,15 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const handleProfilePicUpload = (result: any) => {
     const uploadedURL = result.info.secure_url;
     setData((prevData) => ({ ...prevData, profile_picture: uploadedURL }));
+  };
+
+  const handleCVUpload = (result: any) => {
+    const uploadedURL = result.info.secure_url;
+    setData((prevData) => ({ ...prevData, cv: uploadedURL }));
+  };
+
+  const handleRemoveCV = () => {
+    setData((prevData) => ({ ...prevData, cv: null }));
   };
 
   const handleInputChange = (
@@ -148,15 +165,15 @@ const EditProfile: React.FC<EditProfileProps> = ({
               <Avatar className="w-fit h-fit p-2">
                 <AvatarImage
                   src={data?.profile_picture}
-                  className="rounded-full border-2 border-white p-2"
+                  className="rounded-full border-2 border-white sm:p-2 p-1"
                 />
               </Avatar>
               <CldUploadButton
                 onUpload={handleProfilePicUpload}
                 uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET}
-                className="absolute bottom-1 bg-background right-1 text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
+                className="absolute bottom-0 sm:bottom-2 bg-background right-0 sm:right-2 text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
               >
-                <Pencil />
+                <Pencil size={20} />
               </CldUploadButton>
             </div>
             {data.is_alumni ? (
@@ -260,13 +277,32 @@ const EditProfile: React.FC<EditProfileProps> = ({
             placeholder="Facebook account URL"
             onChange={(e) => handleInputChange("facebook_id", e)}
           />
-          <ProfileCard
-            label="CV"
-            info={data.cv as string}
-            edit={true}
-            placeholder="CV URL"
-            onChange={(e) => handleInputChange("cv", e)}
-          />
+          <div className="mb-2 col-span-2">
+            <p className="text-xs font-semibold">CV</p>
+            <div className="flex gap-2 items-center">
+              {data?.cv ? (
+                <Link href={data?.cv as string} target="_blank">
+                  <Button variant={"outline_red"}>View CV</Button>
+                </Link>
+              ) : (
+                <p className="text-slate-500">Not Available</p>
+              )}
+              <CldUploadButton
+                onUpload={handleCVUpload}
+                uploadPreset={process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET}
+                className={`border border-input bg-background hover:bg-accent hover:text-accent-foreground flex gap-1 p-2 rounded-md items-center`}
+              >
+                <UploadCloud />
+                <div className="flex items-end gap-2">
+                  <p>Upload CV</p>
+                  <p className="text-[10px]">PDF only</p>
+                </div>
+              </CldUploadButton>
+              <Button variant={"outline_red"} onClick={handleRemoveCV}>
+                <Trash2 /> Remove CV
+              </Button>
+            </div>
+          </div>
         </div>
         <EditProject
           projects={data.projects}

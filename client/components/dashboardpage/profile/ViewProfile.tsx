@@ -184,7 +184,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
         <div className="sm:col-start-2 col-start-1">
           <p className="text-xs font-semibold">CV</p>
           {values?.cv ? (
-            <Link href={values?.cv}>
+            <Link href={values?.cv} target="_blank">
               <Button variant={"outline_red"} className="gap-2">
                 Download CV
               </Button>
