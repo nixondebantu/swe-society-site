@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { dpurl, jwt, username, userregno } from "./cookiesName";
+import { dpurl, jwt, uid, username, userregno } from "./cookiesName";
 
 export const getJWT = () => {
   return Cookies.get(jwt);
@@ -12,4 +12,7 @@ export const getUserReg = () => {
 };
 export const getUserDP = () => {
   return Cookies.get(dpurl);
+};
+export const getUserID = () => {
+  return Cookies.get(uid);
 };

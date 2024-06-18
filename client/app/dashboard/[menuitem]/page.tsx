@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
+import Profile from "./_pages/Profile";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -32,6 +33,8 @@ function Page({ params }: { params: { menuitem: string } }) {
   }
 
   switch (params.menuitem) {
+    case "profile":
+      return <Profile />;
     case "members":
       return <Members />;
     case "notice":

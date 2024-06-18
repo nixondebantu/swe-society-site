@@ -59,3 +59,29 @@ export interface MemberDataType {
   is_alumni: string | null;
   role: string;
 }
+
+export interface UserProfile {
+  userid: number;
+  fullname: string;
+  password: string;
+  email: string;
+  profile_picture: string;
+  regno: string;
+  session: string;
+  phone_number: string;
+  bio: string;
+  linkedin_id: string;
+  github_id: string;
+  stop_stalk_id: string;
+  whatsapp: string;
+  facebook_id: string;
+  blood_group: string;
+  school: string;
+  college: string;
+  hometown: string;
+  cv: string | null;
+  experience: string | null;
+  projects: string[] | null;
+  is_alumni: boolean;
+  role: string;
+}

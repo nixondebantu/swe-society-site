@@ -9,6 +9,7 @@ const auth_1 = require("../controllers/auth");
 router.route("/create").post(auth_1.createUser);
 router.route("/createbymailing").post(auth_1.createUserWithMailSend);
 router.route("/multiUserCreate").post(auth_1.createMultiUsersWithMailSend);
-router.route("/updatePassword").post(auth_1.updateUserPassword);
+router.route("/updatePassword").post(auth_1.updateUserPassword); // for forget pass in login page
 router.route("/login").post(auth_1.login);
+router.route("/changePassword").put(auth_1.changePass); // for change pass in dashboard profile page
 exports.default = router;

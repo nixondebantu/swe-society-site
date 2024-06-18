@@ -15,3 +15,11 @@ export const setLoginCookies = (
   Cookies.set(dpurl, profile_picture, { expires: duration });
   Cookies.set(uid, userid, { expires: duration });
 };
+
+export const updateProfileCookies = (
+  fullname: string,
+  profile_picture: string
+) => {
+  Cookies.set(username, fullname);
+  Cookies.set(dpurl, profile_picture);
+};
