@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { getUserID } from "@/data/cookies/getCookies";
+import { updateProfileCookies } from "@/data/cookies/setCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
@@ -111,6 +112,13 @@ const EditProfile: React.FC<EditProfileProps> = ({
         refreshProfileData();
         setSaving(false);
         setUpdating(false);
+        if (
+          data.fullname !== values?.fullname ||
+          data.profile_picture !== values?.profile_picture
+        ) {
+          updateProfileCookies(data.fullname, data.profile_picture);
+          window.location.reload();
+        }
       } catch (error: any) {
         toast({
           title: "Failed Updating Profile",
@@ -294,7 +302,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
               >
                 <UploadCloud />
                 <div className="flex items-end gap-2">
-                  <p>Upload CV</p>
+                  <p>{data?.cv ? "Update" : "Upload"} CV</p>
                   <p className="text-[10px]">PDF only</p>
                 </div>
               </CldUploadButton>
