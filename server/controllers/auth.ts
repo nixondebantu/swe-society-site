@@ -200,7 +200,44 @@ const updateUserPassword = errorWrapper(
   { statusCode: 500, message: `Couldn't update user's password` }
 );
 
+const changePass = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { regno, oldpass, newpass } = req.body;
+
+    const userQueryResult = await pool.query(
+      "SELECT * FROM Users WHERE regno = $1",
+      [regno]
+    );
+    if (userQueryResult.rows.length === 0) {
+      throw new CustomError("This regno do not exists", 404);
+    } else {
+      const isPasswordValid = await bcrypt.compare(
+        oldpass,
+        userQueryResult.rows[0].password
+      );
+      if (!isPasswordValid) {
+        throw new Error("Old password doesn't match");
+      }
+      const hashedPassword = await bcrypt.hash(newpass, 10);
+      await pool.query("UPDATE Users SET password = $1 WHERE regno = $2", [
+        hashedPassword,
+        regno,
+      ]);
+      sendMail(
+        regno,
+        userQueryResult.rows[0].email,
+        `Your Password Has Been Changed`, //mail subject
+        `Your password for the SWE Society account associated with registration number ${regno} has been successfully changed. If you did not initiate this change, please contact our committeee immediately.<br><br>Regards,<br><strong>SWE Society Committee</strong><br><br>`,
+        `<p style="text-align: center;"><span style="font-size: 12px;">This is an automated message. Please do not reply to this email.</span></p>`
+      );
+      res.json({ message: "Password changed successfully" });
+    }
+  },
+  { statusCode: 500, message: `Can't changed password` }
+);
+
 export {
+  changePass,
   createMultiUsersWithMailSend,
   createUser,
   createUserWithMailSend,

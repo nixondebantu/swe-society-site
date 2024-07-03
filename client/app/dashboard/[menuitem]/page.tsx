@@ -7,6 +7,9 @@ import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
 import Achievement from "./_pages/Achievement";
 
+import Profile from "./_pages/Profile";
+
+
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
@@ -33,6 +36,8 @@ function Page({ params }: { params: { menuitem: string } }) {
   }
 
   switch (params.menuitem) {
+    case "profile":
+      return <Profile />;
     case "members":
       return <Members />;
     case "notice":
