@@ -12,21 +12,6 @@ import axios from 'axios';
 
 export function EventCard() {
 
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5050/notice');
-        setData(response.data);
-        console.log(response.data)
-      } catch (error) {
-        console.error('Error fetching data: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <>
