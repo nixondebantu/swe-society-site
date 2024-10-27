@@ -1,6 +1,6 @@
 import { Pool, Client } from 'pg';
 
-const connectionString = 'postgresql://mypostgres:iictSUST1060@society-db-1.cpsw4s4as3ri.us-east-1.rds.amazonaws.com:5432/societysite';
+const connectionString = 'postgresql://postgres.oszveqopythlwzqzykjt:G3jRpdr!fnsx.HC@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres';
 
 const pool = new Pool({
     // user: "mypostgres",
