@@ -1,91 +1,53 @@
-"use client";
-import React from "react";
-import { BackgroundGradient } from "../ui/background-gradient";
-import { IconAppWindow } from "@tabler/icons-react";
-import Image from "next/image";
+import React from 'react';
 
-export function AchievemenCard() {
-  return (
-    <div className="flex">
-      <div className="p-8">
-      <BackgroundGradient className=" rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-        <Image
-          src={`/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg`}
-          alt="jordans"
-          height="400"
-          width="400"
-          className="object-contain"
-        />
-        <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
-          Achievement 1
-        </p>
-
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          The Air Jordan 4 Retro Reimagined Bred will release on Saturday,
-          February 17, 2024. Your best opportunity to get these right now is by
-          entering raffles and waiting for the official releases.
-        </p>
-        <button className="rounded-full pl-4 pr-1 py-1 text-white flex items-center space-x-1 bg-black mt-4 text-xs font-bold dark:bg-zinc-800">
-          <span>See more </span>
-          <span className="bg-zinc-700 rounded-full text-[0.6rem] px-2 py-0 text-white">
-            $100
-          </span>
-        </button>
-      </BackgroundGradient>
-      </div>
-      <div className="p-8">
-      <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-        <Image
-          src={`/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg`}
-          alt="jordans"
-          height="400"
-          width="400"
-          className="object-contain"
-        />
-        <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
-        Achievement 2
-        </p>
-
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          The Air Jordan 4 Retro Reimagined Bred will release on Saturday,
-          February 17, 2024. Your best opportunity to get these right now is by
-          entering raffles and waiting for the official releases.
-        </p>
-        <button className="rounded-full pl-4 pr-1 py-1 text-white flex items-center space-x-1 bg-black mt-4 text-xs font-bold dark:bg-zinc-800">
-          <span>See more </span>
-          <span className="bg-zinc-700 rounded-full text-[0.6rem] px-2 py-0 text-white">
-            $100
-          </span>
-        </button>
-      </BackgroundGradient>
-      </div>
-      <div className="p-8">
-      <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-        <Image
-          src={`/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg`}
-          alt="jordans"
-          height="400"
-          width="400"
-          className="object-contain"
-        />
-        <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
-        Achievement 3
-        </p>
-
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          The Air Jordan 4 Retro Reimagined Bred will release on Saturday,
-          February 17, 2024. Your best opportunity to get these right now is by
-          entering raffles and waiting for the official releases.
-        </p>
-        <button className="rounded-full pl-4 pr-1 py-1 text-white flex items-center space-x-1 bg-black mt-4 text-xs font-bold dark:bg-zinc-800">
-          <span>See more </span>
-          <span className="bg-zinc-700 rounded-full text-[0.6rem] px-2 py-0 text-white">
-            $100
-          </span>
-        </button>
-      </BackgroundGradient>
-      </div>
-    </div>
-  );
+interface Achievement {
+    achieveid: number;
+    teamid: number;
+    teamname: string;
+    eventname: string;
+    segment: string;
+    rank: string;
+    photos: string[];
+    techstack: string;
+    teammembers: {
+        userid: number;
+        fullname: string;
+        session: string;
+    }[];
 }
+
+interface Props {
+    achievements: Achievement[];
+}
+
+const AchievementComponent: React.FC<Props> = ({ achievements }) => {
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 px-4">
+            {achievements.map((achievement) => (
+                <div key={achievement.achieveid} className="p-4 border rounded-lg shadow-md">
+                    <div className="mb-4">
+                        <img src={achievement.photos[0]} alt="Achievement" className="w-full h-auto rounded-lg" />
+                    </div>
+                    <div className="mb-2">
+                        <p className="font-semibold text-2xl">{achievement.rank} in {achievement.eventname}</p>
+                        <p className="font-semibold">Segment: {achievement.segment}</p>
+                        <p className="font-semibold">Team Name: {achievement.teamname}</p>
+                        <p className="font-semibold">Tech Stack: {achievement.techstack}</p>
+                    </div>
+                    <div className="mt-2">
+                        <div className="font-semibold">Team Members:</div>
+                        <div className='flex'>
+                            {achievement.teammembers.map((member, index) => (
+                                <div key={index} className='bg-white text-black px-2 rounded-lg m-1'>{member.fullname} ({member.session})</div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default AchievementComponent;
+
 
