@@ -40,6 +40,7 @@ function createTables() {
             CV VARCHAR(200),
             experience TEXT[],
             projects TEXT[],
+            skills TEXT[],
             is_alumni BOOLEAN DEFAULT FALSE,
             role VARCHAR(20) NOT NULL DEFAULT 'general_member'
         );
