@@ -88,6 +88,8 @@ export async function createTables() {
         CREATE TABLE IF NOT EXISTS TeamMembers (
             userid INT,
             teamid INT,
+            othermember TEXT,
+            other_member_institute TEXT,
             PRIMARY KEY (userid, teamid),
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
@@ -115,8 +117,10 @@ export async function createTables() {
 
         CREATE TABLE IF NOT EXISTS Blogs (
             blogid SERIAL PRIMARY KEY,
-            userid INT,
+            userid INT NOT NULL,
             headline TEXT,
+            designation TEXT,
+            current_institution TEXT,
             article TEXT,
             photos TEXT[],
             blogtype VARCHAR(200),
