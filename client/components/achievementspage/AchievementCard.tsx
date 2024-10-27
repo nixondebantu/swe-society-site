@@ -50,3 +50,4 @@ const AchievementComponent: React.FC<Props> = ({ achievements }) => {
 
 export default AchievementComponent;
 
+
