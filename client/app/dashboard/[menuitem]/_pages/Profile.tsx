@@ -123,6 +123,10 @@ const Profile: React.FC = () => {
     fetchProfileData();
   }, []);
 
+  if (fetching) {
+    return <div className="flex flex-col items-center space-y-2 pt-16 h-screen p-4">Loading profile...</div>;
+  }
+
   return (
     <div className="flex flex-col items-center space-y-2 pt-16 h-screen p-4">
       {updating ? (
