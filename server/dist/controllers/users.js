@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = void 0;
+exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.deleteMultipleUser = void 0;
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
@@ -77,3 +77,17 @@ const deleteUser = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, v
     res.json({ message: "User deleted successfully" });
 }), { statusCode: 500, message: `Couldn't delete User` });
 exports.deleteUser = deleteUser;
+const deleteMultipleUser = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.body;
+    if (!Array.isArray(userId) || userId.length === 0) {
+        throw new CustomError_1.default("No user IDs provided", 400);
+    }
+    const { rowCount } = yield dbconnect_1.default.query("DELETE FROM Users WHERE userId = ANY($1)", [userId]);
+    if (rowCount === 0) {
+        throw new CustomError_1.default("No users found to delete", 404);
+    }
+    res.json({
+        message: `${rowCount} user(s) deleted successfully`,
+    });
+}), { statusCode: 500, message: `Couldn't delete multiple Users` });
+exports.deleteMultipleUser = deleteMultipleUser;
