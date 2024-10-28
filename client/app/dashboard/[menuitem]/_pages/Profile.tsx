@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getUserID, getUserReg } from "@/data/cookies/getCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
+import { headerConfig } from "@/lib/header_config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { KeyRound, PencilLine } from "lucide-react";
@@ -64,7 +65,8 @@ const Profile: React.FC = () => {
       };
       const response = await axios.put(
         APIENDPOINTS.auth.changePassword,
-        reqbody
+        reqbody,
+        headerConfig()
       );
       if (response.status === 200) {
         toast({
@@ -102,7 +104,8 @@ const Profile: React.FC = () => {
   const fetchProfileData = async () => {
     try {
       const response = await axios.get(
-        `${APIENDPOINTS.users.getUserbyID}/${getUserID()}`
+        `${APIENDPOINTS.users.getUserbyID}/${getUserID()}`,
+        headerConfig()
       );
       if (response.status === 200) {
         setProfileData(response.data);
