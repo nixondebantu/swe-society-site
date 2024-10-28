@@ -21,6 +21,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
+import SkillManagement from "./SkillManagement";
+import CVSection from "./CVSection";
 
 interface EditProfileProps {
   values: UserProfile | undefined;
@@ -52,6 +54,7 @@ const defaultUserProfile: UserProfile = {
   projects: null,
   is_alumni: false,
   role: "",
+  skills: null,
 };
 
 const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -172,7 +175,10 @@ const EditProfile: React.FC<EditProfileProps> = ({
             <div className="relative">
               <Avatar className="w-fit h-fit p-2">
                 <AvatarImage
-                  src={data?.profile_picture}
+                  src={
+                    data?.profile_picture ??
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                  }
                   className="rounded-full border-2 border-white sm:p-2 p-1"
                 />
               </Avatar>
@@ -285,42 +291,25 @@ const EditProfile: React.FC<EditProfileProps> = ({
             placeholder="Facebook account URL"
             onChange={(e) => handleInputChange("facebook_id", e)}
           />
-          <div className="mb-2 col-span-2">
-            <p className="text-xs font-semibold">CV</p>
-            <div className="flex gap-2 items-center">
-              {data?.cv ? (
-                <Link href={data?.cv as string} target="_blank">
-                  <Button variant={"outline_red"}>View CV</Button>
-                </Link>
-              ) : (
-                <p className="text-slate-500">Not Available</p>
-              )}
-              <CldUploadButton
-                onUpload={handleCVUpload}
-                uploadPreset={process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET}
-                className={`border border-input bg-background hover:bg-accent hover:text-accent-foreground flex gap-1 p-2 rounded-md items-center`}
-              >
-                <UploadCloud />
-                <div className="flex items-end gap-2">
-                  <p>{data?.cv ? "Update" : "Upload"} CV</p>
-                  <p className="text-[10px]">PDF only</p>
-                </div>
-              </CldUploadButton>
-              <Button variant={"outline_red"} onClick={handleRemoveCV}>
-                <Trash2 /> Remove CV
-              </Button>
-            </div>
-          </div>
+          <CVSection
+            cv={data.cv}
+            edit={true}
+            onUpload={(url) => setData({ ...data, cv: url })}
+            onRemove={() => setData({ ...data, cv: null })}
+            className="mb-2"
+          />
         </div>
         <EditProject
           projects={data.projects}
-          onChange={(projects) => setData({ ...data, projects })}
-        />
-        <ProfileCard
-          label="Skills"
-          info="Your skills go here......"
           edit={true}
-          className="disabled mb-2"
+          onChange={(projects) => setData({ ...data, projects })}
+          className="mb-2"
+        />
+        <SkillManagement
+          selectedSkills={data.skills || []}
+          edit={true}
+          onChange={(skills) => setData({ ...data, skills })}
+          className="mb-2"
         />
       </>
       <div className="flex w-full justify-end gap-3">

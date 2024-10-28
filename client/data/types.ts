@@ -84,4 +84,5 @@ export interface UserProfile {
   projects: string[] | null;
   is_alumni: boolean;
   role: string;
+  skills: string[] | null;
 }
