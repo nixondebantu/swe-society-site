@@ -12,6 +12,7 @@ export const APIENDPOINTS = {
     updateUserbyID: `${BACKENDURL}users`,
     getUserbyID: `${BACKENDURL}users`,
     DelUserbyID: `${BACKENDURL}users`,
+    DelMultiUser: `${BACKENDURL}users`,
   },
   notice: {
     getAllNotice: `${BACKENDURL}notice`,

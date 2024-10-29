@@ -10,4 +10,5 @@ router.route("/:userId").put(users_1.updateUser);
 router.route("/").get(users_1.getAllUsers);
 router.route("/:userId").get(users_1.getUserById);
 router.route("/:userId").delete(users_1.deleteUser);
+router.route("/").delete(users_1.deleteMultipleUser);
 exports.default = router;
