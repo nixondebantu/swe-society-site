@@ -1,6 +1,5 @@
 "use client";
 import AddMembers from "@/components/dashboardpage/members/AddMembers";
-import DelMembers from "@/components/dashboardpage/members/DelMembers";
 import FindMembers from "@/components/dashboardpage/members/FindMembers";
 import MembersNav from "@/components/dashboardpage/members/MembersNav";
 import React, { useState } from "react";
@@ -15,7 +14,6 @@ const Members: React.FC = () => {
       />
       {membersOption === "find" && <FindMembers />}
       {membersOption === "add" && <AddMembers />}
-      {membersOption === "del" && <DelMembers />}
     </div>
   );
 };

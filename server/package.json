@@ -27,6 +27,7 @@
     "nodemailer": "^6.9.13",
     "pg": "^8.11.5",
     "rimraf": "^5.0.5",
+    "server": "file:",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
