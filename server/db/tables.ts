@@ -1,8 +1,8 @@
 import pool from "./dbconnect";
 
 export async function createTables() {
-    try {
-        await pool.query(`
+  try {
+    await pool.query(`
         CREATE TABLE IF NOT EXISTS Users (
             userId SERIAL PRIMARY KEY,
             fullname VARCHAR(100),
@@ -26,7 +26,24 @@ export async function createTables() {
             experience TEXT[],
             projects TEXT[],
             is_alumni BOOLEAN DEFAULT FALSE,
-            role VARCHAR(20) NOT NULL DEFAULT 'general_member'
+            roleid INT NOT NULL,
+            FOREIGN KEY (roleid) REFERENCES Roles(roleid) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Roles (
+            roleid SERIAL PRIMARY KEY,
+            roletitle VARCHAR(50) NOT NULL,
+            blogAccess BOOLEAN DEFAULT FALSE,
+            achievementAccess BOOLEAN DEFAULT FALSE,
+            bulkmailAccess BOOLEAN DEFAULT FALSE,
+            eventAccess BOOLEAN DEFAULT FALSE,
+            ecAccess BOOLEAN DEFAULT FALSE,
+            landingpageAccess BOOLEAN DEFAULT FALSE,
+            membersAccess BOOLEAN DEFAULT FALSE,
+            noticeAccess BOOLEAN DEFAULT FALSE,
+            rolesAccess BOOLEAN DEFAULT FALSE,
+            statisticsAccess BOOLEAN DEFAULT FALSE,
+            isDefaultRole BOOLEAN DEFAULT FALSE
         );
 
         CREATE TABLE IF NOT EXISTS GeneralNotices (
@@ -153,14 +170,14 @@ export async function createTables() {
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
 
-  
+
         
 
         `);
-        console.log('Tables created successfully');
-    } catch (error) {
-        console.error('Unable to create any table:', error);
-    }
+    console.log("Tables created successfully");
+  } catch (error) {
+    console.error("Unable to create any table:", error);
+  }
 }
 
 //Deployment note: User(userid) On delete null hobe.
