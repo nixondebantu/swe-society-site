@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import errorWrapper from "../middlewares/errorWrapper";
 import CustomError from "../services/CustomError";
 import pool from "../db/dbconnect";
-
+import { PoolClient } from 'pg';
 // Create a new team
 const createTeam = errorWrapper(
     async (req: Request, res: Response) => {
-        const { teamname } = req.body;
+        const { teamname, mentor } = req.body;
 
         const { rows } = await pool.query(
-            'INSERT INTO Teams (teamname) VALUES ($1) RETURNING *',
-            [teamname]
+            'INSERT INTO Teams (teamname, mentor) VALUES ($1, $2) RETURNING *',
+            [teamname, mentor]
         );
 
         res.status(201).json(rows[0]);
@@ -33,12 +33,31 @@ const getAllTeams = errorWrapper(
 const updateTeam = errorWrapper(
     async (req: Request, res: Response) => {
         const { teamid } = req.params;
-        const { teamname } = req.body;
+        const { teamname, mentor } = req.body;
 
-        const { rows } = await pool.query(
-            'UPDATE Teams SET teamname = $1 WHERE teamid = $2 RETURNING *',
-            [teamname, teamid]
-        );
+        // Collect columns to update and corresponding values
+        const updates = [];
+        const values = [];
+
+        if (teamname) {
+            updates.push('teamname = $' + (updates.length + 1));
+            values.push(teamname);
+        }
+        if (mentor) {
+            updates.push('mentor = $' + (updates.length + 1));
+            values.push(mentor);
+        }
+
+        // If there are no fields to update, return an error
+        if (updates.length === 0) {
+            throw new CustomError('No fields to update', 400);
+        }
+
+        // Add teamid as the last parameter
+        values.push(teamid);
+        const query = `UPDATE Teams SET ${updates.join(', ')} WHERE teamid = $${values.length} RETURNING *`;
+
+        const { rows } = await pool.query(query, values);
 
         if (rows.length === 0) {
             throw new CustomError('Team not found', 404);
@@ -48,6 +67,7 @@ const updateTeam = errorWrapper(
     },
     { statusCode: 500, message: `Couldn't update team` }
 );
+
 
 // Delete a team
 const deleteTeam = errorWrapper(
@@ -68,17 +88,41 @@ const deleteTeam = errorWrapper(
 
 const addTeamMember = errorWrapper(
     async (req: Request, res: Response) => {
-        const { userid, teamid } = req.body;
+        const { userid, teamid, othermember, other_member_institute } = req.body;
 
-        const { rows } = await pool.query(
-            'INSERT INTO TeamMembers (userid, teamid) VALUES ($1, $2) RETURNING *',
-            [userid, teamid]
-        );
+        // Collect columns and values dynamically based on provided fields
+        const columns = ['teamid'];
+        const values = [teamid];
+        const placeholders = ['$1'];
+
+        if (userid) {
+            columns.push('userid');
+            values.push(userid);
+            placeholders.push(`$${placeholders.length + 1}`);
+        }
+
+        if (othermember) {
+            columns.push('othermember');
+            values.push(othermember);
+            placeholders.push(`$${placeholders.length + 1}`);
+        }
+
+        if (other_member_institute) {
+            columns.push('other_member_institute');
+            values.push(other_member_institute);
+            placeholders.push(`$${placeholders.length + 1}`);
+        }
+
+        // Build the query string dynamically
+        const query = `INSERT INTO TeamMembers (${columns.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
+
+        const { rows } = await pool.query(query, values);
 
         res.status(201).json(rows[0]);
     },
     { statusCode: 500, message: `Couldn't add team member` }
 );
+
 
 // Get all team members
 const getAllTeamMembers = errorWrapper(
@@ -207,6 +251,7 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
             a.achieveid,
             a.teamid,
             t.teamname,
+            t.mentor,
             a.eventname,
             a.segment,
             a.organizer,
@@ -249,6 +294,164 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
     message: `Couldn't retrieve achievements`
 });
 
+// interface TeamMember {
+//     userid?: number;
+//     othermember?: string;
+//     other_member_institute?: string;
+// }
+
+
+const createTeams = async ( teamname: string, mentor: string): Promise<number> => {
+    console.log("Inserting into Teams table...");
+    const { rows } = await pool.query(
+        'INSERT INTO Teams (teamname, mentor) VALUES ($1, $2) RETURNING *',
+        [teamname, mentor]
+    );
+
+    if (rows.length === 0) {
+        throw new CustomError("Could not create team", 500);
+    }
+
+    const teamid = rows[0].teamid;
+    console.log("Team created with ID:", teamid);
+    return teamid; // Ensure teamid is returned as a number
+};
+
+// Function to add team members
+const insertTeamMembers = async (teamid: number, teammembers: number[], others: { othermember: string, other_member_institute: string }[]) => {
+    const memberQueries: Promise<any>[] = [];
+
+    // Insert team members (users)
+    if (teammembers && Array.isArray(teammembers)) {
+        for (let i = 0; i < teammembers.length; i++) {
+            const userid = teammembers[i];
+            const columns = ['teamid', 'userid'];
+            const values = [teamid, userid];
+            const placeholders = ['$1', `$2`];
+            const query = `INSERT INTO TeamMembers (${columns.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
+            memberQueries.push(pool.query(query, values));  // Push each query to the array
+        }
+    }
+
+    // Insert other members (non-users)
+    if (others && Array.isArray(others)) {
+        for (let i = 0; i < others.length; i++) {
+            const { othermember, other_member_institute } = others[i];
+            const columns = ['teamid', 'othermember', 'other_member_institute'];
+            const values = [teamid, othermember, other_member_institute];
+            const placeholders = ['$1', `$2`, `$3`];
+            const query = `INSERT INTO TeamMembers (${columns.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
+            memberQueries.push(pool.query(query, values));  // Push each query to the array
+        }
+    }
+
+    // Execute all queries concurrently
+    const results = await Promise.all(memberQueries);
+
+    // Return inserted members
+    return results.map(result => result.rows[0]);
+};
+
+
+// Function to add achievement
+const addAchievement = async (
+    client: PoolClient,
+    teamid: number,
+    eventname: string,
+    segment: string,
+    organizer: string,
+    venu: string,
+    startdate: string,
+    enddate: string,
+    rank: string,
+    rankarea: string,
+    task: string,
+    solution: string,
+    techstack: string,
+    resources: string,
+    photos: string[],
+    approval_status: boolean
+): Promise<any> => {
+    console.log("Inserting into Achievements table...");
+    const { rows } = await client.query(
+        `INSERT INTO Achievements 
+            (teamid, eventname, segment, organizer, venu, startdate, enddate, rank, 
+            rankarea, task, solution, techstack, resources, photos, approval_status) 
+         VALUES 
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+         RETURNING *`,
+        [teamid, eventname, segment, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status]
+    );
+
+    if (rows.length === 0) {
+        throw new CustomError("Could not create achievement", 500);
+    }
+
+    console.log("Achievement created with ID:", rows[0].achieveid);
+    return rows[0]; // Ensure the returned value is of the correct type
+};
+
+const createTeamAndAchievement = async (req: Request, res: Response) => {
+    const client = await pool.connect();
+    try {
+        const { 
+            teamname, mentor, teammembers, others, 
+            eventname, segment, organizer, venu, 
+            startdate, enddate, rank, rankarea, task, 
+            solution, techstack, resources, photos, approval_status 
+        } = req.body;
+
+        console.log("Starting the transaction...");
+        ;
+
+        // Step 1: Create Team
+        const teamid = await createTeams( teamname, mentor); // Returns a number (teamid)
+
+        // Step 2: Add Team Members
+        await insertTeamMembers(teamid, teammembers, others);
+
+        // Step 3: Add Achievement
+        const achievement = await addAchievement(
+            client,
+            teamid,
+            eventname,
+            segment,
+            organizer,
+            venu,
+            startdate,
+            enddate,
+            rank,
+            rankarea,
+            task,
+            solution,
+            techstack, 
+            resources,
+            photos,
+            approval_status
+        );
+
+        await client.query('COMMIT');
+        console.log("Transaction committed successfully.");
+
+        // Return the created team and achievement
+        res.status(201).json({
+            team: { teamid, teamname, mentor },
+            achievement
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error("Error during the transaction:", error);
+        if (error instanceof CustomError) {
+            res.status(error.statusCode).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Could not complete the transaction" });
+        }
+    } finally {
+        client.release();
+        console.log("Database client released.");
+    }
+};
 
 export {
     createTeam,
@@ -266,5 +469,6 @@ export {
     getAchievementById,
     updateAchievement,
     deleteAchievement,
-    getUserAchievements
+    getUserAchievements,
+    createTeamAndAchievement
 };

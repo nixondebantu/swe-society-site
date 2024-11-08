@@ -82,15 +82,17 @@ export async function createTables() {
         CREATE TABLE IF NOT EXISTS Teams (
             teamid SERIAL PRIMARY KEY,
             teamname VARCHAR(100),
+            mentor VARCHAR(100),
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         
         CREATE TABLE IF NOT EXISTS TeamMembers (
-            userid INT,
+            team_member_id SERIAL,
+            userid INT, 
             teamid INT,
             othermember TEXT,
             other_member_institute TEXT,
-            PRIMARY KEY (userid, teamid),
+            PRIMARY KEY (team_member_id),
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
         );
@@ -158,6 +160,26 @@ export async function createTables() {
             FOREIGN KEY (postid) REFERENCES Committeeposts(committeepostid) ON DELETE SET NULL,
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
+
+CREATE TABLE IF NOT EXISTS Roles (
+    roleid SERIAL PRIMARY KEY,
+    roletitle VARCHAR(50) NOT NULL,
+    blogAccess BOOLEAN DEFAULT FALSE,
+    achievementAccess BOOLEAN DEFAULT FALSE,
+    bulkmailAccess BOOLEAN DEFAULT FALSE,
+    eventAccess BOOLEAN DEFAULT FALSE,
+    ecAccess BOOLEAN DEFAULT FALSE,
+    landingpageAccess BOOLEAN DEFAULT FALSE,
+    membersAccess BOOLEAN DEFAULT FALSE,
+    noticeAccess BOOLEAN DEFAULT FALSE,
+    rolesAccess BOOLEAN DEFAULT FALSE,
+    statisticsAccess BOOLEAN DEFAULT FALSE,
+    isDefaultRole BOOLEAN DEFAULT FALSE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS unique_default_role ON Roles (isDefaultRole) 
+WHERE isDefaultRole = TRUE;
+
 
   
         
