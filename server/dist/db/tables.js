@@ -40,6 +40,7 @@ function createTables() {
             CV VARCHAR(200),
             experience TEXT[],
             projects TEXT[],
+            skills TEXT[],
             is_alumni BOOLEAN DEFAULT FALSE,
             roleid INT NOT NULL,
             FOREIGN KEY (roleid) REFERENCES Roles(roleid) ON DELETE SET NULL
@@ -113,44 +114,51 @@ function createTables() {
         CREATE TABLE IF NOT EXISTS Teams (
             teamid SERIAL PRIMARY KEY,
             teamname VARCHAR(100),
+            mentor VARCHAR(100),
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         
         CREATE TABLE IF NOT EXISTS TeamMembers (
-            userid INT,
+            team_member_id SERIAL,
+            userid INT, 
             teamid INT,
-            PRIMARY KEY (userid, teamid),
+            othermember TEXT,
+            other_member_institute TEXT,
+            PRIMARY KEY (team_member_id),
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
         );
         
         CREATE TABLE IF NOT EXISTS Achievements (
             achieveid SERIAL PRIMARY KEY,
-            teamid INT,
-            eventname TEXT,
+            teamid INT NOT NULL,
+            eventname TEXT NOT NULL,
+            segment TEXT NOT NULL,
             organizer VARCHAR(100),
             venu VARCHAR(100),
             startdate DATE,
             enddate DATE,
             rank VARCHAR(100),
-            rankarea VARCHAR(100),
+            rankarea VARCHAR(100) NOT NULL,
             task TEXT,
             solution TEXT,
             techstack TEXT,
             resources TEXT,
             photos TEXT[],
-            approval_status BOOLEAN,
+            approval_status BOOLEAN DEFAULT FALSE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE SET NULL
         );
 
         CREATE TABLE IF NOT EXISTS Blogs (
             blogid SERIAL PRIMARY KEY,
-            userid INT,
+            userid INT NOT NULL,
             headline TEXT,
+            designation TEXT,
+            current_institution TEXT,
             article TEXT,
             photos TEXT[],
             blogtype VARCHAR(200),
-            approval_status BOOLEAN, 
+            approval_status BOOLEAN DEFAULT FALSE, 
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL
         );
 

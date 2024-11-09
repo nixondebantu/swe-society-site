@@ -1,3 +1,8 @@
+import BlogSection from "@/components/homepage/BlogSection";
+
 export default function page() {
-  return <div>blogs page</div>;
+  return <div>
+<BlogSection/>
+
+  </div>;
 }

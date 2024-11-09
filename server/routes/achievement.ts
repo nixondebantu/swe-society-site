@@ -16,7 +16,11 @@ import {
     getAllAchievements,
     getAchievementById,
     updateAchievement,
-    deleteAchievement
+    deleteAchievement,
+
+    getUserAchievements,
+    createTeamAndAchievement,
+    getUserAchievementsAll
   } from "../controllers/achievement";
 
   router.route("/team/create").post(createTeam);
@@ -31,9 +35,14 @@ import {
 
   router.route("/post/create").post(createAchievement);
   router.route("/post/:achieveid").get(getAchievementById);
-  router.route("/post").get(getAllAchievements);
+  router.route("/post").get(getUserAchievementsAll);
   router.route("/post/:achieveid").put(updateAchievement);
   router.route("/post/:achieveid").delete(deleteAchievement);
+
+  router.route("/individual/:userid").get(getUserAchievements);
+  
+
+  router.route("/post/fullachievement").post(createTeamAndAchievement);
 
 
   export default router;

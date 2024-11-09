@@ -21,9 +21,9 @@ const utils_1 = require("../services/utils");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
 const createUser = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { regno, session, email, password, role } = req.body;
+    const { regno, session, email, password, role, roleid } = req.body;
     const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-    const { rows } = yield dbconnect_1.default.query("INSERT INTO Users (regno, session, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *", [regno, session, email, hashedPassword, role]);
+    const { rows } = yield dbconnect_1.default.query("INSERT INTO Users (regno, session, email, password, role, roleid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [regno, session, email, hashedPassword, role, roleid]);
     res.status(201).json(rows[0]);
 }), { statusCode: 500, message: `Couldn't create user` });
 exports.createUser = createUser;
