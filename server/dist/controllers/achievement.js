@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTeamAndAchievement = exports.getUserAchievements = exports.deleteAchievement = exports.updateAchievement = exports.getAchievementById = exports.getAllAchievements = exports.createAchievement = exports.removeTeamMember = exports.getTeamMembersByTeamId = exports.getAllTeamMembers = exports.addTeamMember = exports.deleteTeam = exports.updateTeam = exports.getAllTeams = exports.createTeam = void 0;
+exports.getUserAchievementsAll = exports.createTeamAndAchievement = exports.getUserAchievements = exports.deleteAchievement = exports.updateAchievement = exports.getAchievementById = exports.getAllAchievements = exports.createAchievement = exports.removeTeamMember = exports.getTeamMembersByTeamId = exports.getAllTeamMembers = exports.addTeamMember = exports.deleteTeam = exports.updateTeam = exports.getAllTeams = exports.createTeam = void 0;
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
@@ -217,6 +217,53 @@ const getUserAchievements = (0, errorWrapper_1.default)((req, res) => __awaiter(
     message: `Couldn't retrieve achievements`
 });
 exports.getUserAchievements = getUserAchievements;
+const getUserAchievementsAll = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Query to get achievements of all users
+    const achievementsQuery = `
+    SELECT DISTINCT ON (a.achieveid)
+        a.achieveid,
+        a.teamid,
+        t.teamname,
+        t.mentor,
+        a.eventname,
+        a.segment,
+        a.organizer,
+        a.venu,
+        a.startdate,
+        a.enddate,
+        a.rank,
+        a.rankarea,
+        a.task,
+        a.solution,
+        a.techstack,
+        a.resources,
+        a.photos,
+        a.approval_status,
+        (
+            SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+            FROM TeamMembers tm
+            JOIN Users u ON tm.userid = u.userid
+            WHERE tm.teamid = a.teamid
+        ) AS teamMembers
+    FROM
+        Achievements a
+    JOIN
+        TeamMembers tm ON a.teamid = tm.teamid
+    JOIN
+        Teams t ON a.teamid = t.teamid
+    WHERE
+        a.achieveid >= 0;
+`;
+    const { rows } = yield dbconnect_1.default.query(achievementsQuery);
+    if (rows.length === 0) {
+        throw new CustomError_1.default("No achievements found", 404);
+    }
+    res.json({ achievements: rows });
+}), {
+    statusCode: 500,
+    message: "Couldn't retrieve achievements"
+});
+exports.getUserAchievementsAll = getUserAchievementsAll;
 // interface TeamMember {
 //     userid?: number;
 //     othermember?: string;

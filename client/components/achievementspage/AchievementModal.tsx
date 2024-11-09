@@ -101,7 +101,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     e.preventDefault();
     console.log(formData);
     const requiredFields = [
-      'teamname', 'eventname', 'segment', 'rank', 'photos', 'startdate', 'organizer', 'venue'
+      'teamname', 'eventname', 'segment', 'rank', 'photos', 'startdate', 'organizer'
     ];
   
     const missingFields = requiredFields.filter((field) => {
@@ -136,7 +136,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
       techstack: formData.techstack,
       resources: formData.resources,
       photos: formData.photos,
-      approval_status: false, // Assuming this is true by default, you can make it dynamic if needed
+      approval_status: true, // Assuming this is true by default, you can make it dynamic if needed
     };
   
 
