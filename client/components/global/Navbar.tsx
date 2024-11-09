@@ -18,25 +18,25 @@ function Navbar({ className }: { className?: string }) {
 
       </MenuItem>
       </Link>
-      <Link href={'/event'}>
+      <Link href={'/events'}>
       <MenuItem setActive={setActive} active={active} item="Event">
 
          
       </MenuItem>
       </Link>
-      <Link href={'/notice'}>
+      <Link href={'/notices'}>
       <MenuItem setActive={setActive} active={active} item="Notice">
           
 
           </MenuItem>
       </Link>
-      <Link href={'/blog'}>
+      <Link href={'/blogs'}>
       <MenuItem setActive={setActive} active={active} item="Blog">
           
 
           </MenuItem>
       </Link>
-      <Link href={'/achievement'}>
+      <Link href={'/achievements'}>
       <MenuItem setActive={setActive} active={active} item="Achievement">
           
 

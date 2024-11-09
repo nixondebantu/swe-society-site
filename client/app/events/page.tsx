@@ -1,3 +1,8 @@
+import EventSection from "@/components/homepage/EventSection";
 export default function page() {
-  return <div>event page</div>;
+  return <div>
+
+<EventSection/>
+
+  </div>;
 }
