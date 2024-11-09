@@ -15,6 +15,9 @@ import {
 import Link from "next/link";
 import React from "react";
 import ProfileCard from "./ProfileCard";
+import SkillManagement from "./SkillManagement";
+import CVSection from "./CVSection";
+import EditProject from "./EditProject";
 interface ViewProfileProps {
   values: UserProfile | undefined;
 }
@@ -62,7 +65,10 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
         <div className="flex flex-col w-full items-center -z-10">
           <Avatar className="w-fit h-fit p-2">
             <AvatarImage
-              src={values?.profile_picture}
+              src={
+                values?.profile_picture ??
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+              }
               className="rounded-full border-2 border-white p-2"
             />
           </Avatar>
@@ -181,39 +187,11 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
             )}
           </div>
         </div>
-        <div className="sm:col-start-2 col-start-1">
-          <p className="text-xs font-semibold">CV</p>
-          {values?.cv ? (
-            <Link href={values?.cv} target="_blank">
-              <Button variant={"outline_red"} className="gap-2">
-                View CV
-              </Button>
-            </Link>
-          ) : (
-            <Button variant={"outline"} className="gap-2" onClick={NA}>
-              <FileText />
-              View CV
-            </Button>
-          )}
-        </div>
+        <CVSection cv={values?.cv ?? null} className="mb-2" />
       </div>
-      <p className="text-xs font-semibold">Projects</p>
-      <div className="flex gap-2 mb-2 flex-wrap">
-        {values?.projects && values.projects.length > 0 ? (
-          values.projects.map((url, index) => (
-            <Link href={url} key={index}>
-              <Button variant={"outline_red"} size={"icon"}>
-                <LucideLink />
-              </Button>
-            </Link>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500">N/A</p>
-        )}
-      </div>
-      <ProfileCard
-        label="Skills"
-        info="Your skills goes here......"
+      <EditProject projects={values?.projects ?? null} className="mb-2" />
+      <SkillManagement
+        selectedSkills={values?.skills || []}
         edit={false}
         className="mb-2"
       />

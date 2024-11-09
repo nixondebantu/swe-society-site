@@ -13,21 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectToDB = exports.testDatabaseConnection = void 0;
-const pg_1 = require("pg");
 const dotenv_1 = __importDefault(require("dotenv"));
+const pg_1 = require("pg");
 dotenv_1.default.config();
 const connectionString = 'postgresql://postgres.oszveqopythlwzqzykjt:G3jRpdr!fnsx.HC@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres';
 const pool = new pg_1.Pool({
-    connectionString: connectionString
+    connectionString: connectionString,
 });
 function testDatabaseConnection() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield pool.query('SELECT 1');
-            console.log('Database connected successfully');
+            yield pool.query("SELECT 1");
+            console.log("Database connected successfully");
         }
         catch (error) {
-            console.error('Unable to connect to the database:', error);
+            console.error("Unable to connect to the database:", error);
         }
     });
 }
@@ -36,10 +36,10 @@ function connectToDB() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield pool.connect();
-            console.log('Connected to PostgreSQL database');
+            console.log("Connected to PostgreSQL database");
         }
         catch (error) {
-            console.error('Error connecting to PostgreSQL database:', error);
+            console.error("Error connecting to PostgreSQL database:", error);
         }
     });
 }

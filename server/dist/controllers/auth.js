@@ -43,7 +43,7 @@ const login = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0
             throw new Error("Invalid regno or password");
         }
         const token = (0, Token_1.generateToken)({
-            id: rows[0].id,
+            userid: rows[0].userid,
             role: rows[0].role,
             regno: rows[0].regno,
         }, longsession ? "30d" : "1h");

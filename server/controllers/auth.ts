@@ -45,7 +45,7 @@ const login = errorWrapper(
 
       const token = generateToken(
         {
-          id: rows[0].id,
+          userid: rows[0].userid,
           role: rows[0].role,
           regno: rows[0].regno,
         },

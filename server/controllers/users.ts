@@ -91,4 +91,25 @@ const deleteUser = errorWrapper(
   { statusCode: 500, message: `Couldn't delete User` }
 );
 
-export { deleteUser, getAllUsers, getUserById, updateUser };
+const deleteMultipleUser = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { userId } = req.body;
+
+    if (!Array.isArray(userId) || userId.length === 0) {
+      throw new CustomError("No user IDs provided", 400);
+    }
+    const { rowCount } = await pool.query(
+      "DELETE FROM Users WHERE userId = ANY($1)",
+      [userId]
+    );
+    if (rowCount === 0) {
+      throw new CustomError("No users found to delete", 404);
+    }
+    res.json({
+      message: `${rowCount} user(s) deleted successfully`,
+    });
+  },
+  { statusCode: 500, message: `Couldn't delete multiple Users` }
+);
+
+export { deleteMultipleUser, deleteUser, getAllUsers, getUserById, updateUser };

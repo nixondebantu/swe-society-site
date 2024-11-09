@@ -22,11 +22,7 @@ const Achievement: React.FC = () => {
         fetchData();
     }, []);
 
-    const handleAddAchievement = (formData: any) => {
-        // Send the form data to the backend or handle it as needed
-        console.log("Form data submitted: ", formData);
-        setIsModalOpen(false);
-      };
+
 
 
   return (
@@ -41,7 +37,7 @@ const Achievement: React.FC = () => {
           </div>
       <AchievementComponent achievements={achievements} />
       {isModalOpen && (
-        <AchievementModal onClose={() => setIsModalOpen(false)} onSubmit={handleAddAchievement} />
+        <AchievementModal onClose={() => setIsModalOpen(false)}  />
       )}
     </div>
   );
