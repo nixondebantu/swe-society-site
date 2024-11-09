@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
+import Achievement from "./_pages/Achievement";
+
 import Profile from "./_pages/Profile";
+
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -39,6 +42,8 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Members />;
     case "notice":
       return <Notice />;
+    case "achievement":
+      return <Achievement />;
 
     default:
       return (

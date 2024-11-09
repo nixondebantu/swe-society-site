@@ -19,4 +19,6 @@ router.route("/post/:achieveid").get(achievement_1.getAchievementById);
 router.route("/post").get(achievement_1.getAllAchievements);
 router.route("/post/:achieveid").put(achievement_1.updateAchievement);
 router.route("/post/:achieveid").delete(achievement_1.deleteAchievement);
+router.route("/individual/:userid").get(achievement_1.getUserAchievements);
+router.route("/post/fullachievement").post(achievement_1.createTeamAndAchievement);
 exports.default = router;

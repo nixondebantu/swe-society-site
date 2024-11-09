@@ -228,6 +228,48 @@ const deleteCommitteeMember = errorWrapper(
     { statusCode: 500, message: `Couldn't delete committee member` }
 );
 
+
+const getCommitteeMembersByElectionId = async (req: Request, res: Response) => {
+    const { electionid } = req.params;
+
+    try {
+        const query = `
+        SELECT 
+            e.year,
+            u.fullname,
+            u.profile_picture,
+            u.email,
+            u.regno,
+            u.session,
+            cp.post_name AS committee_post
+        FROM 
+            Committee c
+        JOIN 
+            Elections e ON c.electionid = e.electionid
+        LEFT JOIN 
+            Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN 
+            Users ac ON e.assistant_commissioner = ac.userId
+        JOIN 
+            Users u ON c.userid = u.userId
+        JOIN 
+            Committeeposts cp ON c.postid = cp.committeepostid
+        WHERE 
+            c.electionid = $1;
+    `;
+        const { rows } = await pool.query(query, [electionid]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'No committee members found for the specified election ID' });
+        }
+
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching committee members:', error);
+        res.status(500).json({ error: "Couldn't get committee members data" });
+    }
+};
+
 export {
     createElection,
     getAllElections,
@@ -246,5 +288,6 @@ export {
     getAllCommitteeMembers,
     getCommitteeMemberById,
     updateCommitteeMember,
-    deleteCommitteeMember
+    deleteCommitteeMember,
+    getCommitteeMembersByElectionId
 };
