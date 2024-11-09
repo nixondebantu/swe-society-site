@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
 import { AiFillDelete } from "react-icons/ai";
+import { FaFile } from "react-icons/fa";
+
+import AddNotice from "@/components/dashboardpage/notice/AddNotice";
 
 import React, { useState } from "react";
 
@@ -124,6 +127,9 @@ const Notice: React.FC = () => {
       file: "partnership_details.pdf"
     }
   ];
+
+  // const notice = axios.get("http://localhost:5000/api/notices");
+  
   const [searchQuery, setSearchQuery] = useState("");
   const filteredNotices = notices.filter((notice) =>
     notice.headline.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -136,7 +142,8 @@ const Notice: React.FC = () => {
       <div className="w-full flex justify-between  ">
         <Input placeholder="Search notices" className="max-w-sm" value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)} />
-        <Button><IoIosAddCircleOutline className="h-full w-full" />  Add notice</Button>
+          <AddNotice />
+        {/* <Button><IoIosAddCircleOutline className="h-full w-full" />  Add notice</Button> */}
       </div>
       <div className="w-full h-max ">
         {filteredNotices.length > 0 ? (
@@ -160,6 +167,7 @@ const Notice: React.FC = () => {
 
 
     </div>
+
   );
 };
 
