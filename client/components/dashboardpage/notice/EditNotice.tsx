@@ -9,7 +9,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
+import { FiEdit } from "react-icons/fi";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { Input } from '@/components/ui/input';
@@ -21,19 +21,19 @@ import { parseCookies } from 'nookies';
 import { getJWT, getUserID } from '@/data/cookies/getCookies';
 // import { cookies } from 'next/headers';
 
-function AddNotice() {
+function EditNotice(props:any) {
     const [notice, setNotice] = useState({
-        notice_provider: 0,
-        notice_date: "",
-        expire_date: "",
-        headline: "",
-        notice_body: "",
-        picture: "",
-        file: ""
+        notice_provider: props.notice_provider,
+        notice_date: props.notice_date,
+        expire_date: props.expire_date,
+        headline: props.headline,
+        notice_body: props.notice_body,
+        picture: props.picture,
+        file: props.file
     });
 
-    const [notice_date, setNotice_date] = useState<Date>();
-    const [expire_date, setExpire_date] = useState<Date>();
+    const [notice_date, setNotice_date] = useState<Date>(props.notice_date);
+    const [expire_date, setExpire_date] = useState<Date | null>(props.expire_date || null);
     const [uploadingStatus, setUploadingStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
 
     const handleNoticeChange = (field: string, value: any) => {
@@ -65,36 +65,25 @@ function AddNotice() {
 
     const handleSubmit = async (e:any) => {
         const userId = getUserID();
-        console.log(userId);
+        
         const updatedNotice = {
             ...notice,
-            notice_provider: userId || 3,
+            notice_provider: userId ,
             notice_date: notice_date ? format(notice_date, "yyyy-MM-dd") : "",
             expire_date: expire_date ? format(expire_date, "yyyy-MM-dd") : "",
         };
-
-        try {
-            axios.post("http://localhost:5050/notice/create",updatedNotice).then((res)=>{
-                console.log(res);
-            })
+        console.log(updatedNotice);
+        try {            
+            await axios.put(`http://localhost:5050/notice/${props.noticeid}`, updatedNotice)
+            .then((res)=>{console.log(res)})
         } catch (error) {
             console.error("Error submitting notice:", error);
         }
     };
-
-    const isFormComplete = () => {
-        return notice.notice_provider !== 0 &&
-            notice.notice_date &&
-            notice.expire_date &&
-            notice.headline &&
-            notice.notice_body &&
-            notice.file;
-    };
-
     return (
         <AlertDialog>
-            <AlertDialogTrigger className="bg-primary flex items-center text-primary-foreground hover:bg-primary/90 rounded-lg font-bold px-4 py-2">
-                <IoIosAddCircleOutline className="mr-2 text-2xl" /> Add Notice
+            <AlertDialogTrigger className="bg-primary flex items-center text-primary-foreground hover:bg-primary/90 rounded-lg font-bold p-2">
+                <FiEdit className="text-md " />
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -126,7 +115,11 @@ function AddNotice() {
                                 <Input
                                     type='date'
                                     value={notice_date ? format(notice_date, "yyyy-MM-dd") : ""}
-                                    onChange={(e) => setNotice_date(e.target.value ? new Date(e.target.value) : undefined)}
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            setNotice_date(new Date(e.target.value));
+                                        }
+                                    }}
                                     className='w-full'
                                 />
                             </div>
@@ -135,7 +128,7 @@ function AddNotice() {
                                 <Input
                                     type='date'
                                     value={expire_date ? format(expire_date, "yyyy-MM-dd") : ""}
-                                    onChange={(e) => setExpire_date(e.target.value ? new Date(e.target.value) : undefined)}
+                                    onChange={(e) => setExpire_date(e.target.value ? new Date(e.target.value) : null)}
                                     className='w-full'
                                 />
                             </div>
@@ -167,4 +160,4 @@ function AddNotice() {
     );
 }
 
-export default AddNotice;
+export default EditNotice;
