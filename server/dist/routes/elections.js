@@ -21,4 +21,5 @@ router.route("/members/:committeeid").get(elections_1.getCommitteeMemberById);
 router.route("/members").get(elections_1.getAllCommitteeMembers);
 router.route("/members/:committeeid").put(elections_1.updateCommitteeMember);
 router.route("/members/:committeeid").delete(elections_1.deleteCommitteeMember);
+router.route("/allmembers/:electionid").get(elections_1.getCommitteeMembersByElectionId);
 exports.default = router;

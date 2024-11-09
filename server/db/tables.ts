@@ -82,15 +82,17 @@ export async function createTables() {
         CREATE TABLE IF NOT EXISTS Teams (
             teamid SERIAL PRIMARY KEY,
             teamname VARCHAR(100),
+            mentor VARCHAR(100),
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         
         CREATE TABLE IF NOT EXISTS TeamMembers (
-            userid INT,
+            team_member_id SERIAL,
+            userid INT, 
             teamid INT,
             othermember TEXT,
             other_member_institute TEXT,
-            PRIMARY KEY (userid, teamid),
+            PRIMARY KEY (team_member_id),
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
         );
@@ -158,6 +160,8 @@ export async function createTables() {
             FOREIGN KEY (postid) REFERENCES Committeeposts(committeepostid) ON DELETE SET NULL,
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
+
+
 
   
         

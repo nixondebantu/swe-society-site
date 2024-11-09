@@ -1,10 +1,11 @@
-import { AchievemenCard } from "../achievementspage/AchievementCard";
+import Achievement from "@/app/dashboard/[menuitem]/_pages/Achievement";
+
 
 function AchievementSection() {
   return (
     <div>
       <h1 className="flex flex-col items-center">Achievements</h1>
-      <AchievemenCard />
+      <Achievement />
       
       <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
     </div>
