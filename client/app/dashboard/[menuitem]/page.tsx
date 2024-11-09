@@ -8,6 +8,7 @@ import Notice from "./_pages/Notice";
 import Achievement from "./_pages/Achievement";
 
 import Profile from "./_pages/Profile";
+import Roles from "./_pages/Roles";
 
 
 function Page({ params }: { params: { menuitem: string } }) {
@@ -42,6 +43,8 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Members />;
     case "notice":
       return <Notice />;
+    case "roles":
+      return <Roles />;
     case "achievement":
       return <Achievement />;
 

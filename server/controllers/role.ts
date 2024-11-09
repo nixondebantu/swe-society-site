@@ -34,17 +34,17 @@ const createRole = errorWrapper(
   async (req: Request, res: Response) => {
     const {
       roletitle,
-      blogAccess,
-      achievementAccess,
-      bulkmailAccess,
-      eventAccess,
-      ecAccess,
-      landingpageAccess,
-      membersAccess,
-      noticeAccess,
-      rolesAccess,
-      statisticsAccess,
-      isDefaultRole,
+      blogaccess,
+      achievementaccess,
+      bulkmailaccess,
+      eventaccess,
+      ecaccess,
+      landingpageaccess,
+      membersaccess,
+      noticeaccess,
+      rolesaccess,
+      statisticsaccess,
+      isdefaultrole,
     } = req.body;
 
     // Access Check
@@ -58,7 +58,7 @@ const createRole = errorWrapper(
         message: "Access denied. You do not have permission to create roles.",
       });
     }
-    if (isDefaultRole) {
+    if (isdefaultrole) {
       const { rowCount } = await pool.query(
         `SELECT 1 FROM Roles WHERE isDefaultRole = true`
       );
@@ -74,17 +74,17 @@ const createRole = errorWrapper(
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
       [
         roletitle,
-        blogAccess,
-        achievementAccess,
-        bulkmailAccess,
-        eventAccess,
-        ecAccess,
-        landingpageAccess,
-        membersAccess,
-        noticeAccess,
-        rolesAccess,
-        statisticsAccess,
-        isDefaultRole,
+        blogaccess,
+        achievementaccess,
+        bulkmailaccess,
+        eventaccess,
+        ecaccess,
+        landingpageaccess,
+        membersaccess,
+        noticeaccess,
+        rolesaccess,
+        statisticsaccess,
+        isdefaultrole,
       ]
     );
 
@@ -98,16 +98,16 @@ const updateRole = errorWrapper(
     const { roleid } = req.params;
     const {
       roletitle,
-      blogAccess,
-      achievementAccess,
-      bulkmailAccess,
-      eventAccess,
-      ecAccess,
-      landingpageAccess,
-      membersAccess,
-      noticeAccess,
-      rolesAccess,
-      statisticsAccess,
+      blogaccess,
+      achievementaccess,
+      bulkmailaccess,
+      eventaccess,
+      ecaccess,
+      landingpageaccess,
+      membersaccess,
+      noticeaccess,
+      rolesaccess,
+      statisticsaccess,
     } = req.body;
 
     const { rows: accessCheckRows } = await pool.query(
@@ -126,16 +126,16 @@ const updateRole = errorWrapper(
          WHERE roleid = $12 RETURNING *`,
       [
         roletitle,
-        blogAccess,
-        achievementAccess,
-        bulkmailAccess,
-        eventAccess,
-        ecAccess,
-        landingpageAccess,
-        membersAccess,
-        noticeAccess,
-        rolesAccess,
-        statisticsAccess,
+        blogaccess,
+        achievementaccess,
+        bulkmailaccess,
+        eventaccess,
+        ecaccess,
+        landingpageaccess,
+        membersaccess,
+        noticeaccess,
+        rolesaccess,
+        statisticsaccess,
         roleid,
       ]
     );
@@ -203,7 +203,7 @@ const deleteRole = errorWrapper(
     // Delete the role
     await pool.query(`DELETE FROM Roles WHERE roleid = $1`, [roleid]);
 
-    res.status(204).send();
+    res.status(204).json({ message: "Delete role successfully" });
   },
   { statusCode: 500, message: "Failed to delete role." }
 );
@@ -258,11 +258,33 @@ const updateDefaultRole = errorWrapper(
   { statusCode: 500, message: "Failed to update default role." }
 );
 
+const getRoleInfo = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { rows } = await pool.query(`
+      SELECT 
+        Roles.roleid, 
+        Roles.roletitle, 
+        Roles.isDefaultRole,
+        COUNT(Users.userid) AS user_count
+      FROM Roles
+      LEFT JOIN Users ON Roles.roleid = Users.roleid
+      GROUP BY Roles.roleid
+      ORDER BY user_count DESC
+    `);
+    res.json(rows);
+  },
+  {
+    statusCode: 500,
+    message: "Couldn't get role information",
+  }
+);
+
 export {
   createRole,
   deleteRole,
   getAllRole,
   getRoleById,
+  getRoleInfo,
   updateDefaultRole,
   updateRole,
 };
