@@ -161,24 +161,6 @@ export async function createTables() {
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
 
-CREATE TABLE IF NOT EXISTS Roles (
-    roleid SERIAL PRIMARY KEY,
-    roletitle VARCHAR(50) NOT NULL,
-    blogAccess BOOLEAN DEFAULT FALSE,
-    achievementAccess BOOLEAN DEFAULT FALSE,
-    bulkmailAccess BOOLEAN DEFAULT FALSE,
-    eventAccess BOOLEAN DEFAULT FALSE,
-    ecAccess BOOLEAN DEFAULT FALSE,
-    landingpageAccess BOOLEAN DEFAULT FALSE,
-    membersAccess BOOLEAN DEFAULT FALSE,
-    noticeAccess BOOLEAN DEFAULT FALSE,
-    rolesAccess BOOLEAN DEFAULT FALSE,
-    statisticsAccess BOOLEAN DEFAULT FALSE,
-    isDefaultRole BOOLEAN DEFAULT FALSE
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS unique_default_role ON Roles (isDefaultRole) 
-WHERE isDefaultRole = TRUE;
 
 
   

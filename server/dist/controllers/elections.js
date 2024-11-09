@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCommitteeMember = exports.updateCommitteeMember = exports.getCommitteeMemberById = exports.getAllCommitteeMembers = exports.createCommitteeMember = exports.deleteCommitteepost = exports.updateCommitteepost = exports.getCommitteepostById = exports.getAllCommitteeposts = exports.createCommitteepost = exports.deleteElection = exports.updateElection = exports.getElectionById = exports.getAllElections = exports.createElection = void 0;
+exports.getCommitteeMembersByElectionId = exports.deleteCommitteeMember = exports.updateCommitteeMember = exports.getCommitteeMemberById = exports.getAllCommitteeMembers = exports.createCommitteeMember = exports.deleteCommitteepost = exports.updateCommitteepost = exports.getCommitteepostById = exports.getAllCommitteeposts = exports.createCommitteepost = exports.deleteElection = exports.updateElection = exports.getElectionById = exports.getAllElections = exports.createElection = void 0;
 const errorWrapper_1 = __importDefault(require("../middlewares/errorWrapper"));
 const CustomError_1 = __importDefault(require("../services/CustomError"));
 const dbconnect_1 = __importDefault(require("../db/dbconnect"));
@@ -148,3 +148,42 @@ const deleteCommitteeMember = (0, errorWrapper_1.default)((req, res) => __awaite
     res.json({ message: 'Committee member deleted successfully' });
 }), { statusCode: 500, message: `Couldn't delete committee member` });
 exports.deleteCommitteeMember = deleteCommitteeMember;
+const getCommitteeMembersByElectionId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { electionid } = req.params;
+    try {
+        const query = `
+        SELECT 
+            e.year,
+            u.fullname,
+            u.profile_picture,
+            u.email,
+            u.regno,
+            u.session,
+            cp.post_name AS committee_post
+        FROM 
+            Committee c
+        JOIN 
+            Elections e ON c.electionid = e.electionid
+        LEFT JOIN 
+            Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN 
+            Users ac ON e.assistant_commissioner = ac.userId
+        JOIN 
+            Users u ON c.userid = u.userId
+        JOIN 
+            Committeeposts cp ON c.postid = cp.committeepostid
+        WHERE 
+            c.electionid = $1;
+    `;
+        const { rows } = yield dbconnect_1.default.query(query, [electionid]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'No committee members found for the specified election ID' });
+        }
+        res.json(rows);
+    }
+    catch (error) {
+        console.error('Error fetching committee members:', error);
+        res.status(500).json({ error: "Couldn't get committee members data" });
+    }
+});
+exports.getCommitteeMembersByElectionId = getCommitteeMembersByElectionId;

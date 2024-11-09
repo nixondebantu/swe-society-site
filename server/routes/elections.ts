@@ -18,7 +18,9 @@ import {
     getAllCommitteeMembers,
     getCommitteeMemberById,
     updateCommitteeMember,
-    deleteCommitteeMember
+    deleteCommitteeMember,
+
+    getCommitteeMembersByElectionId
   } from "../controllers/elections";
 
   router.route("/newelection/create").post(createElection);
@@ -38,6 +40,7 @@ import {
   router.route("/members").get(getAllCommitteeMembers);
   router.route("/members/:committeeid").put(updateCommitteeMember);
   router.route("/members/:committeeid").delete(deleteCommitteeMember);
+  router.route("/allmembers/:electionid").get(getCommitteeMembersByElectionId);
 
 
   export default router;

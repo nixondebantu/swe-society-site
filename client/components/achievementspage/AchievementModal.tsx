@@ -1,14 +1,31 @@
-import React, { useState } from "react";
-
+"use client";
+import { BACKENDURL } from "@/data/urls";
+import React, { useEffect, useState } from "react";
+import Select, { MultiValue, ActionMeta } from "react-select";
 interface AchievementFormProps {
   onClose: () => void;
   onSubmit: (formData: any) => void;
 }
 
+interface UserResponse {
+  userid: number;
+  regno: string;
+  // other properties if needed
+}
+
+interface MappedUser {
+  id: number;
+  value: number;
+  label: string;
+}
+
+
 const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit }) => {
+  const [userList, setUserList] = useState<MappedUser[]>([]);
   const [formData, setFormData] = useState({
     teamname: "",
     mentor: "",
+    teammembers: [] as number[],
     eventname: "",
     segment: "",
     rank: "",
@@ -37,11 +54,56 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
     onClose();
   };
 
+  const handleSelectChange = (selectedOptions: MultiValue<MappedUser>) => {
+    const selectedIds = selectedOptions.map(option => option.id);
+    setFormData((prev) => ({
+      ...prev,
+      teammembers: selectedIds,
+    }));
+    console.log(formData);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${BACKENDURL}users/`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        
+        const data: UserResponse[] = await response.json();
+
+        // Map the response to the required structure
+        const mappedData: MappedUser[] = data.map((user) => ({
+          id: user.userid,
+          value: user.userid,
+          label: user.regno,
+        }));
+
+        setUserList(mappedData);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+ 
+
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-black text-white p-8 rounded-lg w-full max-w-2xl">
+        <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">Add Achievement</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <button 
+        onClick={()=>{onClose()}}
+        className="bg-white p-1 m-2 text-black w-5 h-5 flex justify-center items-center rounded-full">X</button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4 h-[70vh] overflow-y-scroll px-2">
           <input
             type="text"
             placeholder="Team Name"
@@ -56,6 +118,17 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
             onChange={(e) => handleChange(e, "mentor")}
             className="w-full p-2 rounded bg-gray-700"
           />
+           <Select
+            name="Team Members"
+            isMulti
+            options={userList}
+            className=" border rounded w-full   text-gray-200 bg-gray-700 leading-tight focus:outline-none"
+            onChange={handleSelectChange}
+          />
+          <div className="w-full text-sm flex justify-end">
+              <button className="underline text-red-400">Add member from another department / institution</button>
+
+          </div>
           <input
             type="text"
             placeholder="Event Name"
