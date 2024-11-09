@@ -3,7 +3,7 @@ import Link from "next/link";
 function BlogSection() {
   return (
     <div>
-      <h1 className="flex flex-col items-center">Blogs</h1>
+      {/* <h1 className="flex flex-col items-center">Blogs</h1> */}
       
       <BlogCard />
       

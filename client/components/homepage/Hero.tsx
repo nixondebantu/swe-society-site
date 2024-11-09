@@ -1,4 +1,5 @@
 import { Spotlight } from "../ui/Spotlight";
+import Carousel from "./Carousel";
 import { GlobeDemo } from "./Globe_demo";
 function Hero() {
   return (
@@ -17,7 +18,8 @@ function Hero() {
       </p> */}
       <div className='mt-4 flex flex-col items-center justify-center gap-4 md:
       flex-row md:gap-8 md:justify-start md:items-start'>
-      <GlobeDemo/>
+      {/* <GlobeDemo/> */}
+      <Carousel/>
       </div>
 
     </div>

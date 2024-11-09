@@ -14,9 +14,10 @@ export default function Home() {
   return (
     <main>
       <Navbar/>
-      <Hero />
       <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-      <Carousel />
+      <Hero />
+     
+      {/* <Carousel /> */}
       <EventSection />
       <NoticeSection />
       <BlogSection />
