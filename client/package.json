@@ -46,7 +46,7 @@
     "react-select": "^5.8.2",
     "simplex-noise": "^4.0.1",
     "tailwind-merge": "^2.3.0",
-
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.164.1",
     "three-globe": "^2.31.0",
     "vaul": "^0.9.1",
