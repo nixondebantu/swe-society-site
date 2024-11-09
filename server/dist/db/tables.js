@@ -42,7 +42,24 @@ function createTables() {
             projects TEXT[],
             skills TEXT[],
             is_alumni BOOLEAN DEFAULT FALSE,
-            role VARCHAR(20) NOT NULL DEFAULT 'general_member'
+            roleid INT NOT NULL,
+            FOREIGN KEY (roleid) REFERENCES Roles(roleid) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Roles (
+            roleid SERIAL PRIMARY KEY,
+            roletitle VARCHAR(50) NOT NULL,
+            blogAccess BOOLEAN DEFAULT FALSE,
+            achievementAccess BOOLEAN DEFAULT FALSE,
+            bulkmailAccess BOOLEAN DEFAULT FALSE,
+            eventAccess BOOLEAN DEFAULT FALSE,
+            ecAccess BOOLEAN DEFAULT FALSE,
+            landingpageAccess BOOLEAN DEFAULT FALSE,
+            membersAccess BOOLEAN DEFAULT FALSE,
+            noticeAccess BOOLEAN DEFAULT FALSE,
+            rolesAccess BOOLEAN DEFAULT FALSE,
+            statisticsAccess BOOLEAN DEFAULT FALSE,
+            isDefaultRole BOOLEAN DEFAULT FALSE
         );
 
         CREATE TABLE IF NOT EXISTS GeneralNotices (
@@ -178,14 +195,13 @@ function createTables() {
 
 
 
-  
         
 
         `);
-            console.log('Tables created successfully');
+            console.log("Tables created successfully");
         }
         catch (error) {
-            console.error('Unable to create any table:', error);
+            console.error("Unable to create any table:", error);
         }
     });
 }
