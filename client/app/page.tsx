@@ -1,6 +1,7 @@
 import {Footer} from "@/components/global/Footer";
 import Navbar from "@/components/global/Navbar";
 import AchievementSection from "@/components/homepage/AchievementSection";
+// import AchievementSection from "@/components/homepage/AchievementSection";
 import BlogSection from "@/components/homepage/BlogSection";
 import Carousel from "@/components/homepage/Carousel";
 import ECMemberCarousel from "@/components/homepage/ECMemberCarousel";

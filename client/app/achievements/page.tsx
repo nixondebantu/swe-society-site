@@ -1,3 +1,8 @@
+import AchievementSection from "@/components/homepage/AchievementSection";
+
 export default function page() {
-  return <div>achievements page</div>;
+  return <div>
+
+    <AchievementSection/>
+  </div>;
 }
