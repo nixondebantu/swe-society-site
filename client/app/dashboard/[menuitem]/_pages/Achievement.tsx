@@ -11,9 +11,9 @@ const Achievement: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${APIENDPOINTS.achievement.getUsersAllAchievement}/${getUserID()}`);
+                const response = await fetch(`${APIENDPOINTS.achievement.getAllAchievement}`);
                 const data = await response.json();
-                setAchievements(data.achievement);
+                setAchievements(data.achievements);
             } catch (error) {
                 console.error('Error fetching data: ', error);
             }
