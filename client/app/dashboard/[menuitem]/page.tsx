@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
 import Profile from "./_pages/Profile";
+import Roles from "./_pages/Roles";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -39,6 +40,8 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Members />;
     case "notice":
       return <Notice />;
+    case "roles":
+      return <Roles />;
 
     default:
       return (
