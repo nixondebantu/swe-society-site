@@ -2,9 +2,22 @@
 import { BACKENDURL } from "@/data/urls";
 import React, { useEffect, useState } from "react";
 import Select, { MultiValue, ActionMeta } from "react-select";
+import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
+import { CldUploadButton } from "next-cloudinary";
+import {
+  CircleX,
+  LoaderIcon,
+  Pencil,
+  Save,
+  Trash2,
+  UploadCloud,
+} from "lucide-react";
+import { DatePicker } from "../commons/DatePicker";
+
 interface AchievementFormProps {
   onClose: () => void;
-  onSubmit: (formData: any) => void;
+
 }
 
 interface UserResponse {
@@ -19,27 +32,46 @@ interface MappedUser {
   label: string;
 }
 
+interface FormData {
+  teamname: string;
+  mentor: string;
+  teammembers: number[];
+  eventname: string;
+  segment: string;
+  rank: string;
+  photos: string[];
+  task: string;
+  solution: string;
+  techstack: string;
+  resources: string;
+  others: { othermember: string; other_member_institute: string }[];
+  startdate: string;
+  enddate: string;
+  organizer: string;
+  venu: string;
+}
 
-const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit }) => {
+const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     teamname: "",
     mentor: "",
     teammembers: [] as number[],
     eventname: "",
     segment: "",
     rank: "",
-    photos: "",
+    photos: [] as string [],
     task: "",
     solution: "",
     techstack: "",
     resources: "",
-    others: [{ othermember: "", other_member_institute: "" }],
+    others: [] as { othermember: string; other_member_institute: string }[],
     startdate: "",
     enddate: "",
     organizer: "",
-    venue: "",
+    venu: "",
   });
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     setFormData((prev) => ({
@@ -48,9 +80,70 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleOthersChange = (index: number, field: string, value: string) => {
+    const updatedOthers = [...formData.others];
+    updatedOthers[index][field as keyof typeof updatedOthers[0]] = value;
+    setFormData((prev) => ({
+      ...prev,
+      others: updatedOthers,
+    }));
+  };
+
+  const addOthersField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      others: [...prev.others, { othermember: "", other_member_institute: "" }],
+    }));
+  };
+
+  const notify = () => toast('Your achivement to added for review.');
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    console.log(formData);
+    const requiredFields = [
+      'teamname', 'eventname', 'segment', 'rank', 'photos', 'startdate', 'organizer', 'venue'
+    ];
+  
+    const missingFields = requiredFields.filter((field) => {
+      return !formData[field as keyof FormData] || 
+             (Array.isArray(formData[field as keyof FormData]) && formData[field as keyof FormData].length === 0);
+    });
+  
+    if (missingFields.length > 0) {
+      // Show an alert or error message if any required fields are missing
+      alert(`Please fill in the following fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
+    const requestBody = {
+      teamname: formData.teamname,
+      mentor: formData.mentor,
+      teammembers: formData.teammembers,
+      others: formData.others.map((other) => ({
+        othermember: other.othermember,
+        other_member_institute: other.other_member_institute,
+      })),
+      eventname: formData.eventname,
+      segment: formData.segment,
+      organizer: formData.organizer,
+      venue: formData.venu,
+      startdate: formData.startdate,
+      enddate: formData.startdate,
+      rank: formData.rank,
+      rankarea: "National", // This value could be dynamic if needed
+      task: formData.task,
+      solution: formData.solution,
+      techstack: formData.techstack,
+      resources: formData.resources,
+      photos: formData.photos,
+      approval_status: false, // Assuming this is true by default, you can make it dynamic if needed
+    };
+  
+
+    const response = await axios.post(`${BACKENDURL}achievement/post/fullachievement`, requestBody);
+    if(response){
+      notify();
+    }
     onClose();
   };
 
@@ -88,6 +181,25 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
 
     fetchData();
   }, []);
+  const handleAchievementImages = (result: any) => {
+    const uploadedURL = result.info.secure_url;
+    setFormData((prevData) => ({
+      ...prevData,
+      photos: [...prevData.photos, uploadedURL],
+    }));
+  };
+
+  const removePhoto = (index: number) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      photos: prevData.photos.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleDateChange = (date: string) => {
+    setFormData((prev) => ({ ...prev, startdate: date }));
+  };
+  
 
 
  
@@ -104,6 +216,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4 h-[70vh] overflow-y-scroll px-2">
+       
           <input
             type="text"
             placeholder="Team Name"
@@ -122,13 +235,31 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
             name="Team Members"
             isMulti
             options={userList}
-            className=" border rounded w-full   text-gray-200 bg-gray-700 leading-tight focus:outline-none"
+            className=" border rounded w-full   text-gray-800 bg-gray-700 leading-tight focus:outline-none"
             onChange={handleSelectChange}
           />
           <div className="w-full text-sm flex justify-end">
-              <button className="underline text-red-400">Add member from another department / institution</button>
-
+            <button type="button" onClick={addOthersField} className="underline text-red-400">Add member from another department / institution</button>
           </div>
+
+          {formData.others.map((other, index) => (
+            <div key={index} id="others" className=" grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="Other Member"
+                value={other.othermember}
+                onChange={(e) => handleOthersChange(index, "othermember", e.target.value)}
+                className="w-full p-2 rounded bg-gray-700"
+              />
+              <input
+                type="text"
+                placeholder="Other Dept, Institute"
+                value={other.other_member_institute}
+                onChange={(e) => handleOthersChange(index, "other_member_institute", e.target.value)}
+                className="w-full p-2 rounded bg-gray-700"
+              />
+            </div>
+          ))}
           <input
             type="text"
             placeholder="Event Name"
@@ -176,20 +307,11 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
             onChange={(e) => handleChange(e, "resources")}
             className="w-full p-2 rounded bg-gray-700"
           />
-          <input
-            type="text"
-            placeholder="Start Date"
-            value={formData.startdate}
-            onChange={(e) => handleChange(e, "startdate")}
-            className="w-full p-2 rounded bg-gray-700"
-          />
-          <input
-            type="text"
-            placeholder="End Date"
-            value={formData.enddate}
-            onChange={(e) => handleChange(e, "enddate")}
-            className="w-full p-2 rounded bg-gray-700"
-          />
+          <div className=" space-x-2">
+          <label className="text-sm font-medium">Competition Date</label>
+          <DatePicker onDateChange={handleDateChange} />
+          </div>
+       
           <input
             type="text"
             placeholder="Organizer"
@@ -200,10 +322,50 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onSubmit })
           <input
             type="text"
             placeholder="Venue"
-            value={formData.venue}
-            onChange={(e) => handleChange(e, "venue")}
+            value={formData.venu}
+            onChange={(e) => handleChange(e, "venu")}
             className="w-full p-2 rounded bg-gray-700"
           />
+        <div className="">
+           
+           <CldUploadButton
+               onUpload={handleAchievementImages}
+               uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET} // Ensure this preset exists in Cloudinary
+               className="flex items-center space-x-2 bg-white text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
+             >
+               <UploadCloud size={20} /> 
+               <span>Upload Image</span>
+               <Pencil size={20} />
+             </CldUploadButton>
+             </div>
+             {formData.photos && formData.photos.length > 0 && (
+  <div className="space-y-2">
+    <h3 className="text-lg font-semibold">Uploaded Photos</h3>
+    <div className="grid grid-cols-4 gap-4">
+    {formData.photos.map((photoUrl, index) => (
+        <div key={index} className="relative flex flex-col items-center">
+          {/* Remove button */}
+          <button
+            onClick={() => removePhoto(index)}
+            className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
+            aria-label="Remove photo"
+          >
+            &times;
+          </button>
+          
+          {/* Photo preview */}
+          <img src={photoUrl} alt={`Uploaded photo ${index + 1}`} className="w-full h-32 object-cover rounded" />
+          
+          {/* View full image link */}
+          <a href={photoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline mt-2">
+            View Full Image
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+     
           <div className="flex justify-between">
             <button
               type="button"
