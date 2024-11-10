@@ -6,6 +6,7 @@ import { getUserID, getUserReg } from "@/data/cookies/getCookies";
 
 import ElectionModal from "@/components/electiondashboard/CreateElectionModal";
 import ElectionMemberDetails from "@/components/electiondashboard/CommmitteeMembers";
+import BlogModal from "@/components/blogdashboard/AddBlogModal";
 
 
 const BlogForUsers: React.FC = () => {
@@ -43,7 +44,7 @@ const BlogForUsers: React.FC = () => {
           </div>
        {/* <BlogComponent blogs={blogs} setShowFullCommitteee={setShowFullCommitteee} setSelectedElectionId={setSelectedElectionId}/> */}
       {isModalOpen && (
-         <ElectionModal onClose={() => setIsModalOpen(false)}  />
+         <BlogModal onClose={() => setIsModalOpen(false)}  />
       )}
       </>}
 

@@ -22,6 +22,9 @@
     "@react-three/drei": "^9.106.0",
     "@react-three/fiber": "^8.16.6",
     "@tanstack/react-table": "^8.17.3",
+    "@tiptap/pm": "^2.9.1",
+    "@tiptap/react": "^2.9.1",
+    "@tiptap/starter-kit": "^2.9.1",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "client": "file:",
@@ -44,7 +47,7 @@
     "react-select": "^5.8.2",
     "simplex-noise": "^4.0.1",
     "tailwind-merge": "^2.3.0",
-
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.164.1",
     "three-globe": "^2.31.0",
     "vaul": "^0.9.1",
