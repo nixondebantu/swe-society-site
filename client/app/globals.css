@@ -108,3 +108,32 @@ display: none; /* Chrome, Safari, and Opera */
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* styles.css */
+.text-editor {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.toolbar {
+  margin-bottom: 8px;
+}
+
+.toolbar button {
+  margin-right: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.toolbar .is-active {
+  background-color: #111827;
+  color: #fff;
+}
+
+
+.text-editor .ProseMirror {
+  padding: 5px;
+  min-height: calc(1.5em * 10); /* Adjusts to 4 lines based on line-height */
+  line-height: 1.5em; /* Sets the spacing for each line */
+}

@@ -7,8 +7,12 @@ import axios from 'axios';
 import { getJWT } from "@/data/cookies/getCookies";
 import { CldUploadButton } from "next-cloudinary";
 import { UploadCloud, Pencil } from "lucide-react";
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import ArticleEditor from "./ArticleEditor";
+
+
+
+ // Import TextEditor component
+
 
 interface BlogFormProps {
   onClose: () => void;
@@ -26,8 +30,9 @@ interface FormData {
 }
 
 const BlogModal: React.FC<BlogFormProps> = ({ onClose }) => {
+    const [content, setContent] = useState('<p>Initial content</p>');
   const [formData, setFormData] = useState<FormData>({
-    userid: 2,  // Set a default or fetch as needed
+    userid: 2,
     headline: "",
     designation: "",
     current_institution: "",
@@ -35,15 +40,6 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose }) => {
     photos: [],
     blogtype: "Technology",
     approval_status: true,
-  });
-
-  // Tiptap editor instance
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: "<p>Write your article here...</p>",
-    onUpdate: ({ editor }) => {
-      setFormData((prev) => ({ ...prev, article: editor.getHTML() }));
-    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
@@ -68,68 +64,81 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose }) => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const response = await axios.post(`${BACKENDURL}/blog/create`, formData, {
-      headers: {
-        Authorization: `Bearer ${getJWT()}`,
-      },
-    });
-
-    if (response.status === 201) {
-      toast.success("Blog created successfully!");
-      onClose();
-      window.location.reload();
-    } else {
+  const handleSubmit = async () => {
+    try {
+      console.log(formData);
+  
+      const response = await axios.post(`${BACKENDURL}blog/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${getJWT()}`,
+        },
+      });
+  
+      // Check for successful response
+      if (response.status === 201) {
+        toast.success("Blog created successfully!");
+        onClose();
+        window.location.reload();
+      }
+    } catch (error) {
+      // Handle error response
+      console.error("Error creating blog:", error);
       toast.error("Failed to create blog. Please try again.");
     }
+  };
+  
+
+  const handleArticleChange = (newContent: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      article: newContent,
+    }));
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white text-gray-800 p-8 rounded-lg w-full max-w-2xl">
+      <div className="bg-black text-white p-8 rounded-lg w-full max-w-5xl">
         <div className="flex justify-between">
           <h2 className="text-2xl font-bold mb-4">Add Blog</h2>
           <button
             onClick={onClose}
-            className="bg-gray-300 p-1 m-2 text-gray-700 w-5 h-5 flex justify-center items-center rounded-full"
+            className="bg-gray-200 p-1 m-2 text-gray-700 w-5 h-5 flex justify-center items-center rounded-full"
           >
             X
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 h-[70vh] overflow-y-scroll px-2">
+        <div className="space-y-4 h-[70vh] overflow-y-scroll px-2">
           <input
             type="text"
             placeholder="Headline"
             value={formData.headline}
             onChange={(e) => handleChange(e, "headline")}
-            className="w-full p-2 rounded bg-gray-100 border"
+            className="w-full p-2 rounded bg-gray-900 border"
           />
           <input
             type="text"
             placeholder="Designation"
             value={formData.designation}
             onChange={(e) => handleChange(e, "designation")}
-            className="w-full p-2 rounded bg-gray-100 border"
+            className="w-full p-2 rounded bg-gray-900 border"
           />
           <input
             type="text"
             placeholder="Current Institution"
             value={formData.current_institution}
             onChange={(e) => handleChange(e, "current_institution")}
-            className="w-full p-2 rounded bg-gray-100 border"
+            className="w-full p-2 rounded bg-gray-900 border"
           />
 
-          <label className="text-lg font-semibold">Article</label>
-          <EditorContent editor={editor} className="bg-gray-100 p-4 rounded border" />
-
+          <div className="text-lg font-semibold mt-3">Article</div>
+          {/* <ArticleEditor content={formData.article} onContentChange={handleArticleChange} /> */}
+          <ArticleEditor content={formData.article} onContentChange={handleArticleChange} />
           <div className="mt-4">
             <CldUploadButton
               onUpload={handleBlogImages}
               uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET}
-              className="flex items-center space-x-2 bg-blue-500 text-white rounded-full p-2"
+              className="flex items-center space-x-2 bg-read-600 text-white rounded-full p-2 bg-red-600"
             >
               <UploadCloud size={20} />
               <span>Upload Image</span>
@@ -156,14 +165,15 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose }) => {
               </div>
             </div>
           )}
-
+<div className="flex justify-end">
           <button
-            type="submit"
-            className="w-full bg-green-600 text-white rounded px-4 py-2 mt-4"
+            onClick={handleSubmit}
+            className=" bg-red-600 text-white rounded px-4 py-2 mt-4"
           >
             Submit
           </button>
-        </form>
+          </div>
+        </div>
       </div>
       <Toaster position="top-right" />
     </div>

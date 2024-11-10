@@ -1,19 +1,41 @@
+
+
+
+import React, { useEffect } from 'react'
 import { useEditor, EditorContent, useCurrentEditor, EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Heading from '@tiptap/extension-heading';
 import Underline from '@tiptap/extension-underline';
-import React from 'react';
+
 import { FaBold, FaItalic, FaUnderline, FaHeading } from "react-icons/fa";
 import classNames from 'classnames';
+interface TextEditorProps {
+  content: string;
+  onContentChange: (content: string) => void;
+}
 
-function Menubar() {
-  const { editor } = useCurrentEditor();
+const ArticleEditor: React.FC<TextEditorProps> = ({ content, onContentChange }) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Heading.configure({
+        levels: [1, 2, 3],
+      }),
+    ],
+    content,
+    onUpdate: ({ editor }) => {
+      onContentChange(editor.getHTML());
+    },
+  });
+
   if (!editor) {
     return null;
   }
-  
+
   return (
-    <div className="flex gap-2 mb-4">
+    <div className="text-editor">
+      {/* Toolbar */}
+      <div className="flex">
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={classNames(
@@ -32,15 +54,7 @@ function Menubar() {
       >
         <FaItalic /> <div>Italic</div>
       </button>
-      <button
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        className={classNames(
-          "bg-black text-white px-4 py-1 rounded flex space-x-2 items-center",
-          editor.isActive("underline") && "bg-red-600"
-        )}
-      >
-        <FaUnderline /> <div>Underline</div>
-      </button>
+    
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={classNames(
@@ -68,22 +82,12 @@ function Menubar() {
       >
         <FaHeading /> <div>H3</div>
       </button>
-    </div>
-  );
-}
+      </div>
 
-export const RichTextEditor = ({ content }: { content: string }) => {
-  const extensions = [StarterKit, Underline, Heading.configure({ levels: [1, 2, 3] })];
-
-  return (
-    <div className="bg-gray-900 rounded p-4 text-editor">
-      <EditorProvider
-        slotBefore={<Menubar />}
-        extensions={extensions}
-        content={content}
-      >
-        <></>
-      </EditorProvider>
+      {/* Editor Content */}
+      <EditorContent editor={editor} />
     </div>
   );
 };
+
+export default ArticleEditor;
