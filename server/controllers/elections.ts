@@ -21,11 +21,37 @@ const createElection = errorWrapper(
 // Get all elections
 const getAllElections = errorWrapper(
     async (req: Request, res: Response) => {
-        const { rows } = await pool.query('SELECT * FROM Elections');
-        res.json(rows);
+      const query = `
+        SELECT 
+          e.electionid,
+          e.year,
+          e.election_type,
+          e.batch,
+          e.candidate_form_date,
+          e.election_date,
+          e.election_commissioner,
+          e.assistant_commissioner,
+         
+          ec.userId AS commissioner_userId,
+          ec.fullname AS commissioner_fullname,
+          ec.email AS commissioner_email,
+          ec.profile_picture AS commissioner_profile_picture,
+          
+          ac.userId AS assistant_userId,
+          ac.fullname AS assistant_fullname,
+          ac.email AS assistant_email,
+          ac.profile_picture AS assistant_profile_picture
+        FROM Elections e
+        LEFT JOIN Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN Users ac ON e.assistant_commissioner = ac.userId;
+      `;
+  
+      const { rows } = await pool.query(query);
+      res.json(rows);
     },
     { statusCode: 500, message: `Couldn't get elections` }
-);
+  );
+  
 
 // Get election by ID
 const getElectionById = errorWrapper(

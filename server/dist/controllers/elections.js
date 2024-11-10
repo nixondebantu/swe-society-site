@@ -25,7 +25,31 @@ const createElection = (0, errorWrapper_1.default)((req, res) => __awaiter(void 
 exports.createElection = createElection;
 // Get all elections
 const getAllElections = (0, errorWrapper_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { rows } = yield dbconnect_1.default.query('SELECT * FROM Elections');
+    const query = `
+        SELECT 
+          e.electionid,
+          e.year,
+          e.election_type,
+          e.batch,
+          e.candidate_form_date,
+          e.election_date,
+          e.election_commissioner,
+          e.assistant_commissioner,
+         
+          ec.userId AS commissioner_userId,
+          ec.fullname AS commissioner_fullname,
+          ec.email AS commissioner_email,
+          ec.profile_picture AS commissioner_profile_picture,
+          
+          ac.userId AS assistant_userId,
+          ac.fullname AS assistant_fullname,
+          ac.email AS assistant_email,
+          ac.profile_picture AS assistant_profile_picture
+        FROM Elections e
+        LEFT JOIN Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN Users ac ON e.assistant_commissioner = ac.userId;
+      `;
+    const { rows } = yield dbconnect_1.default.query(query);
     res.json(rows);
 }), { statusCode: 500, message: `Couldn't get elections` });
 exports.getAllElections = getAllElections;
