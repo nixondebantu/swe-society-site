@@ -137,7 +137,7 @@ const NoticeCard = ({ notice }) => {
         <Card className="w-full max-w-md cursor-pointer hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-gray-900">
           <CardHeader>
             <div className="flex justify-between items-start">
-              <CardTitle className="text-xl font-bold text-blue-600 dark:text-blue-400">
+              <CardTitle className="text-xl font-bold text-primary">
                 {notice.headline}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ const NoticeBoard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-8">
-              <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
+              <h1 className="text-3xl font-bold text-center mb-8 text-primary">
         Swe Notices
        </h1>
       {/* <div className="w-full flex items-center justify-end mb-4 gap-2">

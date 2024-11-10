@@ -56,7 +56,7 @@ function Navbar({ className }: { className?: string }) {
       
       
 
-          <Link href={'/login'}>
+          <Link href={'/signin'}>
       <MenuItem setActive={setActive} active={active} item="Login">
           
 

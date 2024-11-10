@@ -4,6 +4,7 @@ function BlogSection() {
   return (
     <div>
       {/* <h1 className="flex flex-col items-center">Blogs</h1> */}
+      <h1 className="flex flex-col items-center font-bold text-primary">Blogs</h1>
       
       <BlogCard />
       

@@ -24,7 +24,7 @@ export default function Home() {
       <BlogSection />
       <AchievementSection />
       <ECMemberCarousel />
-      <GallerySection />
+      {/* <GallerySection /> */}
       <Footer/>
       
 

@@ -60,9 +60,9 @@ export function HomeAchievementCard() {
             </p>
             
             <button className="rounded-full pl-4 pr-1 py-1 text-white flex items-center space-x-1 bg-black mt-4 text-xs font-bold dark:bg-zinc-800">
-              <span>See more at {achievement.venue} ({achievement.organizer})</span>
+              <span>  by {achievement.organizer}</span>
               <span className="bg-zinc-700 rounded-full text-[0.6rem] px-2 py-0 text-white">
-                $100
+                
               </span>
             </button>
           </BackgroundGradient>

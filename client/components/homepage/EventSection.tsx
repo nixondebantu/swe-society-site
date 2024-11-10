@@ -6,7 +6,9 @@ function EventSection() {
   return (
     <div>
       {/* <h1 className="flex flex-col justify-center items-center">Events</h1> */}
-      <Suspense fallback={<div className="text-center py-10">Loading events...</div>}>
+      <Suspense fallback={<div className="text-center py-10">Loading</div>}>
+      <h1 className="flex flex-col items-center font-bold text-primary">Events...</h1>
+     
         <EventMarqueeDemo />
       </Suspense>
       <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
