@@ -107,7 +107,7 @@ const ElectionModal: React.FC<ElectionModalProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-black text-white p-8 rounded-lg w-full max-w-lg">
-        <Toaster />
+       
         <div className="flex justify-between">
           <h2 className="text-2xl font-bold mb-4">Create New Election</h2>
           <button

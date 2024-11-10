@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKENDURL } from "@/data/urls";
 import { MdOutlineArrowBackIos } from "react-icons/md";
+import AddCommitteeMemberModal from "./AddCommitteeMemberModal";
 
 interface Member {
   year: string;
@@ -22,7 +23,7 @@ interface ElectionMemberDetailsProps {
 const ElectionMemberDetails: React.FC<ElectionMemberDetailsProps> = ({ electionId, setShowFullCommitteee }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -46,11 +47,24 @@ const ElectionMemberDetails: React.FC<ElectionMemberDetailsProps> = ({ electionI
 
   return (
     <>
+    <div className="flex justify-between items-center w-full">
     <button 
     onClick={()=>{
         setShowFullCommitteee(false);
     }}
     className="text-white flex items-center space-x-3 "> <MdOutlineArrowBackIos className="text-white"/><div>Back</div></button>
+
+
+<button 
+          onClick={() => setIsModalOpen(true)}
+         className="bg-red-700 rounded-lg px-4 mr-2">+ Add Panel Member</button>
+    </div>
+    {members && members.length === 0 && <div className="text-center py-8">
+                <p className="text-xl text-gray-500">No Panel Members Available</p>
+            </div>
+
+    }
+    
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
       {members.map((member) => (
         <div
@@ -82,6 +96,9 @@ const ElectionMemberDetails: React.FC<ElectionMemberDetailsProps> = ({ electionI
         </div>
       ))}
     </div>
+    {isModalOpen && (
+         <AddCommitteeMemberModal electionId={electionId} onClose={() => setIsModalOpen(false)}  />
+      )}
     </>
   );
 };

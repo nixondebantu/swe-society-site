@@ -201,7 +201,7 @@ const getCommitteeMembersByElectionId = (req, res) => __awaiter(void 0, void 0, 
     `;
         const { rows } = yield dbconnect_1.default.query(query, [electionid]);
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'No committee members found for the specified election ID' });
+            return res.status(200).json([]);
         }
         res.json(rows);
     }

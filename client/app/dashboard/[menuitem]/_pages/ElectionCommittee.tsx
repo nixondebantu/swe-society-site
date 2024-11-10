@@ -47,7 +47,7 @@ const ElectionCommittee: React.FC = () => {
       )}
       </>}
 
-      {isShowFullCommitteee && selectedElectionId && <div>
+      {isShowFullCommitteee && selectedElectionId && <div className="w-full">
         <ElectionMemberDetails electionId={selectedElectionId} setShowFullCommitteee={setShowFullCommitteee}/>
         </div>}
     </div>

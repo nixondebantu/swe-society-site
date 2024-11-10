@@ -286,7 +286,7 @@ const getCommitteeMembersByElectionId = async (req: Request, res: Response) => {
         const { rows } = await pool.query(query, [electionid]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'No committee members found for the specified election ID' });
+            return res.status(200).json([]);
         }
 
         res.json(rows);
