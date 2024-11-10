@@ -44,6 +44,8 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Members />;
     case "notice":
       return <Notice />;
+    case "roles":
+      return <Roles />;
     case "achievement":
       return <Achievement />;
       case "ec":

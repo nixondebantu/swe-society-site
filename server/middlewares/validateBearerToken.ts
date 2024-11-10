@@ -22,10 +22,10 @@ const validateBearerToken = async (
       };
       next();
     } else {
-      res.status(401).json({ error: "Invalid token payload." });
+      res.status(401).json({ message: "Invalid token payload." });
     }
   } catch (error) {
-    res.status(401).json({ error: "Unauthorized access. Invalid token." });
+    res.status(401).json({ message: "Unauthorized access. Invalid token." });
   }
 };
 

@@ -68,4 +68,12 @@ export const APIENDPOINTS = {
     getPositionbyID: `${BACKENDURL}election/positions`,
     deletePosition: `${BACKENDURL}election/positions`,
   },
+  role: {
+    getRole: `${BACKENDURL}role`,
+    createRole: `${BACKENDURL}role`,
+    updateRole: `${BACKENDURL}role`,
+    deleteRole: `${BACKENDURL}role`,
+    updateDefaultRole: `${BACKENDURL}role/default`,
+    getRoleInfo: `${BACKENDURL}role/info`,
+  },
 };

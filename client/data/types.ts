@@ -98,3 +98,19 @@ export interface UserProfile {
   role: string;
   skills: string[] | null;
 }
+
+export interface Role {
+  roleid: number;
+  roletitle: string;
+  blogaccess: boolean;
+  achievementaccess: boolean;
+  bulkmailaccess: boolean;
+  eventaccess: boolean;
+  ecaccess: boolean;
+  landingpageaccess: boolean;
+  membersaccess: boolean;
+  noticeaccess: boolean;
+  rolesaccess: boolean;
+  statisticsaccess: boolean;
+  isdefaultrole: boolean;
+}
