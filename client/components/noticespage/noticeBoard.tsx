@@ -158,14 +158,14 @@ const NoticeCard = ({ notice }) => {
               <Clock className="h-4 w-4" />
               <span>Expires: {formatDate(notice.expire_date)}</span>
             </div>
-            <span>ID: {notice.noticeid}</span>
+            
           </CardFooter>
         </Card>
       </DialogTrigger>
 
       <DialogContent className="max-w-2xl bg-white dark:bg-gray-900">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <DialogTitle className="text-2xl font-bold text-primary">
             {notice.headline}
           </DialogTitle>
         </DialogHeader>
