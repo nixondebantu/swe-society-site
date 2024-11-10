@@ -9,6 +9,7 @@ import EventSection from "@/components/homepage/EventSection";
 import GallerySection from "@/components/homepage/GallerySection";
 import Hero from "@/components/homepage/Hero";
 import NoticeSection from "@/components/homepage/NoticeSection";
+import TweetCard from "@/components/Tweet/tweetCard";
 
 export default function Home() {
   return (
@@ -25,6 +26,21 @@ export default function Home() {
       <ECMemberCarousel />
       <GallerySection />
       <Footer/>
+      
+
+{/* <TweetCard
+  avatar="https://avatars.githubusercontent.com/u/1234567?v=4"
+  name="John Doe"
+  username="johndoe"
+  timestamp="1h"
+  content="Just launched my new project! Check it out and let me know what you think 🚀"
+  image="https://picsum.photos/500/300"
+  metrics={{
+    replies: 24,
+    retweets: 12,
+    likes: 348
+  }}
+/> */}
     </main>
   );
 }
