@@ -10,6 +10,7 @@ import Achievement from "./_pages/Achievement";
 import Profile from "./_pages/Profile";
 import ElectionCommittee from "./_pages/ElectionCommittee";
 import BlogForUsers from "./_pages/Blog";
+import Roles from "./_pages/Roles";
 
 
 function Page({ params }: { params: { menuitem: string } }) {
