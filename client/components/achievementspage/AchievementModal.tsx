@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Select, { MultiValue, ActionMeta } from "react-select";
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
+import { getJWT } from "@/data/cookies/getCookies";
 import { CldUploadButton } from "next-cloudinary";
 import {
   CircleX,
@@ -14,6 +15,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { DatePicker } from "../commons/DatePicker";
+import { useToast } from "../ui/use-toast";
 
 interface AchievementFormProps {
   onClose: () => void;
@@ -71,6 +73,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     organizer: "",
     venu: "",
   });
+  const { toast } = useToast();
   
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
@@ -96,7 +99,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     }));
   };
 
-  const notify = () => toast('Your achivement to added for review.');
+  // const notify = () => toast('Your achivement to added for review.');
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
@@ -140,11 +143,21 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     };
   
 
-    const response = await axios.post(`${BACKENDURL}achievement/post/fullachievement`, requestBody);
-    if(response){
-      notify();
+    const response = await axios.post(`${BACKENDURL}achievement/post/fullachievement`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${getJWT()}`,
+      },
+    });
+    if(response.status === 201){
+      // notify();
+      toast({
+        title: "Password Changed Successfully",
+        duration: 3000,
+      });
+      onClose();
+      window.location.reload();
     }
-    onClose();
+    
   };
 
   const handleSelectChange = (selectedOptions: MultiValue<MappedUser>) => {
@@ -207,6 +220,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+     
       <div className="bg-black text-white p-8 rounded-lg w-full max-w-2xl">
         <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">Add Achievement</h2>

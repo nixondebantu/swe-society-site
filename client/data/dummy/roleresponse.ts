@@ -11,4 +11,5 @@ export const roleAccess: RoleAccessType = {
   events: true,
   ec: true,
   roles: true,
+  usersblog: true,
 };
