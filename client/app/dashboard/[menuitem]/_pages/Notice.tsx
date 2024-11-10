@@ -65,20 +65,12 @@ const Notice: React.FC = () => {
               <p className="w-3/12 ">{notice.headline}</p>
               <p className="w-6/12  ">{truncateText(notice.notice_body, 40)}</p>
               <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-                {userId == notice.notice_provider ? (
-                  <EditNotice noticeid={notice.noticeid} notice_provider={userId} notice_date={notice.notice_date} expire_date={notice.expire_date} headline={notice.headline} notice_body={notice.notice_body} file={notice.file} picture={notice.picture} />
-                ) : (
-                  <div className="opacity-50 pointer-events-none">
-                    <EditNotice />
-                  </div>
-                )}
+              <EditNotice noticeid={notice.noticeid} notice_provider={userId} notice_date={notice.notice_date} expire_date={notice.expire_date} headline={notice.headline} notice_body={notice.notice_body} file={notice.file} picture={notice.picture} />
               </Button>
               <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-                {notice.notice_provider == userId ? <AiFillDelete   onClick={() => { handle_dlt(notice.noticeid) }} className="h-full w-10" /> : <AiFillDelete className="h-full w-10 opacity-50 pointer-events-none" />}
-                
+              <AiFillDelete   onClick={() => { handle_dlt(notice.noticeid) }} className="h-full w-10" />
               </Button>
             </div>
-
           ))
         ) : (
           <p className="text-white">No matching notices found.</p>
