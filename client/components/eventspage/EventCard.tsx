@@ -8,7 +8,7 @@ const EventCard = ({ event }: { event: Event }) => {
   const formattedDate = new Date(event.start_time).toLocaleDateString();
 
   return (
-    <Link href={`/event/${event.eventid}`}>
+    <Link href={`/events/${event.eventid}`}>
       <figure
         className={cn(
           "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4 mx-2",
