@@ -68,4 +68,12 @@ export const APIENDPOINTS = {
     getPositionbyID: `${BACKENDURL}election/positions`,
     deletePosition: `${BACKENDURL}election/positions`,
   },
+  events: {
+    getEvents: `${BACKENDURL}event`,
+    createEvent: `${BACKENDURL}event/create`,
+    updateEvent: `${BACKENDURL}event`,
+    deleteEvent: `${BACKENDURL}event`,
+    getEventbyID: `${BACKENDURL}event`,
+  },
+
 };

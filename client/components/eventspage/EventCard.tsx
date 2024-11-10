@@ -45,12 +45,12 @@ export async function EventMarqueeDemo() {
   return (
     <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
       <Marquee pauseOnHover className="[--duration:20s]">
-        {firstRow.map((event) => (
+        {firstRow.map((event:any) => (
           <EventCard key={event.eventid} event={event} />
         ))}
       </Marquee>
       <Marquee reverse pauseOnHover className="[--duration:20s]">
-        {secondRow.map((event) => (
+        {secondRow.map((event:any) => (
           <EventCard key={event.eventid} event={event} />
         ))}
       </Marquee>
