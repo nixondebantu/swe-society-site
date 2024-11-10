@@ -8,21 +8,13 @@ import { updateProfileCookies } from "@/data/cookies/setCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
-import {
-  CircleX,
-  LoaderIcon,
-  Pencil,
-  Save,
-  Trash2,
-  UploadCloud,
-} from "lucide-react";
+import { CircleX, LoaderIcon, Pencil, Save } from "lucide-react";
 import { CldUploadButton } from "next-cloudinary";
-import Link from "next/link";
 import React, { useState } from "react";
+import CVSection from "./CVSection";
 import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
 import SkillManagement from "./SkillManagement";
-import CVSection from "./CVSection";
 
 interface EditProfileProps {
   values: UserProfile | undefined;
