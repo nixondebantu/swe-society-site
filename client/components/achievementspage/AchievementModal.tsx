@@ -195,6 +195,9 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     fetchData();
   }, []);
   const handleAchievementImages = (result: any) => {
+    console.log("image call");
+    console.log(result);
+    console.log(result.info.secure_url);
     const uploadedURL = result.info.secure_url;
     setFormData((prevData) => ({
       ...prevData,
@@ -213,6 +216,46 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     setFormData((prev) => ({ ...prev, startdate: date }));
   };
   
+  useEffect(()=>{
+    
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET);
+    console.log(process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET);
+    console.log(process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET);
+  },[])
+
+
+  const uploadImageToCloudinary = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET!);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData
+      );
+      console.log(response);
+      const uploadedURL = response.data.secure_url;
+      setFormData((prevData) => ({
+        ...prevData,
+        photos: [...prevData.photos, uploadedURL],
+      }));
+      console.log("Image uploaded successfully");
+      //toast.success("Image uploaded successfully!");
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      //toast.error("Image upload failed, please try again.");
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadImageToCloudinary(file);
+    }
+  };
 
 
  
@@ -340,42 +383,41 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
             onChange={(e) => handleChange(e, "venu")}
             className="w-full p-2 rounded bg-gray-700"
           />
-        <div className="">
-           
-           <CldUploadButton
-               onUpload={handleAchievementImages}
-               uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET} // Ensure this preset exists in Cloudinary
-               className="flex items-center space-x-2 bg-white text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
-             >
-               <UploadCloud size={20} /> 
-               <span>Upload Image</span>
-               <Pencil size={20} />
-             </CldUploadButton>
-             </div>
+           <div className="space-y-4">
+          <label className="block text-sm font-medium">Upload Achievement Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-500 bg-gray-700 rounded border border-gray-600 cursor-pointer"
+          />
+        </div>
              {formData.photos && formData.photos.length > 0 && (
   <div className="space-y-2">
     <h3 className="text-lg font-semibold">Uploaded Photos</h3>
-    <div className="grid grid-cols-4 gap-4">
-    {formData.photos.map((photoUrl, index) => (
-        <div key={index} className="relative flex flex-col items-center">
-          {/* Remove button */}
-          <button
-            onClick={() => removePhoto(index)}
-            className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
-            aria-label="Remove photo"
-          >
-            &times;
-          </button>
-          
-          {/* Photo preview */}
-          <img src={photoUrl} alt={`Uploaded photo ${index + 1}`} className="w-full h-32 object-cover rounded" />
-          
-          {/* View full image link */}
-          <a href={photoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline mt-2">
-            View Full Image
-          </a>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 gap-4">
+    {formData.photos && formData.photos.length > 0 && (
+          <div className="space-y-2">
+           
+            <div className="grid grid-cols-4 gap-4">
+              {formData.photos.map((photoUrl, index) => (
+                <div key={index} className="relative flex flex-col items-center">
+                  <button
+                    onClick={() => removePhoto(index)}
+                    className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
+                    aria-label="Remove photo"
+                  >
+                    &times;
+                  </button>
+                  <img src={photoUrl} alt={`Uploaded photo ${index + 1}`} className="w-full h-32 object-cover rounded" />
+                  <a href={photoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline mt-2">
+                    View Full Image
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
     </div>
   </div>
 )}
