@@ -8,19 +8,25 @@ import AchievementModal from "@/components/achievementspage/AchievementModal";
 const Achievement: React.FC = () => {
     const [achievements, setAchievements] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const fetchData = async () => {
+      try {
+          const response = await fetch(`${APIENDPOINTS.achievement.getAllAchievement}`);
+          const data = await response.json();
+          setAchievements(data.achievements);
+      } catch (error) {
+          console.error('Error fetching data: ', error);
+      }
+  };
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${APIENDPOINTS.achievement.getAllAchievement}`);
-                const data = await response.json();
-                setAchievements(data.achievements);
-            } catch (error) {
-                console.error('Error fetching data: ', error);
-            }
-        };
+
 
         fetchData();
     }, []);
+    const handleAchievementAdded = () => {
+      setIsModalOpen(false)
+      fetchData(); 
+  };
+
 
 
 
@@ -37,7 +43,9 @@ const Achievement: React.FC = () => {
           </div>
       <AchievementComponent achievements={achievements} />
       {isModalOpen && (
-        <AchievementModal onClose={() => setIsModalOpen(false)}  />
+        <AchievementModal onClose={() => setIsModalOpen(false)} 
+        onAchievementAdded={handleAchievementAdded}
+        />
       )}
     </div>
   );

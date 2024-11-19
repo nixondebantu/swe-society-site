@@ -456,7 +456,6 @@ const createTeamAndAchievement = async (req: Request, res: Response) => {
         } = req.body;
 
         console.log("Starting the transaction...");
-        ;
 
         // Step 1: Create Team
         const teamid = await createTeams( teamname, mentor); // Returns a number (teamid)
