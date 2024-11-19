@@ -196,16 +196,7 @@ const EditAchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
 
     fetchData();
   }, []);
-  const handleAchievementImages = (result: any) => {
-    console.log("image call");
-    console.log(result);
-    console.log(result.info.secure_url);
-    const uploadedURL = result.info.secure_url;
-    setFormData((prevData) => ({
-      ...prevData,
-      photos: [...prevData.photos, uploadedURL],
-    }));
-  };
+
 
   const removePhoto = (index: number) => {
     setFormData((prevData) => ({

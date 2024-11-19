@@ -208,12 +208,26 @@ const getAchievementById = errorWrapper(
 const updateAchievement = errorWrapper(
     async (req: Request, res: Response) => {
         const { achieveid } = req.params;
-        const { teamid, eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status } = req.body;
+        const { eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status } = req.body;
 
         const { rows } = await pool.query(
-            `UPDATE Achievements SET teamid = $1, eventname = $2, organizer = $3, venu = $4, startdate = $5, enddate = $6, rank = $7, rankarea = $8, task = $9, solution = $10, techstack = $11, resources = $12, photos = $13, approval_status = $14
-             WHERE achieveid = $15 RETURNING *`,
-            [teamid, eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status, achieveid]
+            `UPDATE Achievements 
+             SET eventname = $1, 
+                 organizer = $2, 
+                 venu = $3, 
+                 startdate = $4, 
+                 enddate = $5, 
+                 rank = $6, 
+                 rankarea = $7, 
+                 task = $8, 
+                 solution = $9, 
+                 techstack = $10, 
+                 resources = $11, 
+                 photos = $12, 
+                 approval_status = $13
+             WHERE achieveid = $14 
+             RETURNING *`,
+            [eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status, achieveid]
         );
 
         if (rows.length === 0) {
@@ -224,6 +238,7 @@ const updateAchievement = errorWrapper(
     },
     { statusCode: 500, message: `Couldn't update achievement` }
 );
+
 
 // Delete an achievement
 const deleteAchievement = errorWrapper(
