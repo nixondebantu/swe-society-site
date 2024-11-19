@@ -1,134 +1,53 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { FiEdit } from "react-icons/fi";
 import { AiFillDelete } from "react-icons/ai";
-
-import React, { useState } from "react";
+import AddNotice from "@/components/dashboardpage/notice/AddNotice";
+import { Checkbox } from "@/components/ui/checkbox"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { getUserID } from "@/data/cookies/getCookies";
+import EditNotice from "@/components/dashboardpage/notice/EditNotice";
+import { set } from "date-fns";
 
 const Notice: React.FC = () => {
+  const [notices, setNotices] = useState<any[]>([]);
+  const [onlyMyNotices, setOnlyMyNotices] = useState<boolean>(false);
+  const userId: string | undefined = getUserID();
+
   const truncateText = (text: any, maxLength: any) => {
     if (text.length <= maxLength) {
       return text;
     }
     return text.slice(0, maxLength) + '...';
   };
-  const notices = [
-    {
-      notice_provider: 1,
-      notice_date: "2023-01-15",
-      expire_date: "2023-06-15",
-      headline: "Important Update",
-      notice_body: "Please be informed of the upcoming system maintenance scheduled for this weekend.",
-      picture: "update_image.jpg",
-      file: "maintenance_details.pdf"
-    },
-    {
-      notice_provider: 2,
-      notice_date: "2023-03-20",
-      expire_date: "2023-09-20",
-      headline: "New Policy Changes",
-      notice_body: "We have updated our privacy policy to include new regulations.",
-      picture: "policy_changes.jpg",
-      file: "privacy_policy.pdf"
-    },
-    {
-      notice_provider: 3,
-      notice_date: "2023-05-10",
-      expire_date: "2023-12-10",
-      headline: "Staff Meeting",
-      notice_body: "There will be a mandatory staff meeting next Monday at 10 AM.",
-      picture: "staff_meeting.jpg",
-      file: "meeting_agenda.docx"
-    },
-    {
-      notice_provider: 4,
-      notice_date: "2023-07-01",
-      expire_date: "2024-01-01",
-      headline: "Holiday Schedule",
-      notice_body: "Please review the holiday schedule for the upcoming year.",
-      picture: "holiday_schedule.jpg",
-      file: "holiday_schedule.pdf"
-    },
-    {
-      notice_provider: 5,
-      notice_date: "2023-09-05",
-      expire_date: "2024-03-05",
-      headline: "System Upgrade",
-      notice_body: "Our system will undergo an upgrade next weekend. Expect intermittent downtimes.",
-      picture: "system_upgrade.jpg",
-      file: "upgrade_details.pdf"
-    },
-    {
-      notice_provider: 6,
-      notice_date: "2023-11-15",
-      expire_date: "2024-05-15",
-      headline: "Annual Performance Reviews",
-      notice_body: "Annual performance reviews are scheduled to begin next month.",
-      picture: "performance_reviews.jpg",
-      file: "review_schedule.pdf"
-    },
-    {
-      notice_provider: 7,
-      notice_date: "2024-01-10",
-      expire_date: "2024-07-10",
-      headline: "New Software Release",
-      notice_body: "We are excited to announce the release of our new software version.",
-      picture: "software_release.jpg",
-      file: "release_notes.pdf"
-    },
-    {
-      notice_provider: 8,
-      notice_date: "2024-03-22",
-      expire_date: "2024-09-22",
-      headline: "Quarterly Financial Results",
-      notice_body: "The quarterly financial results will be published next week.",
-      picture: "financial_results.jpg",
-      file: "financial_report.pdf"
-    },
-    {
-      notice_provider: 9,
-      notice_date: "2024-05-18",
-      expire_date: "2024-11-18",
-      headline: "Customer Feedback",
-      notice_body: "We value your feedback. Please take a moment to fill out our survey.",
-      picture: "customer_feedback.jpg",
-      file: "feedback_form.pdf"
-    },
-    {
-      notice_provider: 10,
-      notice_date: "2024-07-29",
-      expire_date: "2025-01-29",
-      headline: "New Partnership Announcement",
-      notice_body: "We are thrilled to announce our new partnership with XYZ Corp.",
-      picture: "partnership_announcement.jpg",
-      file: "partnership_details.pdf"
-    },
-    {
-      notice_provider: 10,
-      notice_date: "2024-07-29",
-      expire_date: "2025-01-29",
-      headline: "New Partnership Announcement",
-      notice_body: "We are thrilled to announce our new partnership with XYZ Corp.",
-      picture: "partnership_announcement.jpg",
-      file: "partnership_details.pdf"
-    },
-    {
-      notice_provider: 10,
-      notice_date: "2024-07-29",
-      expire_date: "2025-01-29",
-      headline: "New Partnership Announcement",
-      notice_body: "We are thrilled to announce our new partnership with XYZ Corp.",
-      picture: "partnership_announcement.jpg",
-      file: "partnership_details.pdf"
+
+  useEffect(() => {
+
+    if (!onlyMyNotices) {
+      axios.get("http://localhost:5050/notice/").then((res) => {
+        setNotices(res.data)
+      })
     }
-  ];
+    // else {
+    //   axios.get(`http://localhost:5050/notice/${userId}`).then((res) => {
+    //     setNotices(res.data)
+    //   })
+    // }
+    console.log(onlyMyNotices)
+  }, [onlyMyNotices])
+
   const [searchQuery, setSearchQuery] = useState("");
   const filteredNotices = notices.filter((notice) =>
     notice.headline.toLowerCase().includes(searchQuery.toLowerCase()) ||
     notice.notice_body.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handle_dlt = (noticeid: any) => {
+    axios.delete(`http://localhost:5050/notice/${noticeid}`).then((res) => {
+      console.log(res.data)
+    })
+  }
 
   return (
     <div className="flex flex-col items-center justify-start gap-4 space-y-2 pt-16 px-4 h-screen  ">
@@ -136,7 +55,8 @@ const Notice: React.FC = () => {
       <div className="w-full flex justify-between  ">
         <Input placeholder="Search notices" className="max-w-sm" value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)} />
-        <Button><IoIosAddCircleOutline className="h-full w-full" />  Add notice</Button>
+        <AddNotice />
+        {/* <Button><IoIosAddCircleOutline className="h-full w-full" />  Add notice</Button> */}
       </div>
       <div className="w-full h-max ">
         {filteredNotices.length > 0 ? (
@@ -145,10 +65,10 @@ const Notice: React.FC = () => {
               <p className="w-3/12 ">{notice.headline}</p>
               <p className="w-6/12  ">{truncateText(notice.notice_body, 40)}</p>
               <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-                <FiEdit className=" h-full w-10" />
+              <EditNotice noticeid={notice.noticeid} notice_provider={userId} notice_date={notice.notice_date} expire_date={notice.expire_date} headline={notice.headline} notice_body={notice.notice_body} file={notice.file} picture={notice.picture} />
               </Button>
               <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-                <AiFillDelete className="h-full w-10" />
+              <AiFillDelete   onClick={() => { handle_dlt(notice.noticeid) }} className="h-full w-10" />
               </Button>
             </div>
           ))
@@ -157,9 +77,23 @@ const Notice: React.FC = () => {
         )}
       </div>
 
+      <div className="w-full flex justify-center items-center gap-2 mt-4">
+  <Checkbox 
+    id="onlyMyNotices" 
+    onClick={()=>{setOnlyMyNotices(!onlyMyNotices);console.log(onlyMyNotices)}}
+  />
+  <label
+    htmlFor="onlyMyNotices"
+    className="text-sm font-medium leading-none cursor-pointer"
+  >
+    See only your notices
+  </label>
+</div>
+
 
 
     </div>
+
   );
 };
 
