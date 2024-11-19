@@ -20,7 +20,9 @@ import {
 
     getUserAchievements,
     createTeamAndAchievement,
-    getUserAchievementsAll
+    getUserAchievementsAll,
+
+    updateAchievementStatus
   } from "../controllers/achievement";
   import { validateBearerToken } from "../middlewares/validateBearerToken";
 
@@ -46,6 +48,7 @@ import {
   
 
   router.route("/post/fullachievement").post(validateBearerToken, createTeamAndAchievement);
+  router.route("/poststatus/:achieveid").put(validateBearerToken, updateAchievementStatus);
 
 
   export default router;

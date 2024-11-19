@@ -1,14 +1,29 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { MdDelete, MdModeEditOutline } from "react-icons/md";
+import EditAchievementModal from './dashboardcomponents.tsx/EditAchievementModal';
+import ConfirmationModal from '../commons/ConfirmationModal';
+import axios from 'axios';
+import { BACKENDURL } from '@/data/urls';
+import { getJWT } from '@/data/cookies/getCookies';
+import { useToast } from "@/components/ui/use-toast";
 interface Achievement {
     achieveid: number;
     teamid: number;
     teamname: string;
+    mentor: string | null;
+    task: string | null;
+    solution: string | null;
+    resources: string | null;
+    startdate: string | null;
     eventname: string;
     segment: string;
     rank: string;
     photos: string[];
     techstack: string;
+    enddate: string | null;
+    organizer: string | null;
+    venu: string | null;
     teammembers: {
         userid: number;
         fullname: string;
@@ -18,9 +33,78 @@ interface Achievement {
 
 interface Props {
     achievements: Achievement[];
+    fetchDataAll: () => void;
+   
 }
 
-const AchievementComponent: React.FC<Props> = ({ achievements }) => {
+interface FormData {
+    achieveid: number;
+    teamname: string;
+    mentor: string;
+    teammembers: number[];
+    eventname: string;
+    segment: string;
+    rank: string;
+    photos: string[];
+    task: string;
+    solution: string;
+    techstack: string;
+    resources: string;
+    startdate: string;
+    enddate: string;
+    organizer: string;
+    venu: string;
+  }
+
+const AchievementComponent: React.FC<Props> = ({ achievements, fetchDataAll }) => {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [selecteAchieveId, setSelectedAchieveId]= useState<number | null> (null);
+    const { toast } = useToast();
+    const [formData, setFormData] = useState<FormData>({
+        achieveid: 0,
+        teamname: "",
+        mentor: "",
+        teammembers: [],
+        eventname: "",
+        segment: "",
+        rank: "",
+        photos: [],
+        task: "",
+        solution: "",
+        techstack: "",
+        resources: "",
+        startdate: "",
+        enddate: "",
+        organizer: "",
+        venu: "",
+      });
+    
+      const handleEditClick = (achievement: Achievement) => {
+        // Map the Achievement object to the FormData structure
+        const transformedFormData: FormData = {
+            achieveid: achievement.achieveid,
+          teamname: achievement.teamname,
+          mentor: achievement.mentor || "", // Default null to empty string
+          teammembers: achievement.teammembers.map((member) => member.userid), // Extract user IDs
+          eventname: achievement.eventname,
+          segment: achievement.segment,
+          rank: achievement.rank,
+          photos: achievement.photos,
+          task: achievement.task || "", // Default null to empty string
+          solution: achievement.solution || "", // Default null to empty string
+          techstack: achievement.techstack,
+          resources: achievement.resources || "", // Default null to empty string
+          startdate: achievement.startdate || "", // Default null to empty string
+          enddate: achievement.enddate || "", // Default null to empty string
+          organizer: achievement.organizer || "", // Default null to empty string
+          venu: achievement.venu || "", // Default null to empty string
+        };
+    
+        setFormData(transformedFormData); // Set transformed data
+        setIsEditModalOpen(true); // Open the modal
+      };
+    
     // Check if there are any achievements to display
     if (!achievements || achievements.length === 0) {
         return (
@@ -30,7 +114,36 @@ const AchievementComponent: React.FC<Props> = ({ achievements }) => {
         );
     }
 
+    const handleDeleteConfirm = async () => {
+       
+        try {
+          const response = await axios.delete(
+            `${BACKENDURL}achievement/post/${selecteAchieveId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${getJWT()}`,
+              },
+            }
+          );
+          if (response.status === 200 || response.status === 201) {
+            toast({
+                title: "Deleted Election Successfully",
+                duration: 3000,
+              });
+              fetchDataAll();
+              setOpenDeleteModal(false);
+            
+            // window.location.reload();
+          }
+        } catch (error) {
+          console.error("Error creating election:", error);
+        }
+      };
+
+  
+
     return (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 px-4 h-[70vh] overflow-y-scroll">
             {achievements.map((achievement) => (
                 <div key={achievement.achieveid} className="p-4 border rounded-lg shadow-md relative">
@@ -39,7 +152,7 @@ const AchievementComponent: React.FC<Props> = ({ achievements }) => {
                     <button 
                      onClick={(event) => {
                         event.stopPropagation(); 
-                        
+                        handleEditClick(achievement);
                       }}
                     className="p-2 rounded border bg-gray-200 border-black  flex items-center justify-center">
                         <MdModeEditOutline className="text-black text-sm"/>
@@ -47,7 +160,8 @@ const AchievementComponent: React.FC<Props> = ({ achievements }) => {
                     <button
                    onClick={(event) => {
                     event.stopPropagation(); 
-                      
+                    setSelectedAchieveId(achievement.achieveid);
+                      setOpenDeleteModal(true);
                      }}
                     className="p-2 rounded border bg-gray-200 border-black  flex items-center justify-center">
                         <MdDelete className="text-black text-sm"/>
@@ -78,6 +192,28 @@ const AchievementComponent: React.FC<Props> = ({ achievements }) => {
                 </div>
             ))}
         </div>
+       
+        {isEditModalOpen && (
+        <EditAchievementModal
+          onClose={() => setIsEditModalOpen(false)}
+          onAchievementEdited={()=>{
+            setIsEditModalOpen(false);
+            fetchDataAll();
+          }}
+          formDatass={formData} // Pass the selected achievement
+        />
+      )}
+      {openDeleteModal && (
+        <ConfirmationModal
+          title="Confirm Deletion"
+          subtitle="Are you sure you want to delete the achievement? This action cannot be undone."
+          confirmButtonTitle="Delete"
+          onConfirm={handleDeleteConfirm}
+          onCancel={()=>{setOpenDeleteModal(false)}}
+        />
+      )}
+        
+        </>
     );
 };
 

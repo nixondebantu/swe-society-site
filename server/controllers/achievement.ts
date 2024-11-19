@@ -239,6 +239,32 @@ const updateAchievement = errorWrapper(
     { statusCode: 500, message: `Couldn't update achievement` }
 );
 
+const updateAchievementStatus = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { achieveid } = req.params; // Get the achievement ID from the URL parameters
+        const { approval_status } = req.body; // Extract the new approval status from the request body
+
+        if (approval_status === undefined) {
+            throw new CustomError('approval_status is required', 400); // Ensure `approval_status` is provided
+        }
+
+        const { rows } = await pool.query(
+            `UPDATE Achievements 
+             SET approval_status = $1 
+             WHERE achieveid = $2 
+             RETURNING *`, // Only update `approval_status`
+            [approval_status, achieveid]
+        );
+
+        if (rows.length === 0) {
+            throw new CustomError('Achievement not found', 404); // Handle case where no achievement is found
+        }
+
+        res.json(rows[0]); // Respond with the updated record
+    },
+    { statusCode: 500, message: `Couldn't update approval status` }
+);
+
 
 // Delete an achievement
 const deleteAchievement = errorWrapper(
@@ -539,5 +565,7 @@ export {
     deleteAchievement,
     getUserAchievements,
     createTeamAndAchievement,
-    getUserAchievementsAll
+    getUserAchievementsAll,
+
+    updateAchievementStatus
 };
