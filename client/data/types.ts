@@ -12,6 +12,7 @@ export interface RoleAccessType {
   statistics: boolean;
   achievement: boolean;
   blog: boolean;
+  usersblog: boolean;
   member: boolean;
   notice: boolean;
   bulkmail: boolean;

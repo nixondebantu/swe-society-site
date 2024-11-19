@@ -14,13 +14,13 @@ import {
   Trash2,
   UploadCloud,
 } from "lucide-react";
-import { DatePicker } from "../commons/DatePicker";
-import { useToast } from "../ui/use-toast";
+
 import { uploadImageToCloud } from "@/utils/ImageUploadService";
+import { useToast } from "@/components/ui/use-toast";
+import { DatePicker } from "@/components/commons/DatePicker";
 
 interface AchievementFormProps {
   onClose: () => void;
-  onAchievementAdded: () => void
 
 }
 
@@ -55,7 +55,7 @@ interface FormData {
   venu: string;
 }
 
-const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchievementAdded }) => {
+const EditAchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
   const [formData, setFormData] = useState<FormData>({
     teamname: "",
@@ -102,8 +102,6 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchieveme
   };
 
   // const notify = () => toast('Your achivement to added for review.');
-  
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
@@ -153,15 +151,13 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchieveme
       },
     });
     if(response.status === 201){
+      // notify();
       toast({
-        title: "Achievement Updated  Successfully",
+        title: "Password Changed Successfully",
         duration: 3000,
       });
-      onAchievementAdded();
-      // notify();
-    
-     
-      // window.location.reload();
+      onClose();
+      window.location.reload();
     }
     
   };
@@ -200,7 +196,16 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchieveme
 
     fetchData();
   }, []);
-
+  const handleAchievementImages = (result: any) => {
+    console.log("image call");
+    console.log(result);
+    console.log(result.info.secure_url);
+    const uploadedURL = result.info.secure_url;
+    setFormData((prevData) => ({
+      ...prevData,
+      photos: [...prevData.photos, uploadedURL],
+    }));
+  };
 
   const removePhoto = (index: number) => {
     setFormData((prevData) => ({
@@ -432,4 +437,4 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchieveme
   );
 };
 
-export default AchievementModal;
+export default EditAchievementModal;
