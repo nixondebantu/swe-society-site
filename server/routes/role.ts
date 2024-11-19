@@ -4,6 +4,7 @@ import {
   deleteRole,
   getAllRole,
   getRoleById,
+  getRoleInfo,
   updateDefaultRole,
   updateRole,
 } from "../controllers/role";
@@ -13,7 +14,8 @@ const roleRoute = express.Router();
 roleRoute.post("/", validateBearerToken, createRole);
 roleRoute.put("/:roleid", validateBearerToken, updateRole);
 roleRoute.delete("/:roleid", validateBearerToken, deleteRole);
-roleRoute.put("/:roleid/default", validateBearerToken, updateDefaultRole);
+roleRoute.put("/default/:roleid", validateBearerToken, updateDefaultRole);
+roleRoute.get("/info", validateBearerToken, getRoleInfo);
 roleRoute.get("/", getAllRole);
 roleRoute.get("/:roleid", getRoleById);
 

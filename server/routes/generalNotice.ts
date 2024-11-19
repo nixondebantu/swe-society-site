@@ -8,7 +8,7 @@ import {
     deleteNotice,
     getNoticeById
   } from "../controllers/generalNotice";
-
+  import { validateBearerToken } from "../middlewares/validateBearerToken";
   router.route("/create").post(createNotice);
   router.route("/:noticeId").get(getNoticeById);
   router.route("/").get(getAllNotices);

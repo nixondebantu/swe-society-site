@@ -294,6 +294,60 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
     message: `Couldn't retrieve achievements`
 });
 
+
+
+const getUserAchievementsAll = errorWrapper(async (req: Request, res: Response) => {
+   
+    // Query to get achievements of all users
+    const achievementsQuery = `
+    SELECT DISTINCT ON (a.achieveid)
+        a.achieveid,
+        a.teamid,
+        t.teamname,
+        t.mentor,
+        a.eventname,
+        a.segment,
+        a.organizer,
+        a.venu,
+        a.startdate,
+        a.enddate,
+        a.rank,
+        a.rankarea,
+        a.task,
+        a.solution,
+        a.techstack,
+        a.resources,
+        a.photos,
+        a.approval_status,
+        (
+            SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+            FROM TeamMembers tm
+            JOIN Users u ON tm.userid = u.userid
+            WHERE tm.teamid = a.teamid
+        ) AS teamMembers
+    FROM
+        Achievements a
+    JOIN
+        TeamMembers tm ON a.teamid = tm.teamid
+    JOIN
+        Teams t ON a.teamid = t.teamid
+    WHERE
+        a.achieveid >= 0;
+`;
+
+    const { rows } = await pool.query(achievementsQuery);
+
+    if (rows.length === 0) {
+        throw new CustomError("No achievements found", 404);
+    }
+
+    res.json({ achievements: rows });
+}, {
+    statusCode: 500,
+    message: "Couldn't retrieve achievements"
+});
+
+
 // interface TeamMember {
 //     userid?: number;
 //     othermember?: string;
@@ -402,7 +456,6 @@ const createTeamAndAchievement = async (req: Request, res: Response) => {
         } = req.body;
 
         console.log("Starting the transaction...");
-        ;
 
         // Step 1: Create Team
         const teamid = await createTeams( teamname, mentor); // Returns a number (teamid)
@@ -470,5 +523,6 @@ export {
     updateAchievement,
     deleteAchievement,
     getUserAchievements,
-    createTeamAndAchievement
+    createTeamAndAchievement,
+    getUserAchievementsAll
 };
