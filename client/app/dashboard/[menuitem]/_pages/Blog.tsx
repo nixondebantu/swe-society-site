@@ -2,12 +2,15 @@
 
 import { APIENDPOINTS, BACKENDURL } from "@/data/urls";
 import React, { useEffect, useState } from "react";
-import { getUserID, getUserReg } from "@/data/cookies/getCookies";
+import { getJWT, getUserID, getUserReg } from "@/data/cookies/getCookies";
 
 import ElectionModal from "@/components/electiondashboard/CreateElectionModal";
 import ElectionMemberDetails from "@/components/electiondashboard/CommmitteeMembers";
 import BlogModal from "@/components/blogdashboard/AddBlogModal";
 import BlogCard from "@/components/blogdashboard/BlogComp/BlogCard";
+import ConfirmationModal from "@/components/commons/ConfirmationModal";
+import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Blog {
     blogid: number;
@@ -26,8 +29,9 @@ const BlogForUsers: React.FC = () => {
     const [blogs, setBlogs] = useState<Blog[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isShowFullBlog, setShowFullBlog] = useState(false);
-    const [selectedElectionId, setSelectedElectionId] = useState<number | null>(null);
-    
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [selecteBlogId, setSelecteBlogId] = useState<number | null>(null);
+    const { toast } = useToast();
     const fetchBlogs = async () => {
         try {
           const response = await fetch(`${BACKENDURL}blog`);
@@ -42,13 +46,42 @@ const BlogForUsers: React.FC = () => {
     
         fetchBlogs();
       }, []);
+      const handleDeleteConfirm = async () => {
+       
+        try {
+          const response = await axios.delete(
+            `${BACKENDURL}blog/${selecteBlogId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${getJWT()}`,
+              },
+            }
+          );
+          if (response.status === 200 || response.status === 201) {
+            toast({
+                title: "Deleted Blog Successfully",
+                duration: 3000,
+              });
+              setOpenDeleteModal(false);
+              fetchBlogs();
+              
+             
+            
+            // window.location.reload();
+          }
+        } catch (error) {
+          console.error("Error creating election:", error);
+        }
+      };
+      
+
     
 
 
 
 
   return (
-    <div className="flex flex-col items-center space-y-2 py-16 mb-16 h-screen ">
+    <div className="flex flex-col items-center space-y-2 py-16 mb-16  ">
      <div className="w-full  mt-4 ">
          <div className="text-3xl text-center font-bold">Blogs</div>
       </div>
@@ -62,11 +95,14 @@ const BlogForUsers: React.FC = () => {
        {blogs.map((blog) => (
         <BlogCard
           key={blog.blogid}
+          blogid={blog.blogid}
           label={blog.blogtype}
           title={blog.headline}
           description={blog.article}
           author={blog.fullname || "Anonymous"}
           image={blog.photos[0] || null}
+          setBlogId={setSelecteBlogId}
+          setOpenDeleteModal={setOpenDeleteModal}
         />
       ))}
       </div>
@@ -75,7 +111,17 @@ const BlogForUsers: React.FC = () => {
       )}
       </>}
 
-      {isShowFullBlog && selectedElectionId && <div className="w-full">
+      {openDeleteModal && (
+        <ConfirmationModal
+          title="Confirm Deletion"
+          subtitle="Are you sure you want to delete the Blog? This action cannot be undone."
+          confirmButtonTitle="Delete"
+          onConfirm={handleDeleteConfirm}
+          onCancel={()=>{setOpenDeleteModal(false)}}
+        />
+      )}
+
+      {isShowFullBlog  && <div className="w-full">
         {/* <ElectionMemberDetails electionId={selectedElectionId} setShowFullBlog={setShowFullBlog}/> */}
         </div>}
     </div>

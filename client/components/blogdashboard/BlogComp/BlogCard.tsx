@@ -1,42 +1,84 @@
-import React from "react";
+"use client";
+import { useToast } from "@/components/ui/use-toast";
+import { getJWT } from "@/data/cookies/getCookies";
+import { BACKENDURL } from "@/data/urls";
+import axios from "axios";
+import React, { useState } from "react";
+import { MdDelete, MdModeEditOutline } from "react-icons/md";
 
 interface CardProps {
+    blogid: number;
   label: string;
   title: string;
   description: string;
   author: string | null;
   timeToRead?: string;
   image: string | null;
+  setBlogId: React.Dispatch<React.SetStateAction<number | null>>;
+  setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Card: React.FC<CardProps> = ({
+    blogid,
   label,
   title,
   description,
   author,
   timeToRead = "3 min read",
   image,
+  setBlogId,
+  setOpenDeleteModal
 }) => {
-
+    
+   
+  
     const extractText = (html: string): string => {
         const plainText = html.replace(/<\/?[^>]+(>|$)/g, "").trim();
         return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
       };
-      
+  
+
+
 
       
   return (
-    <div className="flex items-center justify-between bg-gray-900 text-white rounded-lg shadow-md p-6 space-x-4 ">
-      {/* Left Content */}
-      <div className="space-y-3 w-3/5">
-        <span className="inline-block bg-red-600 text-xs font-semibold uppercase px-3 py-1 rounded">
+    <div className="flex flex-col items-center justify-between bg-gray-900 text-white rounded-lg shadow-md px-6 py-4 space-x-4">
+        <div className="flex justify-between w-full">
+    <div className=" bg-red-600 text-xs font-semibold uppercase px-3 py-1 rounded flex items-center mb-2">
           {label}
-        </span>
+        </div>
+        <div className="   space-x-3 flex">
+                    <button 
+                     onClick={(event) => {
+                        event.stopPropagation(); 
+                       
+                      }}
+                    className="p-2 rounded border bg-gray-200 border-black  flex items-center justify-center">
+                        <MdModeEditOutline className="text-black text-sm"/>
+                    </button>
+                    <button
+                   onClick={(event) => {
+                    event.stopPropagation(); 
+                    setBlogId(blogid);
+                    setOpenDeleteModal(true);
+                     }}
+                    className="p-2 rounded border bg-gray-200 border-black  flex items-center justify-center">
+                        <MdDelete className="text-black text-sm"/>
+                    </button>
+                </div>
+
+        </div>
+  
+    <div className=" flex items-center  w-full text-white rounded-lg  space-x-4">
+      {/* Left Content */}
+     
+      <div className=" w-3/5">
+        
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="text-gray-300">{extractText(description)}</p>
         <a
           href="#"
-          className="text-red-400 font-medium inline-flex items-center gap-1 hover:underline"
+          className="text-red-400 font-medium inline-flex items-center gap-1 hover:underline my-2"
         >
           Read more →
         </a>
@@ -66,6 +108,7 @@ const Card: React.FC<CardProps> = ({
     />
   )}
 </div>
+    </div>
     </div>
   );
 };
