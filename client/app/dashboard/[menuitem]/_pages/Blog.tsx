@@ -12,6 +12,7 @@ import ConfirmationModal from "@/components/commons/ConfirmationModal";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import BlogEditModal from "@/components/blogdashboard/BlogComp/BlogEditModal";
+import FullBlogCard from "@/components/blogdashboard/BlogComp/FullBlog";
 
 interface Blog {
     blogid: number;
@@ -53,6 +54,19 @@ const BlogForUsers: React.FC = () => {
       blogtype: "",
       approval_status: false,
     });
+
+    const [selectedFUllBlog, setselectedFUllBlog] = useState<Blog>({
+      blogid: selecteBlogId || 2,
+      userid: userids,
+      headline: "",
+      designation: "",
+      current_institution: "",
+      article: "",
+      photos: [],
+      blogtype: "",
+      approval_status: false,
+      fullname: ""
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isShowFullBlog, setShowFullBlog] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -87,8 +101,16 @@ const BlogForUsers: React.FC = () => {
           }
         }
 
-        console.log("Selected Blog",selectedBlog);
+        if (selecteBlogId !== null) {
+          const matchedBloging = blogs.find((blog) => blog.blogid === selecteBlogId);
+          if (matchedBloging) {
+            setselectedFUllBlog(matchedBloging);
+          }
+        }
+        console.log("Selected full blog", selectedFUllBlog)
       }, [selecteBlogId]);
+
+     
       
 
     useEffect(() => {
@@ -162,6 +184,11 @@ const BlogForUsers: React.FC = () => {
          <BlogModal onClose={() => setIsModalOpen(false)} fetchDataAll={fetchBlogs} />
       )}
       </>}
+
+      {isShowFullBlog && <FullBlogCard 
+      blogDetails={selectedFUllBlog}
+      setShowFullBlog={setShowFullBlog}
+      />}
 
       {openDeleteModal && (
         <ConfirmationModal

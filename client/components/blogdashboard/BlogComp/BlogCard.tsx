@@ -94,6 +94,7 @@ const Card: React.FC<CardProps> = ({
         <p className="text-gray-300">{extractText(description)}</p>
         <button
           onClick={()=>{
+            setBlogId(blogid);
             setShowFullBlog(true);
           }}
           className="text-red-400 font-medium inline-flex items-center gap-1 hover:underline my-2"
