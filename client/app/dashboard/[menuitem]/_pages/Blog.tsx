@@ -11,6 +11,7 @@ import BlogCard from "@/components/blogdashboard/BlogComp/BlogCard";
 import ConfirmationModal from "@/components/commons/ConfirmationModal";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
+import BlogEditModal from "@/components/blogdashboard/BlogComp/BlogEditModal";
 
 interface Blog {
     blogid: number;
@@ -25,12 +26,38 @@ interface Blog {
     fullname: string | null;
   }
 
+  interface FormData {
+    blogid: number;
+    userid: number;
+    headline: string;
+    designation: string;
+    current_institution: string;
+    article: string;
+    photos: string[];
+    blogtype: string;
+    approval_status: boolean;
+  }
+
 const BlogForUsers: React.FC = () => {
+  const userids = Number(getUserID()) || 2;
+  const [selecteBlogId, setSelecteBlogId] = useState<number | null>(null);
     const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [selectedBlog, setSelectedBlog] = useState<FormData>({
+      blogid: selecteBlogId || 2,
+      userid: userids,
+      headline: "",
+      designation: "",
+      current_institution: "",
+      article: "",
+      photos: [],
+      blogtype: "",
+      approval_status: false,
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isShowFullBlog, setShowFullBlog] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const [selecteBlogId, setSelecteBlogId] = useState<number | null>(null);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    
     const { toast } = useToast();
     const fetchBlogs = async () => {
         try {
@@ -41,6 +68,29 @@ const BlogForUsers: React.FC = () => {
           console.error("Error fetching blogs:", error);
         }
       };
+      useEffect(() => {
+        if (selecteBlogId !== null) {
+          const matchedBlog = blogs.find((blog) => blog.blogid === selecteBlogId);
+          if (matchedBlog) {
+            // Transform `Blog` into `FormData` type
+            setSelectedBlog({
+              blogid: matchedBlog.blogid,
+              userid: matchedBlog.userid,
+              headline: matchedBlog.headline,
+              designation: matchedBlog.designation || "", // Ensure non-null value
+              current_institution: matchedBlog.current_institution || "", // Ensure non-null value
+              article: matchedBlog.article,
+              photos: matchedBlog.photos,
+              blogtype: matchedBlog.blogtype,
+              approval_status: matchedBlog.approval_status,
+            });
+          }
+        }
+
+        console.log("Selected Blog",selectedBlog);
+      }, [selecteBlogId]);
+      
+
     useEffect(() => {
  
     
@@ -103,6 +153,7 @@ const BlogForUsers: React.FC = () => {
           image={blog.photos[0] || null}
           setBlogId={setSelecteBlogId}
           setOpenDeleteModal={setOpenDeleteModal}
+          setOpenEditModal={setOpenEditModal}
         />
       ))}
       </div>
@@ -124,6 +175,13 @@ const BlogForUsers: React.FC = () => {
       {isShowFullBlog  && <div className="w-full">
         {/* <ElectionMemberDetails electionId={selectedElectionId} setShowFullBlog={setShowFullBlog}/> */}
         </div>}
+        {openEditModal && (
+          <BlogEditModal
+          onClose={()=>{setOpenEditModal(false)}}
+          fetchDataAll={fetchBlogs}
+          formDataPrev={selectedBlog}
+          />
+        )}
     </div>
   );
 };

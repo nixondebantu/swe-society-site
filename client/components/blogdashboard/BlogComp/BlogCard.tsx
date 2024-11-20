@@ -6,6 +6,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import { MdDelete, MdModeEditOutline } from "react-icons/md";
 
+
+
 interface CardProps {
     blogid: number;
   label: string;
@@ -16,6 +18,7 @@ interface CardProps {
   image: string | null;
   setBlogId: React.Dispatch<React.SetStateAction<number | null>>;
   setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenEditModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -27,7 +30,8 @@ const Card: React.FC<CardProps> = ({
   timeToRead = "3 min read",
   image,
   setBlogId,
-  setOpenDeleteModal
+  setOpenDeleteModal,
+  setOpenEditModal
 }) => {
     
    
@@ -51,7 +55,8 @@ const Card: React.FC<CardProps> = ({
                     <button 
                      onClick={(event) => {
                         event.stopPropagation(); 
-                       
+                        setBlogId(blogid);
+                        setOpenEditModal(true);
                       }}
                     className="p-2 rounded border bg-gray-200 border-black  flex items-center justify-center">
                         <MdModeEditOutline className="text-black text-sm"/>
