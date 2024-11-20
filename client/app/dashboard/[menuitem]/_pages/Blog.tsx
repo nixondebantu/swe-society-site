@@ -154,6 +154,7 @@ const BlogForUsers: React.FC = () => {
           setBlogId={setSelecteBlogId}
           setOpenDeleteModal={setOpenDeleteModal}
           setOpenEditModal={setOpenEditModal}
+          setShowFullBlog={setShowFullBlog}
         />
       ))}
       </div>

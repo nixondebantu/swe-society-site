@@ -19,6 +19,7 @@ interface CardProps {
   setBlogId: React.Dispatch<React.SetStateAction<number | null>>;
   setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenEditModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowFullBlog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -31,8 +32,18 @@ const Card: React.FC<CardProps> = ({
   image,
   setBlogId,
   setOpenDeleteModal,
-  setOpenEditModal
+  setOpenEditModal,
+  setShowFullBlog
 }) => {
+
+  const calculateTimeToRead = (text: string): string => {
+    const plainText = text.replace(/<\/?[^>]+(>|$)/g, "").trim(); // Remove HTML tags
+    const totalCharacters = plainText.length;
+    const readingTime = Math.ceil(totalCharacters / 1200); // Divide by 1200 and round up
+    return `${readingTime} min read`;
+  };
+
+  const timeToReadCalculated = calculateTimeToRead(description);
     
    
   
@@ -81,12 +92,14 @@ const Card: React.FC<CardProps> = ({
         
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="text-gray-300">{extractText(description)}</p>
-        <a
-          href="#"
+        <button
+          onClick={()=>{
+            setShowFullBlog(true);
+          }}
           className="text-red-400 font-medium inline-flex items-center gap-1 hover:underline my-2"
         >
           Read more →
-        </a>
+        </button>
         <div className="flex items-center justify-between space-x-2 text-sm text-gray-400">
           <span className="inline-flex items-center gap-1">
             <svg
@@ -99,7 +112,7 @@ const Card: React.FC<CardProps> = ({
             </svg>
             by {author || "Anonymous"}
           </span>
-          <span>{timeToRead}</span>
+          <span>{timeToReadCalculated}</span>
         </div>
       </div>
 
