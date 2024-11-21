@@ -75,7 +75,8 @@ const BlogForUsers: React.FC = () => {
     const { toast } = useToast();
     const fetchBlogs = async () => {
         try {
-          const response = await fetch(`${BACKENDURL}blog`);
+          const userids = getUserID();
+          const response = await fetch(`${BACKENDURL}blog/userblog/${userids}`);
           const data: Blog[] = await response.json();
           setBlogs(data);
         } catch (error) {
