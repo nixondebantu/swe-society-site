@@ -71,6 +71,7 @@ export function SignInCard() {
           response.data.user.regno,
           response.data.user.userid
         );
+        console.log(response.data.user.userid);
         router.push("/dashboard");
       }
     } catch (error: any) {

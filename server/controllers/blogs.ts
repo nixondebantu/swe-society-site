@@ -35,6 +35,23 @@ const getAllBlogs = errorWrapper(
     { statusCode: 500, message: `Couldn't get blogs` }
 );
 
+// get approved blogs
+const getApprovedBlogs = errorWrapper(
+    async (req: Request, res: Response) => {
+        const blogsQuery = `
+            SELECT b.*, u.fullname
+            FROM Blogs b
+            JOIN Users u ON b.userid = u.userid
+            WHERE b.approval_status = true;
+        `;
+
+        const { rows } = await pool.query(blogsQuery);
+        res.json(rows);
+    },
+    { statusCode: 500, message: `Couldn't get approved blogs` }
+);
+
+
 
 // Get a blog by ID
 const getBlogById = errorWrapper(
@@ -59,6 +76,34 @@ const getBlogById = errorWrapper(
     { statusCode: 500, message: `Couldn't get blog by blogid` }
 );
 
+
+const getUserBlogs = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { userid } = req.params;
+
+        if (!userid) {
+            throw new CustomError("User ID is required", 400);
+        }
+
+        const blogsQuery = `
+            SELECT b.*, u.fullname
+            FROM Blogs b
+            JOIN Users u ON b.userid = u.userid
+            WHERE b.userid = $1;
+        `;
+
+        const { rows } = await pool.query(blogsQuery, [userid]);
+
+        if (rows.length === 0) {
+            throw new CustomError("No blogs found for the user", 404);
+        }
+
+        res.json(rows);
+    },
+    { statusCode: 500, message: `Couldn't get user blogs` }
+);
+
+
 // Update a blog
 const updateBlog = errorWrapper(
     async (req: Request, res: Response) => {
@@ -81,6 +126,33 @@ const updateBlog = errorWrapper(
     { statusCode: 500, message: `Couldn't update blog` }
 );
 
+const updateBlogStatus = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { blogid } = req.params;
+        const { approval_status } = req.body;
+
+        if (approval_status === undefined) {
+            throw new CustomError('approval_status is required', 400);
+        }
+
+        const { rows } = await pool.query(
+            `UPDATE Blogs
+             SET approval_status = $1
+             WHERE blogid = $2
+             RETURNING *`,
+            [approval_status, blogid]
+        );
+
+        if (rows.length === 0) {
+            throw new CustomError('Blog not found', 404);
+        }
+
+        res.json(rows[0]);
+    },
+    { statusCode: 500, message: `Couldn't update blog` }
+);
+
+
 
 // Delete a blog
 const deleteBlog = errorWrapper(
@@ -102,5 +174,8 @@ export {
     getAllBlogs,
     getBlogById,
     updateBlog,
-    deleteBlog
+    deleteBlog,
+    updateBlogStatus,
+    getApprovedBlogs,
+    getUserBlogs
 };

@@ -31,7 +31,6 @@ const createNotice = errorWrapper(
     async (req: Request, res: Response) => {
       const { noticeId } = req.params;
       const { notice_provider, notice_date, expire_date, headline, notice_body, picture, file } = req.body;
-      
       const { rows } = await pool.query(
         'UPDATE GeneralNotices SET notice_provider = $1, notice_date = $2, expire_date = $3, headline = $4, notice_body = $5, picture = $6, file = $7 WHERE noticeId = $8 RETURNING *',
         [notice_provider, notice_date, expire_date, headline, notice_body, picture, file, noticeId]

@@ -1,6 +1,6 @@
 "use client";
 import AchievementComponent from "@/components/achievementspage/AchievementCard";
-import { APIENDPOINTS } from "@/data/urls";
+import { APIENDPOINTS, BACKENDURL } from "@/data/urls";
 import React, { useEffect, useState } from "react";
 import { getUserID, getUserReg } from "@/data/cookies/getCookies";
 import AchievementModal from "@/components/achievementspage/AchievementModal";
@@ -8,19 +8,26 @@ import AchievementModal from "@/components/achievementspage/AchievementModal";
 const Achievement: React.FC = () => {
     const [achievements, setAchievements] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const fetchData = async () => {
+      try {
+         const userids = getUserID();
+          const response = await fetch(`${BACKENDURL}achievement/individual/${userids}`);
+          const data = await response.json();
+          setAchievements(data.achievement);
+      } catch (error) {
+          console.error('Error fetching data: ', error);
+      }
+  };
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${APIENDPOINTS.achievement.getAllAchievement}`);
-                const data = await response.json();
-                setAchievements(data.achievements);
-            } catch (error) {
-                console.error('Error fetching data: ', error);
-            }
-        };
+
 
         fetchData();
     }, []);
+    const handleAchievementAdded = () => {
+      setIsModalOpen(false)
+      fetchData(); 
+  };
+
 
 
 
@@ -35,9 +42,11 @@ const Achievement: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
          className="bg-red-700 rounded-lg px-4 mr-2">+ Add Achievement</button>
           </div>
-      <AchievementComponent achievements={achievements} />
+      <AchievementComponent achievements={achievements}   fetchDataAll={fetchData} isAdmin={false}/>
       {isModalOpen && (
-        <AchievementModal onClose={() => setIsModalOpen(false)}  />
+        <AchievementModal onClose={() => setIsModalOpen(false)} 
+        onAchievementAdded={handleAchievementAdded}
+        />
       )}
     </div>
   );
