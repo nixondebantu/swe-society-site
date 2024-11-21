@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {
+
   createEvent,
   getAllEvents,
   updateEvent,
@@ -15,5 +16,6 @@ router.route("/:eventid").get(getEventById);
 router.route("/").get(getAllEvents);
 router.route("/:eventid").put(validateBearerToken, updateEvent);
 router.route("/:eventid").delete(validateBearerToken, deleteEvent);
+
 
 export default router;

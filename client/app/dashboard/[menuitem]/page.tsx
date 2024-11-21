@@ -9,7 +9,15 @@ import Notice from "./_pages/Notice";
 
 import Event from "./_pages/Event";
 import Profile from "./_pages/Profile";
+
+import Event from "./_pages/event";
+
+
+import ElectionCommittee from "./_pages/ElectionCommittee";
+import BlogForUsers from "./_pages/Blog";
 import Roles from "./_pages/Roles";
+import AdminBlogManage from "./_pages/AdminBlog";
+import AchievementManage from "./_pages/AchievementManage";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -49,6 +57,18 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Achievement />;
     case "event":
       return <Event />;
+
+    case "event":
+      return <Event />;
+
+      case "achievement_manage":
+      return <AchievementManage />;
+    case "ec":
+      return <ElectionCommittee />;
+    case "blog":
+      return <AdminBlogManage />;
+    case "usersblog":
+      return <BlogForUsers />;
 
     default:
       return (

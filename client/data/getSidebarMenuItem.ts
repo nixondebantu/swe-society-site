@@ -28,6 +28,13 @@ const getItem = (roleAccess: RoleAccessType): SidebarItems => {
       Icon: Award,
     });
   }
+  if (roleAccess.achievement) {
+    links.push({
+      label: "Achievement Manage",
+      href: "/dashboard/achievement_manage",
+      Icon: Award,
+    });
+  }
   if (roleAccess.blog) {
     links.push({ label: "Blog", href: "/dashboard/blog", Icon: NotebookPen });
   }
@@ -69,6 +76,13 @@ const getItem = (roleAccess: RoleAccessType): SidebarItems => {
       label: "Statistics",
       href: "/dashboard/statistics",
       Icon: BarChart2,
+    });
+  }
+  if (roleAccess.usersblog) {
+    links.push({
+      label: "Users Blog",
+      href: "/dashboard/usersblog",
+      Icon: NotebookPen,
     });
   }
 

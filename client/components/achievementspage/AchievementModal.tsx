@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Select, { MultiValue, ActionMeta } from "react-select";
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
+import { getJWT } from "@/data/cookies/getCookies";
 import { CldUploadButton } from "next-cloudinary";
 import {
   CircleX,
@@ -14,9 +15,12 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { DatePicker } from "../commons/DatePicker";
+import { useToast } from "../ui/use-toast";
+import { uploadImageToCloud } from "@/utils/ImageUploadService";
 
 interface AchievementFormProps {
   onClose: () => void;
+  onAchievementAdded: () => void
 
 }
 
@@ -51,7 +55,7 @@ interface FormData {
   venu: string;
 }
 
-const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
+const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchievementAdded }) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
   const [formData, setFormData] = useState<FormData>({
     teamname: "",
@@ -71,6 +75,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     organizer: "",
     venu: "",
   });
+  const { toast } = useToast();
   
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
@@ -96,7 +101,9 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     }));
   };
 
-  const notify = () => toast('Your achivement to added for review.');
+  // const notify = () => toast('Your achivement to added for review.');
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
@@ -136,15 +143,27 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
       techstack: formData.techstack,
       resources: formData.resources,
       photos: formData.photos,
-      approval_status: true, // Assuming this is true by default, you can make it dynamic if needed
+      approval_status: false, // Assuming this is true by default, you can make it dynamic if needed
     };
   
 
-    const response = await axios.post(`${BACKENDURL}achievement/post/fullachievement`, requestBody);
-    if(response){
-      notify();
+    const response = await axios.post(`${BACKENDURL}achievement/post/fullachievement`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${getJWT()}`,
+      },
+    });
+    if(response.status === 201){
+      toast({
+        title: "Achievement Updated  Successfully",
+        duration: 3000,
+      });
+      onAchievementAdded();
+      // notify();
+    
+     
+      // window.location.reload();
     }
-    onClose();
+    
   };
 
   const handleSelectChange = (selectedOptions: MultiValue<MappedUser>) => {
@@ -181,13 +200,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
 
     fetchData();
   }, []);
-  const handleAchievementImages = (result: any) => {
-    const uploadedURL = result.info.secure_url;
-    setFormData((prevData) => ({
-      ...prevData,
-      photos: [...prevData.photos, uploadedURL],
-    }));
-  };
+
 
   const removePhoto = (index: number) => {
     setFormData((prevData) => ({
@@ -200,6 +213,38 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
     setFormData((prev) => ({ ...prev, startdate: date }));
   };
   
+  useEffect(()=>{
+    
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+    console.log(process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET);
+    console.log(process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET);
+    console.log(process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET);
+  },[])
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const uploadedURL = await uploadImageToCloud(file);
+      setFormData((prevData) => ({
+        ...prevData,
+        photos: [...prevData.photos, uploadedURL],
+      }));
+      console.log("Image uploaded successfully:", uploadedURL);
+    } catch (error) {
+      console.error("Failed to upload image:", error);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+
+
+
 
 
  
@@ -207,6 +252,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+     
       <div className="bg-black text-white p-8 rounded-lg w-full max-w-2xl">
         <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">Add Achievement</h2>
@@ -326,42 +372,41 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose }) => {
             onChange={(e) => handleChange(e, "venu")}
             className="w-full p-2 rounded bg-gray-700"
           />
-        <div className="">
-           
-           <CldUploadButton
-               onUpload={handleAchievementImages}
-               uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET} // Ensure this preset exists in Cloudinary
-               className="flex items-center space-x-2 bg-white text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
-             >
-               <UploadCloud size={20} /> 
-               <span>Upload Image</span>
-               <Pencil size={20} />
-             </CldUploadButton>
-             </div>
+           <div className="space-y-4">
+          <label className="block text-sm font-medium">Upload Achievement Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-500 bg-gray-700 rounded border border-gray-600 cursor-pointer"
+          />
+        </div>
              {formData.photos && formData.photos.length > 0 && (
   <div className="space-y-2">
     <h3 className="text-lg font-semibold">Uploaded Photos</h3>
-    <div className="grid grid-cols-4 gap-4">
-    {formData.photos.map((photoUrl, index) => (
-        <div key={index} className="relative flex flex-col items-center">
-          {/* Remove button */}
-          <button
-            onClick={() => removePhoto(index)}
-            className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
-            aria-label="Remove photo"
-          >
-            &times;
-          </button>
-          
-          {/* Photo preview */}
-          <img src={photoUrl} alt={`Uploaded photo ${index + 1}`} className="w-full h-32 object-cover rounded" />
-          
-          {/* View full image link */}
-          <a href={photoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline mt-2">
-            View Full Image
-          </a>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 gap-4">
+    {formData.photos && formData.photos.length > 0 && (
+          <div className="space-y-2">
+           
+            <div className="grid grid-cols-4 gap-4">
+              {formData.photos.map((photoUrl, index) => (
+                <div key={index} className="relative flex flex-col items-center">
+                  <button
+                    onClick={() => removePhoto(index)}
+                    className="absolute top-2 left-2 bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
+                    aria-label="Remove photo"
+                  >
+                    &times;
+                  </button>
+                  <img src={photoUrl} alt={`Uploaded photo ${index + 1}`} className="w-full h-32 object-cover rounded" />
+                  <a href={photoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline mt-2">
+                    View Full Image
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
     </div>
   </div>
 )}
