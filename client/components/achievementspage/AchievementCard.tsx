@@ -24,6 +24,7 @@ interface Achievement {
   enddate: string | null;
   organizer: string | null;
   venu: string | null;
+  approval_status:boolean;
   teammembers: {
     userid: number;
     fullname: string;
@@ -34,6 +35,7 @@ interface Achievement {
 interface Props {
   achievements: Achievement[];
   fetchDataAll: () => void;
+  isAdmin?: boolean;
 }
 
 interface FormData {
@@ -58,12 +60,15 @@ interface FormData {
 const AchievementComponent: React.FC<Props> = ({
   achievements,
   fetchDataAll,
+  isAdmin
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selecteAchieveId, setSelectedAchieveId] = useState<number | null>(
     null
   );
+  const [approvalStatusModal, setApprovalStatusModal] = useState(false);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const { toast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     achieveid: 0,
@@ -143,6 +148,35 @@ const AchievementComponent: React.FC<Props> = ({
     }
   };
 
+  const handleApprovalStatus = async () => {
+       
+    try {
+      const response = await axios.put(
+        `${BACKENDURL}achievement/poststatus/${selecteAchieveId}`,
+        { approval_status: !isApproved },
+        {
+          headers: {
+            Authorization: `Bearer ${getJWT()}`,
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        toast({
+            title: "Status Updated Successfully",
+            duration: 3000,
+          });
+          setApprovalStatusModal(false);
+          fetchDataAll();
+          
+         
+        
+        // window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error creating election:", error);
+    }
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 px-4 h-[70vh] overflow-y-scroll">
@@ -152,7 +186,16 @@ const AchievementComponent: React.FC<Props> = ({
             className="p-4 border rounded-lg shadow-md relative"
           >
             <div className="flex justify-end w-full right-10 top-5 space-x-3 absolute">
-              <button
+            {isAdmin &&  <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSelectedAchieveId(achievement.achieveid);
+                  setIsApproved(achievement.approval_status);
+                  setApprovalStatusModal(true);
+                }}
+                className={`p-2 ${achievement.approval_status ? 'text-gray-400 border border-gray-600 bg-gray-800' : 'bg-white text-black border border-black'}  rounded  text-xs`}>{achievement.approval_status ? "Approved" : "Approve"}
+              </button>}
+            <button
                 onClick={(event) => {
                   event.stopPropagation();
                   handleEditClick(achievement);
@@ -161,6 +204,7 @@ const AchievementComponent: React.FC<Props> = ({
               >
                 <MdModeEditOutline className="text-black text-sm" />
               </button>
+              
               <button
                 onClick={(event) => {
                   event.stopPropagation();
@@ -235,6 +279,15 @@ const AchievementComponent: React.FC<Props> = ({
           onCancel={() => {
             setOpenDeleteModal(false);
           }}
+        />
+      )}
+      {approvalStatusModal && (
+        <ConfirmationModal
+          title="Confirm Approval Status"
+          subtitle={`Are you sure you want to ${isApproved ? 'Disapprove' : 'Approve'} the Achievement? This action cannot be undone.`}
+          confirmButtonTitle={`${isApproved ? 'Disapprove' : 'Approve'}`}
+          onConfirm={handleApprovalStatus}
+          onCancel={()=>{setApprovalStatusModal(false)}}
         />
       )}
     </>

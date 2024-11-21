@@ -41,7 +41,7 @@ const AchievementManage: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
          className="bg-red-700 rounded-lg px-4 mr-2">+ Add Achievement</button>
           </div>
-      <AchievementComponent achievements={achievements}   fetchDataAll={fetchData}/>
+      <AchievementComponent achievements={achievements}   fetchDataAll={fetchData} isAdmin={true}/>
       {isModalOpen && (
         <AchievementModal onClose={() => setIsModalOpen(false)} 
         onAchievementAdded={handleAchievementAdded}
