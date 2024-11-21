@@ -100,6 +100,18 @@ export interface UserProfile {
   skills: string[] | null;
 }
 
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
+}
+
+
 export interface Role {
   roleid: number;
   roletitle: string;
@@ -115,3 +127,4 @@ export interface Role {
   statisticsaccess: boolean;
   isdefaultrole: boolean;
 }
+
