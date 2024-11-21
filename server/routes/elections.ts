@@ -18,26 +18,29 @@ import {
     getAllCommitteeMembers,
     getCommitteeMemberById,
     updateCommitteeMember,
-    deleteCommitteeMember
-  } from "../controllers/elections";
+    deleteCommitteeMember,
 
-  router.route("/newelection/create").post(createElection);
+    getCommitteeMembersByElectionId
+  } from "../controllers/elections";
+  import { validateBearerToken } from "../middlewares/validateBearerToken";
+  router.route("/newelection/create").post(validateBearerToken , createElection);
   router.route("/newelection/:electionid").get(getElectionById);
   router.route("/newelection").get(getAllElections);
-  router.route("/newelection/:electionid").put(updateElection);
-  router.route("/newelection/:electionid").delete(deleteElection);
+  router.route("/newelection/:electionid").put(validateBearerToken, updateElection);
+  router.route("/newelection/:electionid").delete(validateBearerToken, deleteElection);
 
-  router.route("/positions/create").post(createCommitteepost);
+  router.route("/positions/create").post(validateBearerToken, createCommitteepost);
   router.route("/positions/:committeepostid").get(getCommitteepostById);
   router.route("/positions").get(getAllCommitteeposts);
-  router.route("/positions/:committeepostid").put(updateCommitteepost);
-  router.route("/positions/:committeepostid").delete(deleteCommitteepost);
+  router.route("/positions/:committeepostid").put(validateBearerToken , updateCommitteepost);
+  router.route("/positions/:committeepostid").delete(validateBearerToken, deleteCommitteepost);
 
-  router.route("/members/create").post(createCommitteeMember);
+  router.route("/members/create").post(validateBearerToken, createCommitteeMember);
   router.route("/members/:committeeid").get(getCommitteeMemberById);
   router.route("/members").get(getAllCommitteeMembers);
-  router.route("/members/:committeeid").put(updateCommitteeMember);
-  router.route("/members/:committeeid").delete(deleteCommitteeMember);
+  router.route("/members/:committeeid").put(validateBearerToken , updateCommitteeMember);
+  router.route("/members/:committeeid").delete(validateBearerToken , deleteCommitteeMember);
+  router.route("/allmembers/:electionid").get(getCommitteeMembersByElectionId);
 
 
   export default router;

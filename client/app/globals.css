@@ -62,3 +62,109 @@
     margin: 0;
   }
 }
+
+
+.main-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.main-scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar {
+-ms-overflow-style: none; /* IE and Edge */
+scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+display: none; /* Chrome, Safari, and Opera */
+}
+
+::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #1c2027; /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DC2626; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #DC2626; 
+}
+
+/* Hide scrollbar for all browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* styles.css */
+.text-editor {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.toolbar {
+  margin-bottom: 8px;
+}
+
+.toolbar button {
+  margin-right: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.toolbar .is-active {
+  background-color: #111827;
+  color: #fff;
+}
+
+
+.text-editor .ProseMirror {
+  padding: 5px;
+  min-height: calc(1.5em * 10); /* Adjusts to 4 lines based on line-height */
+  line-height: 1.5em; /* Sets the spacing for each line */
+}
+
+.custom-html p {
+  margin-bottom: 1rem; /* Adds space between paragraphs */
+}
+
+.custom-html h1 {
+  font-weight: bold;
+  font-size: 30px; /* Set h1 font size to 30px */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.custom-html h2 {
+  font-weight: bold;
+  font-size: 23px; /* Set h2 font size to 20px */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.custom-html h3 {
+  font-weight: bold;
+  font-size: 20x; /* Set h3 font size to 15px */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.custom-html br {
+  display: block;
+  content: "";
+  margin-top: 0.5rem;
+}

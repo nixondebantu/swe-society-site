@@ -11,7 +11,9 @@ export interface SidebarItems {
 export interface RoleAccessType {
   statistics: boolean;
   achievement: boolean;
+  achievementmanage: boolean;
   blog: boolean;
+  usersblog: boolean;
   member: boolean;
   notice: boolean;
   bulkmail: boolean;
@@ -41,6 +43,23 @@ export interface MemberDataType {
   regno: string;
   session: string | null;
   role: string;
+}
+
+export interface Achievement {
+  teamid: number;
+  eventname: string | null;
+  organizer: string | null;
+  venu: string | null;
+  startdate: string | null;
+  enddate: string | null;
+  rank: string | null;
+  rankarea: string | null;
+  task: string | null;
+  solution: string | null;
+  techstack: string | null;
+  resources: string | null;
+  photos: string[] | null;
+  approval_status: boolean | null;
 }
 
 export interface TableProps {
@@ -76,3 +95,44 @@ export interface UserProfile {
   role: string;
   skills: string[] | null;
 }
+
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
+}
+
+
+export interface Role {
+  roleid: number;
+  roletitle: string;
+  blogaccess: boolean;
+  achievementaccess: boolean;
+  bulkmailaccess: boolean;
+  eventaccess: boolean;
+  ecaccess: boolean;
+  landingpageaccess: boolean;
+  membersaccess: boolean;
+  noticeaccess: boolean;
+  rolesaccess: boolean;
+  statisticsaccess: boolean;
+  isdefaultrole: boolean;
+}
+
+
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
+}
+

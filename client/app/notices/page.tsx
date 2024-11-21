@@ -1,5 +1,8 @@
+
+import NoticeBoard from "@/components/noticespage/noticeBoard";
+
 export default function page() {
-  return <div className=" ">
-    notices 
+  return <div>
+    <NoticeBoard/>
   </div>;
 }

@@ -10,12 +10,12 @@ import pool from "../db/dbconnect";
 
 const createUser = errorWrapper(
   async (req: Request, res: Response) => {
-    const { regno, session, email, password, role } = req.body;
+    const { regno, session, email, password, role, roleid } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const { rows } = await pool.query(
-      "INSERT INTO Users (regno, session, email, password, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [regno, session, email, hashedPassword, role]
+      "INSERT INTO Users (regno, session, email, password, role, roleid) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [regno, session, email, hashedPassword, role, roleid]
     );
 
     res.status(201).json(rows[0]);
@@ -45,7 +45,7 @@ const login = errorWrapper(
 
       const token = generateToken(
         {
-          id: rows[0].id,
+          userid: rows[0].userid,
           role: rows[0].role,
           regno: rows[0].regno,
         },
