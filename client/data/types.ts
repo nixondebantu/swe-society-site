@@ -11,6 +11,7 @@ export interface SidebarItems {
 export interface RoleAccessType {
   statistics: boolean;
   achievement: boolean;
+  achievementmanage: boolean;
   blog: boolean;
   usersblog: boolean;
   member: boolean;

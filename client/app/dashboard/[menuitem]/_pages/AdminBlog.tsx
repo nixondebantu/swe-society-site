@@ -39,7 +39,7 @@ interface Blog {
     approval_status: boolean;
   }
 
-const BlogForUsers: React.FC = () => {
+const AdminBlogManage: React.FC = () => {
   const userids = Number(getUserID()) || 2;
   const [selecteBlogId, setSelecteBlogId] = useState<number | null>(null);
     const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -71,12 +71,13 @@ const BlogForUsers: React.FC = () => {
     const [isShowFullBlog, setShowFullBlog] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [approvalStatusModal, setApprovalStatusModal] = useState(false);
+    const [isApproved, setIsApproved] = useState<boolean>(false);
     
     const { toast } = useToast();
     const fetchBlogs = async () => {
         try {
-          const userids = getUserID();
-          const response = await fetch(`${BACKENDURL}blog/userblog/${userids}`);
+          const response = await fetch(`${BACKENDURL}blog`);
           const data: Blog[] = await response.json();
           setBlogs(data);
         } catch (error) {
@@ -146,6 +147,35 @@ const BlogForUsers: React.FC = () => {
           console.error("Error creating election:", error);
         }
       };
+
+      const handleApprovalStatus = async () => {
+       
+        try {
+          const response = await axios.put(
+            `${BACKENDURL}blog/status/${selecteBlogId}`,
+            { approval_status: !isApproved },
+            {
+              headers: {
+                Authorization: `Bearer ${getJWT()}`,
+              },
+            }
+          );
+          if (response.status === 200 || response.status === 201) {
+            toast({
+                title: "Status Updated Successfully",
+                duration: 3000,
+              });
+              setApprovalStatusModal(false);
+              fetchBlogs();
+              
+             
+            
+            // window.location.reload();
+          }
+        } catch (error) {
+          console.error("Error creating election:", error);
+        }
+      };
       
 
     
@@ -164,9 +194,18 @@ const BlogForUsers: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
          className="bg-red-700 rounded-lg px-4 mr-2">+ Add Blog</button>
           </div>
-          {blogs.length > 0 ? (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3  mr-4">
        {blogs.map((blog) => (
+        <div className="w-full relative">
+            <div className="absolute top-4 right-32">
+                <button 
+                onClick={()=>{
+                    setSelecteBlogId(blog.blogid);
+                    setIsApproved(blog.approval_status);
+                    setApprovalStatusModal(true);
+                }}
+                className={`p-2 ${blog.approval_status ? 'text-gray-400 border border-gray-600' : 'bg-white text-black'}  rounded  text-xs`}>{blog.approval_status ? "Approved" : "Approve"}</button>
+                </div> 
         <BlogCard
           key={blog.blogid}
           blogid={blog.blogid}
@@ -180,13 +219,9 @@ const BlogForUsers: React.FC = () => {
           setOpenEditModal={setOpenEditModal}
           setShowFullBlog={setShowFullBlog}
         />
+        </div>
       ))}
       </div>
-       ) : (
-        <div className="text-gray-500 text-center py-8">
-          No blogs available.
-        </div>
-      )}
       {isModalOpen && (
          <BlogModal onClose={() => setIsModalOpen(false)} fetchDataAll={fetchBlogs} />
       )}
@@ -207,6 +242,16 @@ const BlogForUsers: React.FC = () => {
         />
       )}
 
+{approvalStatusModal && (
+        <ConfirmationModal
+          title="Confirm Approval Status"
+          subtitle={`Are you sure you want to ${isApproved ? 'Disapprove' : 'Approve'} the Blog? This action cannot be undone.`}
+          confirmButtonTitle={`${isApproved ? 'Disapprove' : 'Approve'}`}
+          onConfirm={handleApprovalStatus}
+          onCancel={()=>{setApprovalStatusModal(false)}}
+        />
+      )}
+
       {isShowFullBlog  && <div className="w-full">
         {/* <ElectionMemberDetails electionId={selectedElectionId} setShowFullBlog={setShowFullBlog}/> */}
         </div>}
@@ -221,4 +266,4 @@ const BlogForUsers: React.FC = () => {
   );
 };
 
-export default BlogForUsers;
+export default AdminBlogManage;

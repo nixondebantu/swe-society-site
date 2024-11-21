@@ -143,7 +143,7 @@ const AchievementModal: React.FC<AchievementFormProps> = ({ onClose, onAchieveme
       techstack: formData.techstack,
       resources: formData.resources,
       photos: formData.photos,
-      approval_status: true, // Assuming this is true by default, you can make it dynamic if needed
+      approval_status: false, // Assuming this is true by default, you can make it dynamic if needed
     };
   
 

@@ -7,11 +7,10 @@ import axios from 'axios';
 import { getJWT, getUserID } from "@/data/cookies/getCookies";
 import { CldUploadButton } from "next-cloudinary";
 import { UploadCloud, Pencil } from "lucide-react";
-import ArticleEditor from "./ArticleEditor";
+
 import { uploadImageToCloud } from "@/utils/ImageUploadService";
-import Todo from "./article/NotePicker";
-import Notes from "./article/Notes";
-import HtmlContent from "./BlogComp/HtmlContent";
+import ArticleEditor from "../ArticleEditor";
+
 
 
 
@@ -21,9 +20,11 @@ import HtmlContent from "./BlogComp/HtmlContent";
 interface BlogFormProps {
   onClose: () => void;
   fetchDataAll: () => void;
+  formDataPrev: FormData;
 }
 
 interface FormData {
+    blogid: number;
   userid: number;
   headline: string;
   designation: string;
@@ -34,19 +35,10 @@ interface FormData {
   approval_status: boolean;
 }
 
-const BlogModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll }) => {
+const BlogEditModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll, formDataPrev }) => {
     const [content, setContent] = useState('<p>Initial content</p>');
     const userids = Number(getUserID()) || 2;
-  const [formData, setFormData] = useState<FormData>({
-    userid: userids,
-    headline: "",
-    designation: "",
-    current_institution: "",
-    article: "",
-    photos: [],
-    blogtype: "",
-    approval_status: true,
-  });
+  const [formData, setFormData] = useState<FormData>(formDataPrev);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     console.log(formData);
@@ -89,7 +81,7 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll }) => {
     try {
       console.log("All Data", formData);
   
-      const response = await axios.post(`${BACKENDURL}blog/create`, formData, {
+      const response = await axios.put(`${BACKENDURL}blog/${formData.blogid}`, formData, {
         headers: {
           Authorization: `Bearer ${getJWT()}`,
         },
@@ -142,7 +134,7 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-black text-white p-8 rounded-lg w-full max-w-5xl">
         <div className="flex justify-between">
-          <h2 className="text-2xl font-bold mb-4">Add Blog</h2>
+          <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
           <button
             onClick={onClose}
             className="bg-gray-200 p-1 m-2 text-gray-700 w-5 h-5 flex justify-center items-center rounded-full"
@@ -238,4 +230,4 @@ const BlogModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll }) => {
   );
 };
 
-export default BlogModal;
+export default BlogEditModal;

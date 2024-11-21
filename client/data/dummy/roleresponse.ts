@@ -3,6 +3,7 @@ import { RoleAccessType } from "../types";
 export const roleAccess: RoleAccessType = {
   statistics: true,
   achievement: true,
+  achievementmanage: true,
   blog: true,
   member: true,
   notice: true,

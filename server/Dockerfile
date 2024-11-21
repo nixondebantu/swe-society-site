@@ -20,4 +20,5 @@ RUN npm run build
 EXPOSE 5050
 
 # Start the application in production mode
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
