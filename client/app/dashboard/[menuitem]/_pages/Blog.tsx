@@ -164,6 +164,7 @@ const BlogForUsers: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
          className="bg-red-700 rounded-lg px-4 mr-2">+ Add Blog</button>
           </div>
+          {blogs.length > 0 ? (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3  mr-4">
        {blogs.map((blog) => (
         <BlogCard
@@ -181,6 +182,11 @@ const BlogForUsers: React.FC = () => {
         />
       ))}
       </div>
+       ) : (
+        <div className="text-gray-500 text-center py-8">
+          No blogs available.
+        </div>
+      )}
       {isModalOpen && (
          <BlogModal onClose={() => setIsModalOpen(false)} fetchDataAll={fetchBlogs} />
       )}
