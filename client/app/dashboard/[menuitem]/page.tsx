@@ -11,6 +11,7 @@ import Profile from "./_pages/Profile";
 import ElectionCommittee from "./_pages/ElectionCommittee";
 import BlogForUsers from "./_pages/Blog";
 import Roles from "./_pages/Roles";
+import AdminBlogManage from "./_pages/AdminBlog";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -51,7 +52,7 @@ function Page({ params }: { params: { menuitem: string } }) {
     case "ec":
       return <ElectionCommittee />;
     case "blog":
-      return <BlogForUsers />;
+      return <AdminBlogManage />;
     case "usersblog":
       return <BlogForUsers />;
 

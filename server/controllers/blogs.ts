@@ -81,6 +81,33 @@ const updateBlog = errorWrapper(
     { statusCode: 500, message: `Couldn't update blog` }
 );
 
+const updateBlogStatus = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { blogid } = req.params;
+        const { approval_status } = req.body;
+
+        if (approval_status === undefined) {
+            throw new CustomError('approval_status is required', 400);
+        }
+
+        const { rows } = await pool.query(
+            `UPDATE Blogs
+             SET approval_status = $1
+             WHERE blogid = $2
+             RETURNING *`,
+            [approval_status, blogid]
+        );
+
+        if (rows.length === 0) {
+            throw new CustomError('Blog not found', 404);
+        }
+
+        res.json(rows[0]);
+    },
+    { statusCode: 500, message: `Couldn't update blog` }
+);
+
+
 
 // Delete a blog
 const deleteBlog = errorWrapper(
@@ -102,5 +129,6 @@ export {
     getAllBlogs,
     getBlogById,
     updateBlog,
-    deleteBlog
+    deleteBlog,
+    updateBlogStatus
 };

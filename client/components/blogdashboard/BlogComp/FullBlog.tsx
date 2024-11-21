@@ -66,11 +66,12 @@ const FullBlogCard: React.FC<CardProps> = ({
                 <div>Back</div>
             </button>
         </div>
+        
          {blogDetails.photos && blogDetails.photos.length >0 && (
     <img
       src={blogDetails.photos[0]}
       alt={blogDetails.headline}
-      className="w-3/5 h-[50vh] object-cover rounded-lg"
+      className="mt-2 w-full lg:w-3/5 h-[50vh] object-cover rounded-lg"
     />
   )}
         
