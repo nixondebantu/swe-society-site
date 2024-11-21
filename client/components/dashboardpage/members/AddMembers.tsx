@@ -12,14 +12,16 @@ import { MemberRowType } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
 import axios from "axios";
 import { LoaderCircle, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FileUpload from "./FileUpload";
+import { headerConfig } from "@/lib/header_config";
 
 const AddMembers: React.FC = () => {
   const { toast } = useToast();
   const [members, setMembers] = useState<MemberRowType[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [addingMember, setAddingMember] = useState<boolean>(false);
+  const [defaultRole, setDefaultRole] = useState<string>("");
 
   const removeMember = (indexToRemove: number) => {
     const updatedMembers = members.filter(
@@ -34,7 +36,8 @@ const AddMembers: React.FC = () => {
     try {
       const response = await axios.post(
         APIENDPOINTS.auth.createMultiuser,
-        members
+        members,
+        headerConfig()
       );
       console.log(response);
       if (response.status === 201) {
@@ -59,6 +62,23 @@ const AddMembers: React.FC = () => {
     setAddingMember(false);
     setOpenDialog(false);
   };
+  const getDefualtRole = async () => {
+    try {
+      const response = await axios.get(
+        APIENDPOINTS.role.getRoleInfo,
+        headerConfig()
+      );
+      const defaultRoleData = response.data.find(
+        (role: { isdefaultrole: boolean }) => role.isdefaultrole
+      );
+      setDefaultRole(defaultRoleData ? defaultRoleData.roletitle : "");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getDefualtRole();
+  }, []);
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -110,7 +130,7 @@ const AddMembers: React.FC = () => {
               </DialogHeader>
               <DialogDescription>
                 Are you sure to add {members.length} member
-                {members.length !== 1 ? "s" : ""} as general member?
+                {members.length !== 1 ? "s" : ""} as {defaultRole}?
               </DialogDescription>
               <div className="flex justify-end gap-3">
                 <DialogTrigger asChild>

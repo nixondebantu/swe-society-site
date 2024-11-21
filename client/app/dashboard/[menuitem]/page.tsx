@@ -6,12 +6,8 @@ import { useEffect, useState } from "react";
 import Achievement from "./_pages/Achievement";
 import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
-
-import Event from "./_pages/Event";
 import Profile from "./_pages/Profile";
-
-import Event from "./_pages/event";
-
+import Event from "./_pages/Event";
 
 import ElectionCommittee from "./_pages/ElectionCommittee";
 import BlogForUsers from "./_pages/Blog";
@@ -61,7 +57,7 @@ function Page({ params }: { params: { menuitem: string } }) {
     case "event":
       return <Event />;
 
-      case "achievement_manage":
+    case "achievement_manage":
       return <AchievementManage />;
     case "ec":
       return <ElectionCommittee />;
