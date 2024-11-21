@@ -337,7 +337,7 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
 
 
 
-const getUserAchievementsAll = errorWrapper(async (req: Request, res: Response) => {
+const getAchievementsAll = errorWrapper(async (req: Request, res: Response) => {
    
     // Query to get achievements of all users
     const achievementsQuery = `
@@ -387,6 +387,64 @@ const getUserAchievementsAll = errorWrapper(async (req: Request, res: Response) 
     statusCode: 500,
     message: "Couldn't retrieve achievements"
 });
+
+
+const getApprovedAchievements = errorWrapper(async (req: Request, res: Response) => {
+    // Query to get all achievements with approval_status true
+    const achievementsQuery = `
+    SELECT DISTINCT ON (a.achieveid)
+        a.achieveid,
+        a.teamid,
+        t.teamname,
+        t.mentor,
+        a.eventname,
+        a.segment,
+        a.organizer,
+        a.venu,
+        a.startdate,
+        a.enddate,
+        a.rank,
+        a.rankarea,
+        a.task,
+        a.solution,
+        a.techstack,
+        a.resources,
+        a.photos,
+        a.approval_status,
+        (
+            SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+            FROM TeamMembers tm
+            JOIN Users u ON tm.userid = u.userid
+            WHERE tm.teamid = a.teamid
+        ) AS teamMembers
+    FROM
+        Achievements a
+    JOIN
+        TeamMembers tm ON a.teamid = tm.teamid
+    JOIN
+        Teams t ON a.teamid = t.teamid
+    WHERE
+        a.approval_status = true  -- Filter achievements with approval_status true
+    ORDER BY
+        a.achieveid;  -- Order by achievement ID
+`;
+
+    const { rows } = await pool.query(achievementsQuery);
+
+    if (rows.length === 0) {
+        throw new CustomError("No approved achievements found", 404);
+    }
+
+    res.json({ achievements: rows });
+}, {
+    statusCode: 500,
+    message: "Couldn't retrieve approved achievements"
+});
+
+
+
+
+
 
 
 // interface TeamMember {
@@ -565,7 +623,9 @@ export {
     deleteAchievement,
     getUserAchievements,
     createTeamAndAchievement,
-    getUserAchievementsAll,
+    getAchievementsAll,
 
-    updateAchievementStatus
+    updateAchievementStatus,
+    getApprovedAchievements
+    
 };

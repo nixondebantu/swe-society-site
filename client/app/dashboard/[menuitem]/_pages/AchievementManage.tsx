@@ -1,19 +1,18 @@
 "use client";
 import AchievementComponent from "@/components/achievementspage/AchievementCard";
-import { APIENDPOINTS, BACKENDURL } from "@/data/urls";
+import { APIENDPOINTS } from "@/data/urls";
 import React, { useEffect, useState } from "react";
 import { getUserID, getUserReg } from "@/data/cookies/getCookies";
 import AchievementModal from "@/components/achievementspage/AchievementModal";
 
-const Achievement: React.FC = () => {
+const AchievementManage: React.FC = () => {
     const [achievements, setAchievements] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const fetchData = async () => {
       try {
-         const userids = getUserID();
-          const response = await fetch(`${BACKENDURL}achievement/individual/${userids}`);
+          const response = await fetch(`${APIENDPOINTS.achievement.getAllAchievement}`);
           const data = await response.json();
-          setAchievements(data.achievement);
+          setAchievements(data.achievements);
       } catch (error) {
           console.error('Error fetching data: ', error);
       }
@@ -52,4 +51,4 @@ const Achievement: React.FC = () => {
   );
 };
 
-export default Achievement;
+export default AchievementManage;

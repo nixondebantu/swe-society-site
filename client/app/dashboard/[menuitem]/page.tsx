@@ -12,6 +12,7 @@ import ElectionCommittee from "./_pages/ElectionCommittee";
 import BlogForUsers from "./_pages/Blog";
 import Roles from "./_pages/Roles";
 import AdminBlogManage from "./_pages/AdminBlog";
+import AchievementManage from "./_pages/AchievementManage";
 
 function Page({ params }: { params: { menuitem: string } }) {
   const [token, setToken] = useState<string | null>(null);
@@ -49,6 +50,8 @@ function Page({ params }: { params: { menuitem: string } }) {
       return <Roles />;
     case "achievement":
       return <Achievement />;
+      case "achievement_manage":
+      return <AchievementManage />;
     case "ec":
       return <ElectionCommittee />;
     case "blog":
