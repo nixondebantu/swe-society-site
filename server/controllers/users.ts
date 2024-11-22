@@ -7,35 +7,66 @@ const updateUser = errorWrapper(
     const { userId } = req.params;
     const updates = req.body;
 
-    // Construct SET clause dynamically from the updates object
-    let setClause = "";
-    const values = [];
-
-    for (const key in updates) {
-      if (key !== "userId") {
-        // Exclude userId from updates
-        setClause += `${key} = $${values.length + 1}, `;
-        values.push(updates[key]);
-      }
+    if (Number(userId) !== req.jwtPayload.userid) {
+      return res.status(403).json({
+        message:
+          "Access denied. You do not have permission to update this profile.",
+      });
     }
-
-    // Remove trailing comma and space
-    setClause = setClause.slice(0, -2);
-
-    if (values.length === 0) {
-      throw new CustomError("No fields provided for update", 404);
-    }
-
-    // Construct the SQL query
-    const query = {
-      text: `UPDATE Users SET ${setClause} WHERE userId = $${
-        values.length + 1
-      } RETURNING *`,
-      values: [...values, userId],
-    };
 
     try {
-      const { rows } = await pool.query(query);
+      // List of allowed fields to update
+      const allowedFields = [
+        "bio",
+        "blood_group",
+        "college",
+        "cv",
+        "email",
+        "experience",
+        "facebook_id",
+        "fullname",
+        "github_id",
+        "hometown",
+        "linkedin_id",
+        "profile_picture",
+        "projects",
+        "school",
+        "session",
+        "skills",
+        "stop_stalk_id",
+        "whatsapp",
+        "phone_number",
+      ];
+
+      // Build query dynamically
+      const fields = [];
+      const values = [];
+      let index = 1;
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (allowedFields.includes(key)) {
+          fields.push(`${key} = $${index}`);
+          values.push(value);
+          index++;
+        }
+      }
+
+      if (fields.length === 0) {
+        return res.status(400).json({
+          message: "No valid fields provided for update.",
+        });
+      }
+
+      const query = `
+        UPDATE Users
+        SET ${fields.join(", ")}
+        WHERE userId = $${index}
+        RETURNING *;
+      `;
+
+      values.push(userId); // Add userId as the final parameter
+
+      const { rows } = await pool.query(query, values);
 
       if (rows.length === 0) {
         throw new CustomError("User not found", 404);

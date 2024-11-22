@@ -7,6 +7,8 @@ import { getUserID } from "@/data/cookies/getCookies";
 import { updateProfileCookies } from "@/data/cookies/setCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
+import { headerConfig } from "@/lib/header_config";
+import { uploadImageToCloud } from "@/utils/ImageUploadService";
 import axios from "axios";
 import { CircleX, LoaderIcon, Pencil, Save } from "lucide-react";
 import React, { useState } from "react";
@@ -14,8 +16,6 @@ import CVSection from "./CVSection";
 import EditProject from "./EditProject";
 import ProfileCard from "./ProfileCard";
 import SkillManagement from "./SkillManagement";
-import { uploadImageToCloud } from "@/utils/ImageUploadService";
-import { headerConfig } from "@/lib/header_config";
 
 interface EditProfileProps {
   values: UserProfile | undefined;
@@ -74,29 +74,15 @@ const EditProfile: React.FC<EditProfileProps> = ({
     }
   };
 
-  const handleCVUpload = (result: any) => {
-    const uploadedURL = result.info.secure_url;
-    setData((prevData) => ({ ...prevData, cv: uploadedURL }));
-  };
-
-  const handleRemoveCV = () => {
-    setData((prevData) => ({ ...prevData, cv: null }));
-  };
-
   const handleInputChange = (
     field: keyof UserProfile,
     value: string | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    let newValue: string;
-    if (typeof value === "string") {
-      newValue = value;
-    } else if (value.target && typeof value.target.value === "string") {
-      newValue = value.target.value;
-    } else {
-      newValue = "";
-    }
+    const newValue = typeof value === "string" ? value : value.target.value;
+
     setData((prevData) => ({ ...prevData, [field]: newValue }));
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
