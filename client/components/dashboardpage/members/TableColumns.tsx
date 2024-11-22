@@ -1,11 +1,14 @@
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MemberDataType } from "@/data/types";
 import { ColumnDef } from "@tanstack/react-table";
+import { Info } from "lucide-react";
 
 export const getTableColumns = (
   selectedUserIds: number[],
   handleSelectUser: (userId: number, selected: boolean) => void,
-  handleSelectAllVisible: (selectAll: boolean) => void
+  handleSelectAllVisible: (selectAll: boolean) => void,
+  onViewDetails: (userId: number) => void
 ): ColumnDef<MemberDataType>[] => [
   {
     id: "select",
@@ -31,4 +34,16 @@ export const getTableColumns = (
   { accessorKey: "email", header: "Email" },
   { accessorKey: "session", header: "Session" },
   { accessorKey: "role", header: "Role" },
+  {
+    id: "viewDetails",
+    cell: ({ row }) => (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => onViewDetails(row.original.userid)}
+      >
+        <Info className="h-4 w-4" />
+      </Button>
+    ),
+  },
 ];

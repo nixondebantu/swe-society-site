@@ -208,12 +208,26 @@ const getAchievementById = errorWrapper(
 const updateAchievement = errorWrapper(
     async (req: Request, res: Response) => {
         const { achieveid } = req.params;
-        const { teamid, eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status } = req.body;
+        const { eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status } = req.body;
 
         const { rows } = await pool.query(
-            `UPDATE Achievements SET teamid = $1, eventname = $2, organizer = $3, venu = $4, startdate = $5, enddate = $6, rank = $7, rankarea = $8, task = $9, solution = $10, techstack = $11, resources = $12, photos = $13, approval_status = $14
-             WHERE achieveid = $15 RETURNING *`,
-            [teamid, eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status, achieveid]
+            `UPDATE Achievements 
+             SET eventname = $1, 
+                 organizer = $2, 
+                 venu = $3, 
+                 startdate = $4, 
+                 enddate = $5, 
+                 rank = $6, 
+                 rankarea = $7, 
+                 task = $8, 
+                 solution = $9, 
+                 techstack = $10, 
+                 resources = $11, 
+                 photos = $12, 
+                 approval_status = $13
+             WHERE achieveid = $14 
+             RETURNING *`,
+            [eventname, organizer, venu, startdate, enddate, rank, rankarea, task, solution, techstack, resources, photos, approval_status, achieveid]
         );
 
         if (rows.length === 0) {
@@ -224,6 +238,33 @@ const updateAchievement = errorWrapper(
     },
     { statusCode: 500, message: `Couldn't update achievement` }
 );
+
+const updateAchievementStatus = errorWrapper(
+    async (req: Request, res: Response) => {
+        const { achieveid } = req.params; // Get the achievement ID from the URL parameters
+        const { approval_status } = req.body; // Extract the new approval status from the request body
+
+        if (approval_status === undefined) {
+            throw new CustomError('approval_status is required', 400); // Ensure `approval_status` is provided
+        }
+
+        const { rows } = await pool.query(
+            `UPDATE Achievements 
+             SET approval_status = $1 
+             WHERE achieveid = $2 
+             RETURNING *`, // Only update `approval_status`
+            [approval_status, achieveid]
+        );
+
+        if (rows.length === 0) {
+            throw new CustomError('Achievement not found', 404); // Handle case where no achievement is found
+        }
+
+        res.json(rows[0]); // Respond with the updated record
+    },
+    { statusCode: 500, message: `Couldn't update approval status` }
+);
+
 
 // Delete an achievement
 const deleteAchievement = errorWrapper(
@@ -296,7 +337,7 @@ const getUserAchievements = errorWrapper(async (req: Request, res: Response) => 
 
 
 
-const getUserAchievementsAll = errorWrapper(async (req: Request, res: Response) => {
+const getAchievementsAll = errorWrapper(async (req: Request, res: Response) => {
    
     // Query to get achievements of all users
     const achievementsQuery = `
@@ -346,6 +387,64 @@ const getUserAchievementsAll = errorWrapper(async (req: Request, res: Response) 
     statusCode: 500,
     message: "Couldn't retrieve achievements"
 });
+
+
+const getApprovedAchievements = errorWrapper(async (req: Request, res: Response) => {
+    // Query to get all achievements with approval_status true
+    const achievementsQuery = `
+    SELECT DISTINCT ON (a.achieveid)
+        a.achieveid,
+        a.teamid,
+        t.teamname,
+        t.mentor,
+        a.eventname,
+        a.segment,
+        a.organizer,
+        a.venu,
+        a.startdate,
+        a.enddate,
+        a.rank,
+        a.rankarea,
+        a.task,
+        a.solution,
+        a.techstack,
+        a.resources,
+        a.photos,
+        a.approval_status,
+        (
+            SELECT json_agg(json_build_object('userid', u.userid, 'fullname', u.fullname, 'session', u.session))
+            FROM TeamMembers tm
+            JOIN Users u ON tm.userid = u.userid
+            WHERE tm.teamid = a.teamid
+        ) AS teamMembers
+    FROM
+        Achievements a
+    JOIN
+        TeamMembers tm ON a.teamid = tm.teamid
+    JOIN
+        Teams t ON a.teamid = t.teamid
+    WHERE
+        a.approval_status = true  -- Filter achievements with approval_status true
+    ORDER BY
+        a.achieveid;  -- Order by achievement ID
+`;
+
+    const { rows } = await pool.query(achievementsQuery);
+
+    if (rows.length === 0) {
+        throw new CustomError("No approved achievements found", 404);
+    }
+
+    res.json({ achievements: rows });
+}, {
+    statusCode: 500,
+    message: "Couldn't retrieve approved achievements"
+});
+
+
+
+
+
 
 
 // interface TeamMember {
@@ -524,5 +623,9 @@ export {
     deleteAchievement,
     getUserAchievements,
     createTeamAndAchievement,
-    getUserAchievementsAll
+    getAchievementsAll,
+
+    updateAchievementStatus,
+    getApprovedAchievements
+    
 };

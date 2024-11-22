@@ -87,67 +87,100 @@ const createMultiUsersWithMailSend = errorWrapper(
     const users = req.body;
     const failedUsers = [];
 
-    for (const user of users) {
-      const { regno, session, email } = user;
-
-      // Check if registration number or email already exists
-      const regnoExists = await pool.query(
-        "SELECT 1 FROM Users WHERE regno = $1",
-        [regno]
-      );
-      const emailExists = await pool.query(
-        "SELECT 1 FROM Users WHERE email = $1",
-        [email]
+    try {
+      const { rows: accessCheckRows } = await pool.query(
+        `SELECT membersaccess 
+       FROM Roles 
+       JOIN Users ON Roles.roleid = Users.roleid 
+       WHERE Users.userid = $1`,
+        [req.jwtPayload.userid]
       );
 
-      if (regnoExists.rows.length > 0) {
-        failedUsers.push({
-          regno,
-          email,
-          message: "Registration number already exists",
+      if (accessCheckRows.length === 0 || !accessCheckRows[0].rolesaccess) {
+        return res.status(403).json({
+          message: "Access denied. You do not have permission to add member.",
         });
-        continue;
       }
 
-      if (emailExists.rows.length > 0) {
-        failedUsers.push({
-          regno,
-          email,
-          message: "Email address already exists",
+      const defaultRole = await pool.query(
+        "SELECT roleid FROM Roles WHERE isDefaultRole = TRUE LIMIT 1"
+      );
+
+      if (defaultRole.rows.length === 0) {
+        return res.status(500).json({
+          message: "Default role is not defined in the database",
         });
-        continue;
       }
 
-      const password = generateRandomPassword(8);
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const defaultRoleId = defaultRole.rows[0].roleid;
 
-      try {
-        const { rows } = await pool.query(
-          "INSERT INTO Users (regno, session, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
-          [regno, session, email, hashedPassword]
+      for (const user of users) {
+        const { regno, session, email } = user;
+
+        // Check if registration number or email already exists
+        const regnoExists = await pool.query(
+          "SELECT 1 FROM Users WHERE regno = $1",
+          [regno]
+        );
+        const emailExists = await pool.query(
+          "SELECT 1 FROM Users WHERE email = $1",
+          [email]
         );
 
-        sendMail(
-          regno,
-          email,
-          `Welcome To SWE Society!`,
-          `Your account has been created by Admin! Here are the Credentials:`,
-          `regno: ${regno}<br>email: ${email}<br>password: ${password}<br><br>Regards,<br>SWE Society Committee`
-        );
-      } catch (error) {
-        console.error(`Failed to create user with regno ${regno}:`, error);
-        failedUsers.push({ regno, email, message: "Failed to create user" });
-      }
-    }
+        if (regnoExists.rows.length > 0) {
+          failedUsers.push({
+            regno,
+            email,
+            message: "Registration number already exists",
+          });
+          continue;
+        }
 
-    if (failedUsers.length > 0) {
-      res.status(207).json({
-        message: "Some users could not be created",
-        failedUsers,
-      });
-    } else {
-      res.status(201).json({
-        message: "All users created successfully",
+        if (emailExists.rows.length > 0) {
+          failedUsers.push({
+            regno,
+            email,
+            message: "Email address already exists",
+          });
+          continue;
+        }
+
+        const password = generateRandomPassword(8);
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        try {
+          const { rows } = await pool.query(
+            "INSERT INTO Users (regno, session, email, password, roleid) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [regno, session, email, hashedPassword, defaultRoleId]
+          );
+
+          sendMail(
+            regno,
+            email,
+            `Welcome To SWE Society!`,
+            `Your account has been created by Admin! Here are the Credentials:`,
+            `regno: ${regno}<br>email: ${email}<br>password: ${password}<br><br>Regards,<br>SWE Society Committee`
+          );
+        } catch (error) {
+          console.error(`Failed to create user with regno ${regno}:`, error);
+          failedUsers.push({ regno, email, message: "Failed to create user" });
+        }
+      }
+
+      if (failedUsers.length > 0) {
+        res.status(207).json({
+          message: "Some users could not be created",
+          failedUsers,
+        });
+      } else {
+        res.status(201).json({
+          message: "All users created successfully",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching default role:", error);
+      res.status(500).json({
+        message: "An error occurred while creating users",
       });
     }
   },

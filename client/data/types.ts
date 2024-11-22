@@ -11,6 +11,7 @@ export interface SidebarItems {
 export interface RoleAccessType {
   statistics: boolean;
   achievement: boolean;
+  achievementmanage: boolean;
   blog: boolean;
   usersblog: boolean;
   member: boolean;
@@ -42,25 +43,24 @@ export interface MemberDataType {
   regno: string;
   session: string | null;
   role: string;
+  roleid: number;
+  roletitle: string;
 }
-
-
-
 
 export interface Achievement {
   teamid: number;
   eventname: string | null;
   organizer: string | null;
   venu: string | null;
-  startdate: string | null;  
-  enddate: string | null;   
+  startdate: string | null;
+  enddate: string | null;
   rank: string | null;
   rankarea: string | null;
   task: string | null;
   solution: string | null;
   techstack: string | null;
   resources: string | null;
-  photos: string[] | null;   
+  photos: string[] | null;
   approval_status: boolean | null;
 }
 
@@ -71,11 +71,9 @@ export interface TableProps {
   onSelectAllVisible: (selectAll: boolean) => void;
 }
 
-
 export interface UserProfile {
   userid: number;
   fullname: string;
-  password: string;
   email: string;
   profile_picture: string;
   regno: string;
@@ -99,6 +97,17 @@ export interface UserProfile {
   skills: string[] | null;
 }
 
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
+}
+
 export interface Role {
   roleid: number;
   roletitle: string;
@@ -113,4 +122,15 @@ export interface Role {
   rolesaccess: boolean;
   statisticsaccess: boolean;
   isdefaultrole: boolean;
+}
+
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
 }
