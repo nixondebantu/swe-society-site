@@ -52,8 +52,41 @@ const updateUser = errorWrapper(
 
 const getAllUsers = errorWrapper(
   async (req: Request, res: Response) => {
-    const { rows } = await pool.query("SELECT * FROM Users");
-    res.json(rows);
+    try {
+      const { rows } = await pool.query(`
+        SELECT 
+          u.userid,
+          u.fullname,
+          u.email,
+          u.regno,
+          u.session,
+          r.roletitle AS role,
+          u.profile_picture,
+          u.bio,
+          u.linkedin_id,
+          u.github_id,
+          u.stop_stalk_id,
+          u.whatsapp,
+          u.facebook_id,
+          u.blood_group,
+          u.school,
+          u.college,
+          u.hometown,
+          u.cv,
+          u.experience,
+          u.projects,
+          u.skills,
+          u.is_alumni
+        FROM Users u
+        LEFT JOIN Roles r
+        ON u.roleid = r.roleid
+      `);
+
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching users with roles:", error);
+      res.status(500).json({ message: `Couldn't get Users` });
+    }
   },
   { statusCode: 500, message: `Couldn't get Users` }
 );
