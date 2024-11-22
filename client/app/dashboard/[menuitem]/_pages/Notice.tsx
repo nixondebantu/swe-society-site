@@ -75,7 +75,12 @@ const Notice: React.FC = () => {
       <div className="w-full h-max grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {filteredNotices.length > 0 ? (
           filteredNotices.map((notice, index) => (
-            <Notice_Card key={index} notice={notice} handle_dlt={handle_dlt} />
+            <Notice_Card
+              key={index}
+              notice={notice}
+              handle_dlt={handle_dlt}
+              fetch_notices={fetch_notices}
+            />
           ))
         ) : (
           <p className="text-white">No matching notices found.</p>

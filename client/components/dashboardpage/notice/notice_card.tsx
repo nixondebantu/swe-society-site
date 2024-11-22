@@ -26,9 +26,14 @@ interface NoticeCardProps {
   notice: NoticeData;
   key: number;
   handle_dlt: (noticeid: any) => void;
+  fetch_notices: () => void;
 }
 
-export default function Component({ notice, handle_dlt }: NoticeCardProps) {
+export default function Component({
+  notice,
+  handle_dlt,
+  fetch_notices,
+}: NoticeCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -56,6 +61,7 @@ export default function Component({ notice, handle_dlt }: NoticeCardProps) {
               <Trash2 className="h-4 w-4" />
             </Button>
             <EditNotice
+              fetch_notices={fetch_notices}
               noticeid={notice.noticeid}
               notice_provider={notice.notice_provider}
               notice_date={notice.notice_date}
@@ -104,7 +110,7 @@ export default function Component({ notice, handle_dlt }: NoticeCardProps) {
               onClick={() => window.open(notice.file!, "_blank")}
             >
               <FileText className="h-3 w-3 mr-1" />
-              PDF
+              Document
             </Button>
           )}
         </div>

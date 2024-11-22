@@ -85,8 +85,8 @@ function AddNotice({ fetch_notices }: AddNoticeProps) {
         .post("http://localhost:5050/notice/create", updatedNotice)
         .then((res) => {
           console.log(res);
+          fetch_notices();
         });
-      fetch_notices();
     } catch (error) {
       console.error("Error submitting notice:", error);
     }
