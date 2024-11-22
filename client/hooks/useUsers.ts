@@ -1,6 +1,7 @@
 import { useToast } from "@/components/ui/use-toast";
 import { MemberDataType } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
+import { headerConfig } from "@/lib/header_config";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -40,6 +41,65 @@ export const useUsers = () => {
     }
   };
 
+  const handleRoleUpdate = async (
+    userIds: number[],
+    newRoleId: number
+  ): Promise<boolean> => {
+    try {
+      const response = await axios.put(
+        APIENDPOINTS.role.assignRole,
+        {
+          roleid: newRoleId,
+          userIds,
+        },
+        headerConfig()
+      );
+
+      if (response.status === 200) {
+        // Get the role title from the response if available, or fetch it
+        const roleResponse = await axios.get(
+          APIENDPOINTS.role.getRoleInfo,
+          headerConfig()
+        );
+        const newRoleTitle =
+          roleResponse.data.find(
+            (role: { roleid: number; roletitle: string }) =>
+              role.roleid === newRoleId
+          )?.roletitle || "";
+
+        // Update the local state to reflect the role change
+        setData((prevData) =>
+          prevData.map((user) =>
+            userIds.includes(user.userid)
+              ? {
+                  ...user,
+                  roleid: newRoleId,
+                  roletitle: newRoleTitle,
+                  role: newRoleTitle,
+                }
+              : user
+          )
+        );
+
+        setSelectedUserIds([]); // Clear selection after successful update
+
+        toast({
+          title: "Role Updated",
+          description: `Role has been updated for ${userIds.length} user(s).`,
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error updating role:", error);
+      toast({
+        title: "Error updating role",
+        description: "Please try again later.",
+      });
+      return false;
+    }
+  };
+
   const handleSelectUser = (userId: number, selected: boolean) => {
     setSelectedUserIds((prev) =>
       selected ? [...prev, userId] : prev.filter((id) => id !== userId)
@@ -56,5 +116,6 @@ export const useUsers = () => {
     handleDelete,
     handleSelectUser,
     setSelectedUserIds,
+    handleRoleUpdate,
   };
 };

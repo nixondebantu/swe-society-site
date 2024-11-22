@@ -43,6 +43,8 @@ export interface MemberDataType {
   regno: string;
   session: string | null;
   role: string;
+  roleid: number;
+  roletitle: string;
 }
 
 export interface Achievement {
@@ -107,7 +109,6 @@ export interface EventType {
   created_time: string;
 }
 
-
 export interface Role {
   roleid: number;
   roletitle: string;
@@ -124,7 +125,6 @@ export interface Role {
   isdefaultrole: boolean;
 }
 
-
 export interface EventType {
   eventid: number;
   start_time: string;
@@ -135,4 +135,3 @@ export interface EventType {
   fullname: string | null;
   created_time: string;
 }
-

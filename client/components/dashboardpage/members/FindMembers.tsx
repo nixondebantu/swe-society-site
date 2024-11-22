@@ -13,6 +13,7 @@ import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { SearchBar } from "./SearchBar";
 import { getTableColumns } from "./TableColumns";
 import { UserTable } from "./UserTable";
+import { RoleUpdateDialog } from "./RoleUpdateDialog";
 
 const FindMember: React.FC = () => {
   const {
@@ -21,9 +22,11 @@ const FindMember: React.FC = () => {
     handleDelete,
     handleSelectUser,
     setSelectedUserIds,
+    handleRoleUpdate,
   } = useUsers();
   const [search, setSearch] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
 
   const filteredData = useMemo(
     () =>
@@ -76,7 +79,13 @@ const FindMember: React.FC = () => {
         onSelectAllVisible={handleSelectAllVisible}
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button
+          onClick={() => setShowRoleDialog(true)}
+          disabled={!selectedUserIds.length}
+        >
+          Update Role
+        </Button>
         <Button
           onClick={() => setShowConfirmDialog(true)}
           disabled={!selectedUserIds.length}
@@ -89,6 +98,13 @@ const FindMember: React.FC = () => {
         open={showConfirmDialog}
         onOpenChange={setShowConfirmDialog}
         onConfirm={handleDelete}
+      />
+
+      <RoleUpdateDialog
+        open={showRoleDialog}
+        onOpenChange={setShowRoleDialog}
+        userIds={selectedUserIds}
+        onRoleUpdate={handleRoleUpdate}
       />
     </div>
   );

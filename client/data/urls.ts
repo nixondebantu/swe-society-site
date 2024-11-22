@@ -84,5 +84,6 @@ export const APIENDPOINTS = {
     deleteRole: `${BACKENDURL}role`,
     updateDefaultRole: `${BACKENDURL}role/default`,
     getRoleInfo: `${BACKENDURL}role/info`,
+    assignRole: `${BACKENDURL}role/assign`,
   },
 };
