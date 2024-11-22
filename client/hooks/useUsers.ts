@@ -20,6 +20,7 @@ export const useUsers = () => {
     try {
       const response = await axios.delete(APIENDPOINTS.users.DelMultiUser, {
         data: { userId: selectedUserIds },
+        headers: headerConfig().headers,
       });
       setData((prevData) =>
         prevData.filter((user) => !selectedUserIds.includes(user.userid))
@@ -36,6 +37,8 @@ export const useUsers = () => {
       console.error("Error deleting users:", error);
       toast({
         title: "Error!!",
+        description:
+          (error as any).response?.data?.message || "An error occurred",
       });
       return false;
     }

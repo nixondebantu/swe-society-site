@@ -158,13 +158,34 @@ const deleteMultipleUser = errorWrapper(
     if (!Array.isArray(userId) || userId.length === 0) {
       throw new CustomError("No user IDs provided", 400);
     }
+
+    // Access check
+    const { rows: accessCheckRows } = await pool.query(
+      `SELECT membersaccess 
+       FROM Roles 
+       JOIN Users ON Roles.roleid = Users.roleid 
+       WHERE Users.userid = $1`,
+      [req.jwtPayload.userid]
+    );
+
+    // Ensure permission exists and is granted
+    if (accessCheckRows.length === 0 || !accessCheckRows[0].membersaccess) {
+      return res.status(403).json({
+        message:
+          "Access denied. You do not have permission to delete member(s).",
+      });
+    }
+
+    // Proceed with deletion
     const { rowCount } = await pool.query(
-      "DELETE FROM Users WHERE userId = ANY($1)",
+      "DELETE FROM Users WHERE userId = ANY($1::int[])",
       [userId]
     );
+
     if (rowCount === 0) {
       throw new CustomError("No users found to delete", 404);
     }
+
     res.json({
       message: `${rowCount} user(s) deleted successfully`,
     });
