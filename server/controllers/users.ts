@@ -7,35 +7,66 @@ const updateUser = errorWrapper(
     const { userId } = req.params;
     const updates = req.body;
 
-    // Construct SET clause dynamically from the updates object
-    let setClause = "";
-    const values = [];
-
-    for (const key in updates) {
-      if (key !== "userId") {
-        // Exclude userId from updates
-        setClause += `${key} = $${values.length + 1}, `;
-        values.push(updates[key]);
-      }
+    if (Number(userId) !== req.jwtPayload.userid) {
+      return res.status(403).json({
+        message:
+          "Access denied. You do not have permission to update this profile.",
+      });
     }
-
-    // Remove trailing comma and space
-    setClause = setClause.slice(0, -2);
-
-    if (values.length === 0) {
-      throw new CustomError("No fields provided for update", 404);
-    }
-
-    // Construct the SQL query
-    const query = {
-      text: `UPDATE Users SET ${setClause} WHERE userId = $${
-        values.length + 1
-      } RETURNING *`,
-      values: [...values, userId],
-    };
 
     try {
-      const { rows } = await pool.query(query);
+      // List of allowed fields to update
+      const allowedFields = [
+        "bio",
+        "blood_group",
+        "college",
+        "cv",
+        "email",
+        "experience",
+        "facebook_id",
+        "fullname",
+        "github_id",
+        "hometown",
+        "linkedin_id",
+        "profile_picture",
+        "projects",
+        "school",
+        "session",
+        "skills",
+        "stop_stalk_id",
+        "whatsapp",
+        "phone_number",
+      ];
+
+      // Build query dynamically
+      const fields = [];
+      const values = [];
+      let index = 1;
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (allowedFields.includes(key)) {
+          fields.push(`${key} = $${index}`);
+          values.push(value);
+          index++;
+        }
+      }
+
+      if (fields.length === 0) {
+        return res.status(400).json({
+          message: "No valid fields provided for update.",
+        });
+      }
+
+      const query = `
+        UPDATE Users
+        SET ${fields.join(", ")}
+        WHERE userId = $${index}
+        RETURNING *;
+      `;
+
+      values.push(userId); // Add userId as the final parameter
+
+      const { rows } = await pool.query(query, values);
 
       if (rows.length === 0) {
         throw new CustomError("User not found", 404);
@@ -193,4 +224,59 @@ const deleteMultipleUser = errorWrapper(
   { statusCode: 500, message: `Couldn't delete multiple Users` }
 );
 
-export { deleteMultipleUser, deleteUser, getAllUsers, getUserById, updateUser };
+const roleAccess = errorWrapper(
+  async (req: Request, res: Response) => {
+    const userid = req.jwtPayload.userid;
+
+    // Query to fetch the user's role and access permissions
+    const { rows } = await pool.query(
+      `SELECT 
+        blogaccess AS blog,
+        achievementaccess AS achievement,
+        achievementaccess AS achievementmanage,
+        bulkmailaccess AS bulkmail,
+        eventaccess AS events,
+        ecaccess AS ec,
+        landingpageaccess AS landingpage,
+        membersaccess AS member,
+        noticeaccess AS notice,
+        rolesaccess AS roles,
+        statisticsaccess AS statistics
+     FROM Roles 
+     JOIN Users ON Roles.roleid = Users.roleid 
+     WHERE Users.userid = $1`,
+      [userid]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User or role not found" });
+    }
+
+    const access = {
+      statistics: rows[0].statistics || false,
+      achievement: rows[0].achievement || false,
+      achievementmanage: rows[0].achievementmanage || false,
+      blog: rows[0].blog || false,
+      member: rows[0].member || false,
+      notice: rows[0].notice || false,
+      bulkmail: rows[0].bulkmail || false,
+      landingpage: rows[0].landingpage || false,
+      events: rows[0].events || false,
+      ec: rows[0].ec || false,
+      roles: rows[0].roles || false,
+      usersblog: rows[0].blog || false,
+    };
+
+    res.json(access);
+  },
+  { statusCode: 500, message: `Couldn't fetch user role access` }
+);
+
+export {
+  deleteMultipleUser,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  roleAccess,
+  updateUser,
+};

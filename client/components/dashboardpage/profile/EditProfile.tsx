@@ -7,9 +7,10 @@ import { getUserID } from "@/data/cookies/getCookies";
 import { updateProfileCookies } from "@/data/cookies/setCookies";
 import { UserProfile } from "@/data/types";
 import { APIENDPOINTS } from "@/data/urls";
+import { headerConfig } from "@/lib/header_config";
+import { uploadImageToCloud } from "@/utils/ImageUploadService";
 import axios from "axios";
 import { CircleX, LoaderIcon, Pencil, Save } from "lucide-react";
-import { CldUploadButton } from "next-cloudinary";
 import React, { useState } from "react";
 import CVSection from "./CVSection";
 import EditProject from "./EditProject";
@@ -25,7 +26,6 @@ interface EditProfileProps {
 const defaultUserProfile: UserProfile = {
   userid: 0,
   fullname: "",
-  password: "",
   email: "",
   profile_picture: "",
   regno: "",
@@ -60,33 +60,34 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
 
-  const handleProfilePicUpload = (result: any) => {
-    const uploadedURL = result.info.secure_url;
-    setData((prevData) => ({ ...prevData, profile_picture: uploadedURL }));
-  };
-
-  const handleCVUpload = (result: any) => {
-    const uploadedURL = result.info.secure_url;
-    setData((prevData) => ({ ...prevData, cv: uploadedURL }));
-  };
-
-  const handleRemoveCV = () => {
-    setData((prevData) => ({ ...prevData, cv: null }));
+  const handleProfilePicUpload = async (file: File) => {
+    try {
+      const uploadedURL = await uploadImageToCloud(file);
+      setData((prevData) => ({ ...prevData, profile_picture: uploadedURL }));
+    } catch (error) {
+      toast({
+        title: "Failed to upload profile picture",
+        variant: "destructive",
+        duration: 4000,
+      });
+      console.error("Profile picture upload failed:", error);
+    }
   };
 
   const handleInputChange = (
     field: keyof UserProfile,
     value: string | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    let newValue: string;
-    if (typeof value === "string") {
-      newValue = value;
-    } else if (value.target && typeof value.target.value === "string") {
-      newValue = value.target.value;
-    } else {
-      newValue = "";
-    }
+    const newValue = typeof value === "string" ? value : value.target.value;
+
     setData((prevData) => ({ ...prevData, [field]: newValue }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleProfilePicUpload(file);
+    }
   };
 
   const handleSave = () => {
@@ -96,7 +97,8 @@ const EditProfile: React.FC<EditProfileProps> = ({
       try {
         const response = await axios.put(
           `${APIENDPOINTS.users.updateUserbyID}/${getUserID()}`,
-          data
+          data,
+          headerConfig()
         );
         if (response.status === 200) {
           toast({
@@ -174,13 +176,17 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   className="rounded-full border-2 border-white sm:p-2 p-1"
                 />
               </Avatar>
-              <CldUploadButton
-                onUpload={handleProfilePicUpload}
-                uploadPreset={process.env.NEXT_PUBLIC_IMG_UPLOAD_PRESET}
-                className="absolute bottom-0 sm:bottom-2 bg-background right-0 sm:right-2 text-primary border-2 border-primary rounded-full p-2 hover:text-white hover:bg-primary"
-              >
-                <Pencil size={20} />
-              </CldUploadButton>
+              <div className="absolute bottom-0 right-0">
+                <label className="flex items-center cursor-pointer bg-background text-primary p-2 rounded-full border-2 border-primary hover:bg-primary hover:text-white">
+                  <Pencil size={20} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
             </div>
             {data.is_alumni ? (
               <p className="px-4 text-center text-background bg-primary text-sm sm:text-base font-bold rounded-full text-wrap">

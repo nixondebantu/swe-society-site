@@ -13,6 +13,7 @@ export const APIENDPOINTS = {
     getUserbyID: `${BACKENDURL}users`,
     DelUserbyID: `${BACKENDURL}users`,
     DelMultiUser: `${BACKENDURL}users`,
+    getRoleAccess: `${BACKENDURL}users/roleaccess`,
   },
   notice: {
     getAllNotice: `${BACKENDURL}notice`,
