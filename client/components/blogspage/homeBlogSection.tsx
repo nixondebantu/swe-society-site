@@ -9,6 +9,7 @@ import { User } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
+import { BACKENDURL } from '@/data/urls';
 
 const BlogCard = ({ blog }) => {
    
@@ -115,7 +116,7 @@ const HomeBlogSection = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:5050/blog');
+        const response = await fetch(`${BACKENDURL}blog`);
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import Image from "next/image";
+import { BACKENDURL } from "@/data/urls";
 
 export function AllAchievementCard() {
     const [achievements, setAchievements] = useState([]);
@@ -11,7 +12,7 @@ export function AllAchievementCard() {
     useEffect(() => {
       const fetchAchievements = async () => {
         try {
-          const response = await fetch('http://localhost:5050/achievement/post');
+          const response = await fetch(`${BACKENDURL}achievement/post`);
           if (!response.ok) {
             throw new Error('Failed to fetch achievements');
           }

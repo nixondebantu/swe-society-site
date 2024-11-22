@@ -80,6 +80,7 @@
 import React, { useEffect, useState } from "react";
 import { IconHeart, IconMessageCircle, IconRepeat, IconShare, IconCalendar, IconClock } from "@tabler/icons-react";
 import { format } from "date-fns"; // Make sure to install date-fns for date formatting
+import { BACKENDURL } from "@/data/urls";
 
 const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   const [event, setEvent] = useState(null);
@@ -89,7 +90,7 @@ const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/event/${params.id}`);
+        const response = await fetch(`${BACKENDURL}event/${params.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch event details');
         }

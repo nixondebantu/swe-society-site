@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, User, Calendar, Clock } from 'lucide-react';
+import { BACKENDURL } from '@/data/urls';
 
 const BlogCard = ({ blog }) => {
   // Function to get first image from photos array
@@ -116,7 +117,7 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:5050/blog');
+        const response = await fetch(`${BACKENDURL}blog`);
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }

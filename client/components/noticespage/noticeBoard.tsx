@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from 'next/link';
+import { BACKENDURL } from '@/data/urls';
 
 const NoticeCard = ({ notice }) => {
   const formatDate = (dateString) => {
@@ -200,7 +201,7 @@ const NoticeBoard = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await fetch('http://localhost:5050/notice');
+        const response = await fetch(`${BACKENDURL}notice`);
         if (!response.ok) {
           throw new Error('Failed to fetch notices');
         }

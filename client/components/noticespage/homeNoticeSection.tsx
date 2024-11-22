@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BACKENDURL } from '@/data/urls';
 
 const NoticeCard = ({ notice }) => {
   const formatDate = (dateString) => {
@@ -178,7 +179,7 @@ const HomeNoticeSection = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await fetch('http://localhost:5050/notice');
+        const response = await fetch(`${BACKENDURL}notice`);
         if (!response.ok) {
           throw new Error('Failed to fetch notices');
         }

@@ -13,6 +13,7 @@
 //       <Suspense fallback={<div className="text-center py-10">Loading</div>}>
 //       <h1 className="flex flex-col items-center font-bold text-primary">Events...</h1>
 
+import { BACKENDURL } from "@/data/urls";
 import { HomeEvents } from "../eventspage/eventsection";
 
      
@@ -36,7 +37,7 @@ import { HomeEvents } from "../eventspage/eventsection";
 
 async function fetchEvents() {
   try {
-    const res = await fetch('http://localhost:5050/event/', { 
+    const res = await fetch(`${BACKENDURL}event/`, { 
       cache: 'no-store' // or 'force-cache' depending on your needs
     });
     return res.json();

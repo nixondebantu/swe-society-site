@@ -77,7 +77,7 @@ function EditNotice(props: any) {
     };
     try {
       await axios
-        .put(`http://localhost:5050/notice/${props.noticeid}`, updatedNotice)
+        .put(`${BACKENDURL}notice/${props.noticeid}`, updatedNotice)
         .then((res) => {
           console.log(res.data);
           props.fetch_notices();

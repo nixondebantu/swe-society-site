@@ -1,6 +1,8 @@
+import { BACKENDURL } from "@/data/urls";
+
 export async function getEvents() {
     try {
-      const response = await fetch('http://localhost:5050/event', { 
+      const response = await fetch(`${BACKENDURL}/event`, { 
         cache: 'no-store'
       });
       
