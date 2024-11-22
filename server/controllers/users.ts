@@ -224,4 +224,59 @@ const deleteMultipleUser = errorWrapper(
   { statusCode: 500, message: `Couldn't delete multiple Users` }
 );
 
-export { deleteMultipleUser, deleteUser, getAllUsers, getUserById, updateUser };
+const roleAccess = errorWrapper(
+  async (req: Request, res: Response) => {
+    const userid = req.jwtPayload.userid;
+
+    // Query to fetch the user's role and access permissions
+    const { rows } = await pool.query(
+      `SELECT 
+        blogaccess AS blog,
+        achievementaccess AS achievement,
+        achievementaccess AS achievementmanage,
+        bulkmailaccess AS bulkmail,
+        eventaccess AS events,
+        ecaccess AS ec,
+        landingpageaccess AS landingpage,
+        membersaccess AS member,
+        noticeaccess AS notice,
+        rolesaccess AS roles,
+        statisticsaccess AS statistics
+     FROM Roles 
+     JOIN Users ON Roles.roleid = Users.roleid 
+     WHERE Users.userid = $1`,
+      [userid]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User or role not found" });
+    }
+
+    const access = {
+      statistics: rows[0].statistics || false,
+      achievement: rows[0].achievement || false,
+      achievementmanage: rows[0].achievementmanage || false,
+      blog: rows[0].blog || false,
+      member: rows[0].member || false,
+      notice: rows[0].notice || false,
+      bulkmail: rows[0].bulkmail || false,
+      landingpage: rows[0].landingpage || false,
+      events: rows[0].events || false,
+      ec: rows[0].ec || false,
+      roles: rows[0].roles || false,
+      usersblog: rows[0].blog || false,
+    };
+
+    res.json(access);
+  },
+  { statusCode: 500, message: `Couldn't fetch user role access` }
+);
+
+export {
+  deleteMultipleUser,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  roleAccess,
+  updateUser,
+};
