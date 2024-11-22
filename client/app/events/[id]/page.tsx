@@ -10,7 +10,7 @@ const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getStatus = (start_time, end_time) => {
+  const getStatus = (start_time: any, end_time: any) => {
     const now = new Date();
     if (isBefore(now, new Date(start_time))) {
       return "Upcoming";
@@ -31,7 +31,7 @@ const EventDetailsPage = ({ params }: { params: { id: string } }) => {
         const data = await response.json();
         setEvent(data);
       } catch (err) {
-        setError(err.message);
+        console.log(err);
       } finally {
         setLoading(false);
       }

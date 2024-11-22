@@ -100,8 +100,8 @@ const Event: React.FC = () => {
           <CalendarFold /> Events
         </h2>
         <Button
-          variant="outline_red"
-          className="flex items-center gap-2"
+          
+          className="flex items-center gap-2 bg-red-600 text-white"
           onClick={() => setShowCreateForm((prev) => !prev)}
         >
           {showCreateForm ? (

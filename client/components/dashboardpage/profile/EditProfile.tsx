@@ -312,15 +312,15 @@ const EditProfile: React.FC<EditProfileProps> = ({
       </>
       <div className="flex w-full justify-end gap-3">
         <Button
-          variant="outline_red"
-          className="gap-2"
+          
+          className="gap-2 bg-red-600 text-white"
           onClick={() => setUpdating(false)}
         >
           <CircleX /> Cancel
         </Button>
         <Button
-          variant="outline_red"
-          className="gap-2"
+          
+          className="gap-2 bg-red-600 text-white"
           disabled={saving}
           onClick={handleSave}
         >
