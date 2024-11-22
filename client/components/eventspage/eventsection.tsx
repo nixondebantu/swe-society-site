@@ -57,8 +57,8 @@ export const HomeEvents = ({ events }) => {
   const topEvents = events.slice(0, 6);
 
   return (
-    
-    <div className="container mx-auto py-10">
+    <>
+        <div className="container mx-auto py-10 ">
        <h1 className="text-3xl font-bold text-center mb-8 text-primary">
           Latest Events
         </h1>
@@ -77,13 +77,18 @@ export const HomeEvents = ({ events }) => {
         
         ))}
       </div>
-      {path==='/'&&(
+     
+    </div>
+    <>
+    {path==='/'&&(
       <Link href={'/events'}>
       <div className='flex flex-col items-end justify-end p-10'>    
           <Button className='flex flex-col justify-center items-end'>All Events</Button></div>
           </Link>
           )}
-    </div>
+          </>
+    </>
+
 
   );
 };

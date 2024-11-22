@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import Image from "next/image";
 import { BACKENDURL } from "@/data/urls";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 // Component for Home Page (3 achievements)
 export function HomeAchievementCard() {
@@ -41,6 +43,7 @@ export function HomeAchievementCard() {
   }
 
   return (
+    <>
     <div className="flex flex-wrap justify-center">
       {achievements.map((achievement, index) => (
         <div key={index} className="p-8">
@@ -70,5 +73,7 @@ export function HomeAchievementCard() {
         </div>
       ))}
     </div>
+   
+    </>
   );
 }
