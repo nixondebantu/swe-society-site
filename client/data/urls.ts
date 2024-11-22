@@ -77,7 +77,6 @@ export const APIENDPOINTS = {
     getEventbyID: `${BACKENDURL}event`,
   },
 
-
   role: {
     getRole: `${BACKENDURL}role`,
     createRole: `${BACKENDURL}role`,
@@ -85,14 +84,6 @@ export const APIENDPOINTS = {
     deleteRole: `${BACKENDURL}role`,
     updateDefaultRole: `${BACKENDURL}role/default`,
     getRoleInfo: `${BACKENDURL}role/info`,
+    assignRole: `${BACKENDURL}role/assign`,
   },
-
-  events: {
-    getEvents: `${BACKENDURL}event`,
-    createEvent: `${BACKENDURL}event/create`,
-    updateEvent: `${BACKENDURL}event`,
-    deleteEvent: `${BACKENDURL}event`,
-    getEventbyID: `${BACKENDURL}event`,
-  },
-
 };
