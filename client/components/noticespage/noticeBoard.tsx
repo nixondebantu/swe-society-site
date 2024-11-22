@@ -290,18 +290,19 @@ const NoticeBoard = () => {
         ))}
       </div>
       <Pagination className="mt-8">
-        <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+        <PaginationPrevious className='hover:bg-primary' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
         {getPageNumbers().map((pageNumber) => (
           <PaginationItem key={pageNumber}>
             <PaginationLink
               onClick={() => handlePageChange(pageNumber)}
               active={pageNumber === currentPage}
+             
             >
               {pageNumber}
             </PaginationLink>
           </PaginationItem>
         ))}
-        <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+        <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}  className='hover:bg-primary' />
       </Pagination>
     </div>
   );

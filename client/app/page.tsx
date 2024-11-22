@@ -13,6 +13,7 @@ import TweetCard from "@/components/Tweet/tweetCard";
 import BlogSection from "@/components/blogspage/blogSection";
 import HomeBlogSection from "@/components/blogspage/homeBlogSection";
 import HomeNoticeSection from "@/components/noticespage/homeNoticeSection";
+import HomeEvent from "@/components/homepage/EventSection";
 export default function Home() {
   return (
     <main>
@@ -21,8 +22,8 @@ export default function Home() {
       <Hero />
      
       {/* <Carousel /> */}
-      <EventSection />
-    
+      {/* <EventSection /> */}
+    <HomeEvent/>
       <HomeNoticeSection/>
       {/* <BlogSection /> */}
      

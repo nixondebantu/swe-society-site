@@ -37,6 +37,7 @@ export function AllAchievementCard() {
   
     return (
       <div className="flex flex-wrap justify-center">
+     
         {achievements.map((achievement, index) => (
           <div key={index} className="p-8">
             <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">

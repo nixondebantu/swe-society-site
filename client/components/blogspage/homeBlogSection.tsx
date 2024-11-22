@@ -6,8 +6,12 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { User } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import { usePathname } from 'next/navigation';
 
 const BlogCard = ({ blog }) => {
+   
   // Function to get first image from photos array
   const getFirstImage = (photos) => {
     if (photos && photos.length > 0) {
@@ -107,7 +111,7 @@ const HomeBlogSection = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const path = usePathname();
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -159,6 +163,12 @@ const HomeBlogSection = () => {
             <BlogCard key={blog.blogid} blog={blog} />
           ))}
         </div>
+        {path==='/'&&(
+      <Link href={'/blogs'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>All Blogs</Button></div>
+          </Link>
+          )}
       </div>
     </div>
   );

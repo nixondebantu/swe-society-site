@@ -18,6 +18,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const NoticeCard = ({ notice }) => {
   const formatDate = (dateString) => {
@@ -168,6 +170,7 @@ const NoticeCard = ({ notice }) => {
 };
 
 const HomeNoticeSection = () => {
+    const path = usePathname()
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -209,6 +212,7 @@ const HomeNoticeSection = () => {
   }
 
   return (
+    <div>
     <div className="flex flex-col items-center justify-center mt-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-primary">
         Latest Notices
@@ -218,6 +222,14 @@ const HomeNoticeSection = () => {
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>
+      
+    </div>
+    {path==='/'&&(
+      <Link href={'/notices'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>All Notices</Button></div>
+          </Link>
+          )}
     </div>
   );
 };
