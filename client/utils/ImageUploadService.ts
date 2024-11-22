@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export const uploadImageToCloud = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);

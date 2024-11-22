@@ -47,9 +47,9 @@
 //     link: "https://microsoft.com",
 //   },
 // ];
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { HoverEffect } from "../ui/card-hover-effect";
 
 export function NoticeCard() {
@@ -57,24 +57,22 @@ export function NoticeCard() {
 
   // Fetch notices from API
   useEffect(() => {
-    fetch('http://localhost:5050/notice')
+    fetch("http://localhost:5050/notice")
       .then((response) => response.json())
       .then((data) => {
         // Map the API data to match the structure needed for HoverEffect
-        const formattedNotices = data.map((notice) => ({
+        const formattedNotices = data.map((notice: any) => ({
           title: notice.headline,
           description: notice.notice_body,
-          link: notice.file || '#', 
+          link: notice.file || "#",
         }));
         setNotices(formattedNotices);
       })
-      .catch((error) => console.error('Error fetching notices:', error));
+      .catch((error) => console.error("Error fetching notices:", error));
   }, []);
 
   return (
     <div className="max-w-5xl mx-auto px-8">
-
-     
       <HoverEffect items={notices} />
     </div>
   );
