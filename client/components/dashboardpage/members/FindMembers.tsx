@@ -1,146 +1,129 @@
-"use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useUsers } from "@/hooks/useUsers";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { MemberDataType } from "@/data/types";
-import { APIENDPOINTS } from "@/data/urls";
-import axios from "axios";
-import { InfoIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import { ColumnVisibilityDropdown } from "./ColumnVisibilityDropdown";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { SearchBar } from "./SearchBar";
+import { getTableColumns } from "./TableColumns";
+import { UserTable } from "./UserTable";
+import { RoleUpdateDialog } from "./RoleUpdateDialog";
+import { UserDetailsDialog } from "./UserDetailsDialog";
 
-const FindMembers: React.FC = () => {
-  const [list, setList] = useState<MemberDataType[]>([]);
-  const [findby, setFindby] = useState<string>("");
+const FindMember: React.FC = () => {
+  const {
+    data,
+    selectedUserIds,
+    handleDelete,
+    handleSelectUser,
+    setSelectedUserIds,
+    handleRoleUpdate,
+  } = useUsers();
+  const [search, setSearch] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get<MemberDataType[]>(
-          APIENDPOINTS.users.getAllUsers
-        );
-        console.log(response.data);
-        setList(response.data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Filter list based on findby string
-  const filteredList = list.filter(
-    (row) =>
-      row.regno?.includes(findby) ||
-      row.fullname?.toLowerCase().includes(findby.toLowerCase()) ||
-      row.session?.includes(findby)
+  const filteredData = useMemo(
+    () =>
+      data.filter(
+        (user) =>
+          user.fullname?.toLowerCase().includes(search.toLowerCase()) ||
+          user.email.toLowerCase().includes(search.toLowerCase()) ||
+          user.regno.includes(search) ||
+          user.role.toLowerCase().includes(search.toLowerCase())
+      ),
+    [data, search]
   );
 
+  const handleSelectAllVisible = (selectAll: boolean) => {
+    const visibleRowIds = table
+      .getRowModel()
+      .rows.map((row) => row.original.userid);
+    setSelectedUserIds((prev) =>
+      selectAll
+        ? Array.from(new Set([...prev, ...visibleRowIds]))
+        : prev.filter((id) => !visibleRowIds.includes(id))
+    );
+  };
+
+  const handleViewDetails = (userId: number) => {
+    setSelectedUserId(userId);
+    setShowUserDetails(true);
+  };
+
+  const columns = getTableColumns(
+    selectedUserIds,
+    handleSelectUser,
+    handleSelectAllVisible,
+    handleViewDetails
+  );
+
+  const table = useReactTable({
+    data: filteredData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
+
   return (
-    <div className="w-full flex flex-col items-center">
-      <Input
-        placeholder="Search by reg, name and session"
-        className="my-2 max-w-96"
-        value={findby}
-        onChange={(e) => setFindby(e.target.value)}
-      />
-      <div className="flex w-full max-w-4xl items-center">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Reg. Number</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Session</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredList.map((row: MemberDataType, index: number) => (
-              <TableRow key={row.regno}>
-                <TableCell className="font-medium">{row.regno}</TableCell>
-                <TableCell>{row.fullname}</TableCell>
-                <TableCell>{row.session}</TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <InfoIcon className="hover:text-primary cursor-pointer" />
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                          <Avatar>
-                            <AvatarImage src={row.profile_picture as string} />
-                            <AvatarFallback>SWE</AvatarFallback>
-                          </Avatar>
-                          {row.fullname}
-                        </DialogTitle>
-                        <DialogDescription>
-                          <p>
-                            <strong>Reg No: </strong>
-                            {row.regno}
-                          </p>
-                          <p>
-                            <strong>Session: </strong>
-                            {row.session}
-                          </p>
-                          <p>
-                            <strong>Email: </strong>
-                            {row.email}
-                          </p>
-                          <p>
-                            <strong>Phone: </strong>
-                            {row.phone_number}
-                          </p>
-                          <p>
-                            <strong>Blood Group: </strong>
-                            {row.blood_group}
-                          </p>
-                          <p>
-                            <strong>Home Town: </strong>
-                            {row.hometown}
-                          </p>
-                          <p>
-                            <strong>School: </strong>
-                            {row.school}
-                          </p>
-                          <p>
-                            <strong>College: </strong>
-                            {row.college}
-                          </p>
-                          <p>
-                            <strong>Role: </strong>
-                            {row.role}
-                          </p>
-                          <p>
-                            <strong>Bio: </strong>
-                            {row.bio}
-                          </p>
-                        </DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+    <div className="w-full max-w-screen-xl p-4">
+      <div className="flex items-center py-4">
+        <SearchBar value={search} onChange={setSearch} />
+        <ColumnVisibilityDropdown table={table} />
       </div>
+
+      <UserTable
+        table={table}
+        selectedUserIds={selectedUserIds}
+        onSelectUser={handleSelectUser}
+        data={filteredData}
+        onSelectAllVisible={handleSelectAllVisible}
+      />
+
+      <div className="flex justify-end gap-2">
+        <Button
+          onClick={() => setShowRoleDialog(true)}
+          disabled={!selectedUserIds.length}
+        >
+          Update Role
+        </Button>
+        <Button
+          onClick={() => setShowConfirmDialog(true)}
+          disabled={!selectedUserIds.length}
+        >
+          Delete Selected
+        </Button>
+      </div>
+
+      <DeleteConfirmationDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onConfirm={handleDelete}
+      />
+
+      <RoleUpdateDialog
+        open={showRoleDialog}
+        onOpenChange={setShowRoleDialog}
+        userIds={selectedUserIds}
+        onRoleUpdate={handleRoleUpdate}
+      />
+      <UserDetailsDialog
+        open={showUserDetails}
+        onOpenChange={setShowUserDetails}
+        userId={selectedUserId}
+      />
     </div>
   );
 };
 
-export default FindMembers;
+export default FindMember;

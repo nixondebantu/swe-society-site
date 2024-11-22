@@ -21,11 +21,37 @@ const createElection = errorWrapper(
 // Get all elections
 const getAllElections = errorWrapper(
     async (req: Request, res: Response) => {
-        const { rows } = await pool.query('SELECT * FROM Elections');
-        res.json(rows);
+      const query = `
+        SELECT 
+          e.electionid,
+          e.year,
+          e.election_type,
+          e.batch,
+          e.candidate_form_date,
+          e.election_date,
+          e.election_commissioner,
+          e.assistant_commissioner,
+         
+          ec.userId AS commissioner_userId,
+          ec.fullname AS commissioner_fullname,
+          ec.email AS commissioner_email,
+          ec.profile_picture AS commissioner_profile_picture,
+          
+          ac.userId AS assistant_userId,
+          ac.fullname AS assistant_fullname,
+          ac.email AS assistant_email,
+          ac.profile_picture AS assistant_profile_picture
+        FROM Elections e
+        LEFT JOIN Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN Users ac ON e.assistant_commissioner = ac.userId;
+      `;
+  
+      const { rows } = await pool.query(query);
+      res.json(rows);
     },
     { statusCode: 500, message: `Couldn't get elections` }
-);
+  );
+  
 
 // Get election by ID
 const getElectionById = errorWrapper(
@@ -228,6 +254,48 @@ const deleteCommitteeMember = errorWrapper(
     { statusCode: 500, message: `Couldn't delete committee member` }
 );
 
+
+const getCommitteeMembersByElectionId = async (req: Request, res: Response) => {
+    const { electionid } = req.params;
+
+    try {
+        const query = `
+        SELECT 
+            e.year,
+            u.fullname,
+            u.profile_picture,
+            u.email,
+            u.regno,
+            u.session,
+            cp.post_name AS committee_post
+        FROM 
+            Committee c
+        JOIN 
+            Elections e ON c.electionid = e.electionid
+        LEFT JOIN 
+            Users ec ON e.election_commissioner = ec.userId
+        LEFT JOIN 
+            Users ac ON e.assistant_commissioner = ac.userId
+        JOIN 
+            Users u ON c.userid = u.userId
+        JOIN 
+            Committeeposts cp ON c.postid = cp.committeepostid
+        WHERE 
+            c.electionid = $1;
+    `;
+        const { rows } = await pool.query(query, [electionid]);
+
+        if (rows.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching committee members:', error);
+        res.status(500).json({ error: "Couldn't get committee members data" });
+    }
+};
+
 export {
     createElection,
     getAllElections,
@@ -246,5 +314,6 @@ export {
     getAllCommitteeMembers,
     getCommitteeMemberById,
     updateCommitteeMember,
-    deleteCommitteeMember
+    deleteCommitteeMember,
+    getCommitteeMembersByElectionId
 };

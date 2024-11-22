@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { UserMinus, UserPlus, UserRoundSearch } from "lucide-react";
+import { UserPlus, UserRoundSearch } from "lucide-react";
 import React from "react";
 
 interface MembersNavProps {
@@ -19,7 +19,7 @@ const MembersNav: React.FC<MembersNavProps> = ({
         onClick={() => setMembersOption("find")}
       >
         <UserRoundSearch />
-        <p className="hidden sm:contents">Show Members</p>
+        <p className="hidden sm:contents">Members</p>
       </Button>
       <Button
         variant={membersOption === "add" ? "default" : "outline_red"}
@@ -27,13 +27,6 @@ const MembersNav: React.FC<MembersNavProps> = ({
       >
         <UserPlus />
         <p className="hidden sm:contents">Add Members</p>
-      </Button>
-      <Button
-        variant={membersOption === "del" ? "default" : "outline_red"}
-        onClick={() => setMembersOption("del")}
-      >
-        <UserMinus />
-        <p className="hidden sm:contents">Remove Members</p>
       </Button>
     </div>
   );

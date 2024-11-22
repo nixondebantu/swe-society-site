@@ -11,7 +11,9 @@ export interface SidebarItems {
 export interface RoleAccessType {
   statistics: boolean;
   achievement: boolean;
+  achievementmanage: boolean;
   blog: boolean;
+  usersblog: boolean;
   member: boolean;
   notice: boolean;
   bulkmail: boolean;
@@ -37,33 +39,41 @@ export interface MemberRowType {
 export interface MemberDataType {
   userid: number;
   fullname: string | null;
-  password: string;
   email: string;
-  profile_picture: string | null;
-  regno: string | null;
+  regno: string;
   session: string | null;
-  phone_number: string | null;
-  bio: string | null;
-  linkedin_id: string | null;
-  github_id: string | null;
-  stop_stalk_id: string | null;
-  whatsapp: string | null;
-  facebook_id: string | null;
-  blood_group: string | null;
-  school: string | null;
-  college: string | null;
-  hometown: string | null;
-  cv: string | null;
-  experience: string | null;
-  projects: string | null;
-  is_alumni: string | null;
   role: string;
+  roleid: number;
+  roletitle: string;
+}
+
+export interface Achievement {
+  teamid: number;
+  eventname: string | null;
+  organizer: string | null;
+  venu: string | null;
+  startdate: string | null;
+  enddate: string | null;
+  rank: string | null;
+  rankarea: string | null;
+  task: string | null;
+  solution: string | null;
+  techstack: string | null;
+  resources: string | null;
+  photos: string[] | null;
+  approval_status: boolean | null;
+}
+
+export interface TableProps {
+  data: MemberDataType[];
+  selectedUserIds: number[];
+  onSelectUser: (userId: number, selected: boolean) => void;
+  onSelectAllVisible: (selectAll: boolean) => void;
 }
 
 export interface UserProfile {
   userid: number;
   fullname: string;
-  password: string;
   email: string;
   profile_picture: string;
   regno: string;
@@ -85,4 +95,42 @@ export interface UserProfile {
   is_alumni: boolean;
   role: string;
   skills: string[] | null;
+}
+
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
+}
+
+export interface Role {
+  roleid: number;
+  roletitle: string;
+  blogaccess: boolean;
+  achievementaccess: boolean;
+  bulkmailaccess: boolean;
+  eventaccess: boolean;
+  ecaccess: boolean;
+  landingpageaccess: boolean;
+  membersaccess: boolean;
+  noticeaccess: boolean;
+  rolesaccess: boolean;
+  statisticsaccess: boolean;
+  isdefaultrole: boolean;
+}
+
+export interface EventType {
+  eventid: number;
+  start_time: string;
+  end_time: string;
+  headline: string;
+  event_details: string;
+  coverphoto: string;
+  fullname: string | null;
+  created_time: string;
 }

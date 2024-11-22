@@ -1,8 +1,8 @@
 import pool from "./dbconnect";
 
 export async function createTables() {
-    try {
-        await pool.query(`
+  try {
+    await pool.query(`
         CREATE TABLE IF NOT EXISTS Users (
             userId SERIAL PRIMARY KEY,
             fullname VARCHAR(100),
@@ -25,8 +25,26 @@ export async function createTables() {
             CV VARCHAR(200),
             experience TEXT[],
             projects TEXT[],
+            skills TEXT[],
             is_alumni BOOLEAN DEFAULT FALSE,
-            role VARCHAR(20) NOT NULL DEFAULT 'general_member'
+            roleid INT NOT NULL,
+            FOREIGN KEY (roleid) REFERENCES Roles(roleid) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS Roles (
+            roleid SERIAL PRIMARY KEY,
+            roletitle VARCHAR(50) NOT NULL,
+            blogAccess BOOLEAN DEFAULT FALSE,
+            achievementAccess BOOLEAN DEFAULT FALSE,
+            bulkmailAccess BOOLEAN DEFAULT FALSE,
+            eventAccess BOOLEAN DEFAULT FALSE,
+            ecAccess BOOLEAN DEFAULT FALSE,
+            landingpageAccess BOOLEAN DEFAULT FALSE,
+            membersAccess BOOLEAN DEFAULT FALSE,
+            noticeAccess BOOLEAN DEFAULT FALSE,
+            rolesAccess BOOLEAN DEFAULT FALSE,
+            statisticsAccess BOOLEAN DEFAULT FALSE,
+            isDefaultRole BOOLEAN DEFAULT FALSE
         );
 
         CREATE TABLE IF NOT EXISTS GeneralNotices (
@@ -81,44 +99,51 @@ export async function createTables() {
         CREATE TABLE IF NOT EXISTS Teams (
             teamid SERIAL PRIMARY KEY,
             teamname VARCHAR(100),
+            mentor VARCHAR(100),
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         
         CREATE TABLE IF NOT EXISTS TeamMembers (
-            userid INT,
+            team_member_id SERIAL,
+            userid INT, 
             teamid INT,
-            PRIMARY KEY (userid, teamid),
+            othermember TEXT,
+            other_member_institute TEXT,
+            PRIMARY KEY (team_member_id),
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE CASCADE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE CASCADE
         );
         
         CREATE TABLE IF NOT EXISTS Achievements (
             achieveid SERIAL PRIMARY KEY,
-            teamid INT,
-            eventname TEXT,
+            teamid INT NOT NULL,
+            eventname TEXT NOT NULL,
+            segment TEXT NOT NULL,
             organizer VARCHAR(100),
             venu VARCHAR(100),
             startdate DATE,
             enddate DATE,
             rank VARCHAR(100),
-            rankarea VARCHAR(100),
+            rankarea VARCHAR(100) NOT NULL,
             task TEXT,
             solution TEXT,
             techstack TEXT,
             resources TEXT,
             photos TEXT[],
-            approval_status BOOLEAN,
+            approval_status BOOLEAN DEFAULT FALSE,
             FOREIGN KEY (teamid) REFERENCES Teams(teamid) ON DELETE SET NULL
         );
 
         CREATE TABLE IF NOT EXISTS Blogs (
             blogid SERIAL PRIMARY KEY,
-            userid INT,
+            userid INT NOT NULL,
             headline TEXT,
+            designation TEXT,
+            current_institution TEXT,
             article TEXT,
             photos TEXT[],
             blogtype VARCHAR(200),
-            approval_status BOOLEAN, 
+            approval_status BOOLEAN DEFAULT FALSE, 
             FOREIGN KEY (userid) REFERENCES Users(userId) ON DELETE SET NULL
         );
 
@@ -153,14 +178,14 @@ export async function createTables() {
             FOREIGN KEY (electionid) REFERENCES Elections(electionid) ON DELETE SET NULL
         );
 
-  
+
         
 
         `);
-        console.log('Tables created successfully');
-    } catch (error) {
-        console.error('Unable to create any table:', error);
-    }
+    console.log("Tables created successfully");
+  } catch (error) {
+    console.error("Unable to create any table:", error);
+  }
 }
 
 //Deployment note: User(userid) On delete null hobe.

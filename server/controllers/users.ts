@@ -52,8 +52,41 @@ const updateUser = errorWrapper(
 
 const getAllUsers = errorWrapper(
   async (req: Request, res: Response) => {
-    const { rows } = await pool.query("SELECT * FROM Users");
-    res.json(rows);
+    try {
+      const { rows } = await pool.query(`
+        SELECT 
+          u.userid,
+          u.fullname,
+          u.email,
+          u.regno,
+          u.session,
+          r.roletitle AS role,
+          u.profile_picture,
+          u.bio,
+          u.linkedin_id,
+          u.github_id,
+          u.stop_stalk_id,
+          u.whatsapp,
+          u.facebook_id,
+          u.blood_group,
+          u.school,
+          u.college,
+          u.hometown,
+          u.cv,
+          u.experience,
+          u.projects,
+          u.skills,
+          u.is_alumni
+        FROM Users u
+        LEFT JOIN Roles r
+        ON u.roleid = r.roleid
+      `);
+
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching users with roles:", error);
+      res.status(500).json({ message: `Couldn't get Users` });
+    }
   },
   { statusCode: 500, message: `Couldn't get Users` }
 );
@@ -61,9 +94,36 @@ const getAllUsers = errorWrapper(
 const getUserById = errorWrapper(
   async (req: Request, res: Response) => {
     const { userId } = req.params;
-    const { rows } = await pool.query("SELECT * FROM Users WHERE userId = $1", [
-      userId,
-    ]);
+    const { rows } = await pool.query(
+      `
+      SELECT 
+          u.userid,
+          u.fullname,
+          u.email,
+          u.regno,
+          u.session,
+          r.roletitle AS role,
+          u.profile_picture,
+          u.bio,
+          u.linkedin_id,
+          u.github_id,
+          u.stop_stalk_id,
+          u.whatsapp,
+          u.facebook_id,
+          u.blood_group,
+          u.school,
+          u.college,
+          u.hometown,
+          u.cv,
+          u.experience,
+          u.projects,
+          u.skills,
+          u.is_alumni
+        FROM Users u
+        LEFT JOIN Roles r
+        ON u.roleid = r.roleid WHERE userId = $1`,
+      [userId]
+    );
 
     if (rows.length === 0) {
       throw new CustomError("User not found", 404);
@@ -91,4 +151,46 @@ const deleteUser = errorWrapper(
   { statusCode: 500, message: `Couldn't delete User` }
 );
 
-export { deleteUser, getAllUsers, getUserById, updateUser };
+const deleteMultipleUser = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { userId } = req.body;
+
+    if (!Array.isArray(userId) || userId.length === 0) {
+      throw new CustomError("No user IDs provided", 400);
+    }
+
+    // Access check
+    const { rows: accessCheckRows } = await pool.query(
+      `SELECT membersaccess 
+       FROM Roles 
+       JOIN Users ON Roles.roleid = Users.roleid 
+       WHERE Users.userid = $1`,
+      [req.jwtPayload.userid]
+    );
+
+    // Ensure permission exists and is granted
+    if (accessCheckRows.length === 0 || !accessCheckRows[0].membersaccess) {
+      return res.status(403).json({
+        message:
+          "Access denied. You do not have permission to delete member(s).",
+      });
+    }
+
+    // Proceed with deletion
+    const { rowCount } = await pool.query(
+      "DELETE FROM Users WHERE userId = ANY($1::int[])",
+      [userId]
+    );
+
+    if (rowCount === 0) {
+      throw new CustomError("No users found to delete", 404);
+    }
+
+    res.json({
+      message: `${rowCount} user(s) deleted successfully`,
+    });
+  },
+  { statusCode: 500, message: `Couldn't delete multiple Users` }
+);
+
+export { deleteMultipleUser, deleteUser, getAllUsers, getUserById, updateUser };

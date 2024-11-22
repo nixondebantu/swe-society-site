@@ -16,8 +16,18 @@ import {
     getAllAchievements,
     getAchievementById,
     updateAchievement,
-    deleteAchievement
+    deleteAchievement,
+
+    getUserAchievements,
+    createTeamAndAchievement,
+    getAchievementsAll,
+
+    updateAchievementStatus,
+    getApprovedAchievements
   } from "../controllers/achievement";
+  import { validateBearerToken } from "../middlewares/validateBearerToken";
+
+
 
   router.route("/team/create").post(createTeam);
   router.route("/team").get(getAllTeams);
@@ -31,9 +41,16 @@ import {
 
   router.route("/post/create").post(createAchievement);
   router.route("/post/:achieveid").get(getAchievementById);
-  router.route("/post").get(getAllAchievements);
+  router.route("/post").get(getAchievementsAll);
+  router.route("/approved").get(getApprovedAchievements);
   router.route("/post/:achieveid").put(updateAchievement);
   router.route("/post/:achieveid").delete(deleteAchievement);
+
+  router.route("/individual/:userid").get(getUserAchievements);
+  
+
+  router.route("/post/fullachievement").post(validateBearerToken, createTeamAndAchievement);
+  router.route("/poststatus/:achieveid").put(validateBearerToken, updateAchievementStatus);
 
 
   export default router;
