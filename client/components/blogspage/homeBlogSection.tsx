@@ -27,7 +27,7 @@ const BlogCard = ({ blog }) => {
         <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:border-gray-700 cursor-pointer">
           <CardHeader className="p-0">
             <img
-              src={getFirstImage(blog.photos)}
+              src={blog.photos[0]}
               alt={blog.headline}
               className="w-full h-48 object-cover"
             />
@@ -35,7 +35,7 @@ const BlogCard = ({ blog }) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="outline" className="bg-primary">
-                {blog.blogtype}
+                {blog.blogtype} 
               </Badge>
             </div>
             <h3 className="text-xl font-semibold mb-2 line-clamp-2 dark:text-gray-100">
@@ -70,7 +70,7 @@ const BlogCard = ({ blog }) => {
         
         <div className="mt-4">
           <img
-            src={getFirstImage(blog.photos)}
+            src={blog.photos[0]}
             alt={blog.headline}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />

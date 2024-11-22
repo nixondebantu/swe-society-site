@@ -45,8 +45,8 @@ export function HomeAchievementCard() {
       {achievements.map((achievement, index) => (
         <div key={index} className="p-8">
           <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-            <Image
-              src={achievement.image || '/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg'}
+            <img
+              src={achievement.photos[0] || '/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg'}
               alt={achievement.eventname || "achievement image"}
               height="400"
               width="400"

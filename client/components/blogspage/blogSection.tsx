@@ -26,7 +26,7 @@ const BlogCard = ({ blog }) => {
         <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:border-gray-700 cursor-pointer">
           <CardHeader className="p-0">
             <img
-              src={getFirstImage(blog.photos)}
+              src={blog.photos[0]}
               alt={blog.headline}
               className="w-full h-48 object-cover"
             />
@@ -69,7 +69,7 @@ const BlogCard = ({ blog }) => {
         
         <div className="mt-4">
           <img
-            src={getFirstImage(blog.photos)}
+            src={blog.photos[0]}
             alt={blog.headline}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />

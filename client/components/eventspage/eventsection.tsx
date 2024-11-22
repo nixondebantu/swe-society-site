@@ -21,7 +21,7 @@ const EventCard = ({ event, isHomePage = false }) => {
     <Card className={`w-full ${isHomePage ? 'h-[350px]' : 'h-[400px]'} flex flex-col`}>
       {coverphoto && (
         <div className="relative w-full h-48 overflow-hidden">
-          <Image 
+          <img 
             src={coverphoto || '/placeholder.jpg'} 
             alt={headline} 
             fill 

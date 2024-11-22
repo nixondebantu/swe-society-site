@@ -70,7 +70,7 @@ const NoticeCard = ({ notice }) => {
     const fileName = getFileName(fileUrl);
 
     return (
-      <div className="mt-4 border rounded-lg p-4 bg-gray-100 dark:bg-gray-800">
+      <div className="mt-4 border rounded-lg p-4 bg-gray-100 dark:bg-gray-800 w-full">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isImageFile(fileUrl) ? (
@@ -218,12 +218,13 @@ const HomeNoticeSection = () => {
       <h1 className="text-3xl font-bold text-center mb-8 text-primary">
         Latest Notices
       </h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
+      <div className='w-full flex justify-center  max-w-[1400px]'>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3   mx-0 md:mx-10">
         {notices.map((notice) => (
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>
-      
+      </div>
     </div>
     {path==='/'&&(
       <Link href={'/notices'}>

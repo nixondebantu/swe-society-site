@@ -98,7 +98,7 @@ export default function Component({
               className="text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-300"
               onClick={() => window.open(notice.picture!, "_blank")}
             >
-              <Image className="h-3 w-3 mr-1" />
+              <img className="h-3 w-3 mr-1" />
               Image
             </Button>
           )}

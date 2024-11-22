@@ -7,7 +7,7 @@ function AchievementSection() {
   return (
     <div>
       {/* <h1 className="flex flex-col items-center">Achievements</h1> */}
-      <h1 className="text-3xl font-bold text-center mb-8 text-primary">
+      <h1 className="text-3xl font-bold text-center my-8 text-primary">
         Latest Achievement
       </h1>
       <HomeAchievementCard />

@@ -157,7 +157,7 @@ const Event: React.FC = () => {
               Upload Cover Photo
             </CldUploadButton>
             {newEvent.coverphoto && (
-              <Image
+              <img
                 src={newEvent.coverphoto}
                 alt="Cover"
                 width={48}

@@ -27,7 +27,7 @@ const ECMemberCarousel = () => {
   useEffect(() => {
     async function fetchMembers() {
       try {
-        const response = await fetch(`${BACKENDURL}/election/allmembers/1`);
+        const response = await fetch(`${BACKENDURL}election/allmembers/1`);
         if (!response.ok) {
           throw new Error('Failed to fetch members');
         }
