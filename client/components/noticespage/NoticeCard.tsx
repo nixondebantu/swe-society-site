@@ -1,10 +1,6 @@
-
-
 'use client'
-
 import { useEffect, useState } from 'react';
 import { HoverEffect } from "../ui/card-hover-effect";
-
 export function NoticeCard() {
   const [notices, setNotices] = useState([]);
 

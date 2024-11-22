@@ -6,3 +6,4 @@ export default function page() {
     <NoticeBoard/>
   </div>;
 }
+

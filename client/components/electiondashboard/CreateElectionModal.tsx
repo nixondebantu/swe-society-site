@@ -9,6 +9,7 @@ import { getJWT } from "@/data/cookies/getCookies";
 
 interface ElectionModalProps {
   onClose: () => void;
+  fetchData: () => void;
 }
 
 interface UserResponse {
@@ -32,7 +33,7 @@ interface ElectionFormData {
   assistant_commissioner?: number;
 }
 
-const ElectionModal: React.FC<ElectionModalProps> = ({ onClose }) => {
+const ElectionModal: React.FC<ElectionModalProps> = ({ onClose ,fetchData}) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
   const [formData, setFormData] = useState<ElectionFormData>({
     year: "",
@@ -74,9 +75,10 @@ const ElectionModal: React.FC<ElectionModalProps> = ({ onClose }) => {
               },
             }
           );
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         notify();
         onClose();
+        fetchData();
       }
     } catch (error) {
       console.error("Error creating election:", error);

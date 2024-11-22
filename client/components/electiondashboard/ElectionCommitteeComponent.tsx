@@ -27,6 +27,7 @@ interface ElectionCommitteeProps {
   }[];
   setShowFullCommitteee: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedElectionId: React.Dispatch<React.SetStateAction<number | null>>;
+  fetchData: () => void;
 }
 
 interface ElectionFormData {
@@ -38,7 +39,7 @@ interface ElectionFormData {
     assistant_commissioner?: number;
   }
 
-const ElectionCommitteeComponent: React.FC<ElectionCommitteeProps> = ({ electionCommittees, setShowFullCommitteee, setSelectedElectionId }) => {
+const ElectionCommitteeComponent: React.FC<ElectionCommitteeProps> = ({ fetchData, electionCommittees, setShowFullCommitteee, setSelectedElectionId }) => {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const { toast } = useToast();
@@ -73,8 +74,11 @@ const ElectionCommitteeComponent: React.FC<ElectionCommitteeProps> = ({ election
                 title: "Deleted Election Successfully",
                 duration: 3000,
               });
+              setOpenDeleteModal(false);
+              fetchData();
+              
             
-            window.location.reload();
+            // window.location.reload();
           }
         } catch (error) {
           console.error("Error creating election:", error);
@@ -180,7 +184,7 @@ const ElectionCommitteeComponent: React.FC<ElectionCommitteeProps> = ({ election
      
     </div>
     {openEditModal && (
-         <ElectionEditModal onClose={() => setOpenEditModal(false)}  prevformData={editingElectionData} electionId={editElectionId}/>
+         <ElectionEditModal fetchData={fetchData} onClose={() => setOpenEditModal(false)}  prevformData={editingElectionData} electionId={editElectionId}/>
       )}
 
 {openDeleteModal && (

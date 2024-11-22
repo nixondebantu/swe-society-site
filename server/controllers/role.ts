@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import pool from "../db/dbconnect";
 import errorWrapper from "../middlewares/errorWrapper";
+import CustomError from "../services/CustomError";
 
 const getAllRole = errorWrapper(
   async (req: Request, res: Response) => {
@@ -279,6 +280,66 @@ const getRoleInfo = errorWrapper(
   }
 );
 
+const assignRole = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { roleid, userIds } = req.body;
+
+    // Validate request body
+    if (!Array.isArray(userIds) || !roleid) {
+      return res.status(400).json({
+        message:
+          "Invalid request. Please provide a valid roleid and an array of userIds.",
+      });
+    }
+
+    try {
+      // Check if the user has permission to assign roles
+      const { rows: accessCheckRows } = await pool.query(
+        `SELECT rolesAccess 
+         FROM Roles 
+         JOIN Users ON Roles.roleid = Users.roleid 
+         WHERE Users.userid = $1`,
+        [req.jwtPayload.userid]
+      );
+
+      if (accessCheckRows.length === 0 || !accessCheckRows[0].rolesaccess) {
+        return res.status(403).json({
+          message: "Access denied. You do not have permission to assign roles.",
+        });
+      }
+
+      // Check if the role exists
+      const { rows: roleCheckRows } = await pool.query(
+        "SELECT 1 FROM Roles WHERE roleid = $1",
+        [roleid]
+      );
+
+      if (roleCheckRows.length === 0) {
+        return res.status(404).json({
+          message: `Role with id ${roleid} does not exist.`,
+        });
+      }
+
+      const { rowCount } = await pool.query(
+        `UPDATE Users SET roleid =$1 WHERE userid = ANY($2)`,
+        [roleid, userIds]
+      );
+      if (rowCount === 0) {
+        throw new CustomError("No users found to delete", 404);
+      }
+      res.json({
+        message: `${rowCount} user(s) role updated successfully`,
+      });
+    } catch (error) {
+      console.error("Error during role assignment:", error);
+      return res.status(500).json({
+        message: "An error occurred while assigning roles.",
+      });
+    }
+  },
+  { statusCode: 500, message: "Couldn't assign roles" }
+);
+
 export {
   createRole,
   deleteRole,
@@ -287,4 +348,5 @@ export {
   getRoleInfo,
   updateDefaultRole,
   updateRole,
+  assignRole,
 };

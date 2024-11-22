@@ -102,6 +102,7 @@ const createEvent = errorWrapper(
       );
     }
 
+
     const { rows } = await pool.query(
       "INSERT INTO Events (event_creator, start_time, end_time, headline, event_details, coverphoto) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [
@@ -219,3 +220,4 @@ const deleteEvent = errorWrapper(
 );
 
 export { createEvent, getAllEvents, updateEvent, deleteEvent, getEventById };
+

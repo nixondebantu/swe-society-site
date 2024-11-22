@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, Trash2, ExternalLink } from "lucide-react";
-import { CldUploadButton } from "next-cloudinary";
-import { cn } from '@/lib/utils';
+import { FileText, Upload, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { uploadAssetsToCloud } from "@/utils/ImageUploadService";
 
 interface CVSectionProps {
   cv: string | null;
@@ -12,31 +12,45 @@ interface CVSectionProps {
   className?: string;
 }
 
-const CVSection: React.FC<CVSectionProps> = ({ 
-  cv, 
-  edit = false, 
-  onUpload, 
+const CVSection: React.FC<CVSectionProps> = ({
+  cv,
+  edit = false,
+  onUpload,
   onRemove,
-  className 
+  className,
 }) => {
-  const handleUpload = (result: any) => {
-    const uploadedURL = result.info.secure_url;
-    onUpload?.(uploadedURL);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        const uploadedURL = await uploadAssetsToCloud(file);
+        onUpload?.(uploadedURL);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
     <div className={cn("space-y-2", className)}>
       <p className="text-xs font-semibold">CV</p>
-      
+
       <div className="flex items-center gap-2">
         {cv ? (
           <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2"
-              asChild
-            >
+            <Button variant="outline" size="sm" className="gap-2" asChild>
               <a href={cv} target="_blank" rel="noopener noreferrer">
                 <FileText className="h-4 w-4" />
                 View CV
@@ -46,25 +60,39 @@ const CVSection: React.FC<CVSectionProps> = ({
 
             {edit && (
               <>
-                <CldUploadButton
-                  onUpload={handleUpload}
-                  uploadPreset={process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleUploadClick}
+                  disabled={isUploading}
                 >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Update
-                  </Button>
-                </CldUploadButton>
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4" />
+                      Update
+                    </>
+                  )}
+                </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept=".pdf"
+                  className="hidden"
+                />
 
                 <Button
                   variant="outline"
                   size="sm"
                   className="gap-2 text-destructive hover:text-destructive"
                   onClick={onRemove}
+                  disabled={isUploading}
                 >
                   <Trash2 className="h-4 w-4" />
                   Remove
@@ -73,20 +101,37 @@ const CVSection: React.FC<CVSectionProps> = ({
             )}
           </>
         ) : edit ? (
-          <CldUploadButton
-            onUpload={handleUpload}
-            uploadPreset={process.env.NEXT_PUBLIC_Assets_UPLOAD_PRESET}
-          >
+          <>
             <Button
               variant="outline"
               size="sm"
               className="gap-2"
+              onClick={handleUploadClick}
+              disabled={isUploading}
             >
-              <Upload className="h-4 w-4" />
-              Upload CV
-              <span className="text-xs text-muted-foreground ml-2">(PDF only)</span>
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  Upload CV
+                  <span className="text-xs text-muted-foreground ml-2">
+                    (PDF only)
+                  </span>
+                </>
+              )}
             </Button>
-          </CldUploadButton>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".pdf"
+              className="hidden"
+            />
+          </>
         ) : (
           <p className="text-sm text-muted-foreground">No CV uploaded</p>
         )}
