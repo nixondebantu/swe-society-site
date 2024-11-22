@@ -55,6 +55,8 @@ const AddMembers: React.FC = () => {
     } catch (error) {
       toast({
         title: "Error!!",
+        description:
+          (error as any).response?.data?.message || "An error occurred",
       });
       console.log(error);
     }

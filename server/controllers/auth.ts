@@ -89,7 +89,10 @@ const createMultiUsersWithMailSend = errorWrapper(
 
     try {
       const { rows: accessCheckRows } = await pool.query(
-        `SELECT rolesAccess FROM Roles JOIN Users ON Roles.roleid = Users.roleid WHERE Users.userid = $1`,
+        `SELECT membersaccess 
+       FROM Roles 
+       JOIN Users ON Roles.roleid = Users.roleid 
+       WHERE Users.userid = $1`,
         [req.jwtPayload.userid]
       );
 
