@@ -4,6 +4,7 @@ import Notice_Card from "@/components/dashboardpage/notice/notice_card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { getUserID } from "@/data/cookies/getCookies";
+import { BACKENDURL } from "@/data/urls";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -29,7 +30,7 @@ const Notice: React.FC = () => {
   };
 
   const fetch_notices = () => {
-    axios.get("http://localhost:5050/notice/").then((res) => {
+    axios.get(`${BACKENDURL}notice/`).then((res) => {
       setNotices(res.data);
     });
   };
@@ -47,7 +48,7 @@ const Notice: React.FC = () => {
 
   const handle_dlt = (noticeid: any) => {
     axios
-      .delete(`http://localhost:5050/notice/${noticeid}`)
+      .delete(`${BACKENDURL}notice/${noticeid}`)
       .then((res) => {
         console.log(res.data);
         setNotices((prevNotices) =>

@@ -7,7 +7,9 @@ function AchievementSection() {
   return (
     <div>
       {/* <h1 className="flex flex-col items-center">Achievements</h1> */}
-      <h1 className="flex flex-col items-center font-bold text-primary">Achievements</h1>
+      <h1 className="text-3xl font-bold text-center my-8 text-primary">
+        Latest Achievement
+      </h1>
       <HomeAchievementCard />
       <Link href={'/achievements'}>
       <div className='flex flex-col items-end justify-end p-10'>    

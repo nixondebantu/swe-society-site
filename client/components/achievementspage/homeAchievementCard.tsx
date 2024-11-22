@@ -4,6 +4,9 @@
 import React, { useState, useEffect } from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import Image from "next/image";
+import { BACKENDURL } from "@/data/urls";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 // Component for Home Page (3 achievements)
 export function HomeAchievementCard() {
@@ -14,7 +17,7 @@ export function HomeAchievementCard() {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const response = await fetch('http://localhost:5050/achievement/post');
+        const response = await fetch(`${BACKENDURL}achievement/post`);
         if (!response.ok) {
           throw new Error('Failed to fetch achievements');
         }
@@ -40,12 +43,13 @@ export function HomeAchievementCard() {
   }
 
   return (
+    <>
     <div className="flex flex-wrap justify-center">
       {achievements.map((achievement, index) => (
         <div key={index} className="p-8">
           <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-            <Image
-              src={achievement.image || '/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg'}
+            <img
+              src={achievement.photos[0] || '/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg'}
               alt={achievement.eventname || "achievement image"}
               height="400"
               width="400"
@@ -69,5 +73,7 @@ export function HomeAchievementCard() {
         </div>
       ))}
     </div>
+   
+    </>
   );
 }

@@ -1,23 +1,30 @@
-
-
-  'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, User, Calendar, Clock } from 'lucide-react';
+import { User } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import { usePathname } from 'next/navigation';
 import { BACKENDURL } from '@/data/urls';
+import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
 
 const BlogCard = ({ blog }) => {
+   
   // Function to get first image from photos array
   const getFirstImage = (photos) => {
     if (photos && photos.length > 0) {
       return `/api/placeholder/400/250`; // Using placeholder for demo
     }
     return `/api/placeholder/400/250`;
+  };
+
+  const extractText = (html: string): string => {
+    const plainText = html.replace(/<\/?[^>]+(>|$)/g, "").trim();
+    return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
   };
 
   return (
@@ -34,14 +41,14 @@ const BlogCard = ({ blog }) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="outline" className="bg-primary">
-                {blog.blogtype}
+                {blog.blogtype} 
               </Badge>
             </div>
             <h3 className="text-xl font-semibold mb-2 line-clamp-2 dark:text-gray-100">
               {blog.headline}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mb-4">
-              {blog.article}
+            {extractText(blog.article)}
             </p>
             <div className="flex items-center gap-3">
               <Avatar className="w-10 h-10 dark:bg-gray-700">
@@ -60,7 +67,7 @@ const BlogCard = ({ blog }) => {
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl bg-white dark:bg-gray-900">
+      <DialogContent className="max-w-3xl bg-white dark:bg-gray-900 max-h-[80vh] overflow-y-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             {blog.headline}
@@ -82,7 +89,7 @@ const BlogCard = ({ blog }) => {
 
           <div className="prose dark:prose-invert max-w-none">
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-              {blog.article}
+              <HtmlContent content={blog.article}/>
             </p>
           </div>
 
@@ -107,13 +114,11 @@ const BlogCard = ({ blog }) => {
   );
 };
 
-const BlogSection = () => {
+const HomeBlogSection = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 6;
-
+  const path = usePathname();
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -122,7 +127,8 @@ const BlogSection = () => {
           throw new Error('Failed to fetch blogs');
         }
         const data = await response.json();
-        setBlogs(data);
+        // Take only the first 6 blogs
+        setBlogs(data.slice(0, 6));
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -132,19 +138,6 @@ const BlogSection = () => {
 
     fetchBlogs();
   }, []);
-
-  // Pagination calculations
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
-
-  const paginate = (pageNumber) => {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
 
   if (loading) {
     return (
@@ -166,80 +159,27 @@ const BlogSection = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-8 text-primary">
-          Blog Posts
+          Latest Blog Posts
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {currentBlogs.map((blog) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {blogs.map((blog) => (
             <BlogCard key={blog.blogid} blog={blog} />
           ))}
         </div>
-
-        {/* Pagination Controls */}
-        {blogs.length > blogsPerPage && (
-          <div className="flex justify-center items-center mt-8 gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="flex items-center gap-1 dark:border-gray-700 dark:hover:bg-primary"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </Button>
-
-            <div className="flex items-center gap-1">
-              {[...Array(totalPages)].map((_, index) => {
-                const pageNumber = index + 1;
-                if (
-                  pageNumber === 1 ||
-                  pageNumber === totalPages ||
-                  (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                ) {
-                  return (
-                    <Button
-                      key={pageNumber}
-                      variant={currentPage === pageNumber ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => paginate(pageNumber)}
-                      className={`w-8 h-8 dark:border-gray-700 ${
-                        currentPage === pageNumber 
-                          ? 'dark:bg-primary dark:text-white' 
-                          : 'dark:hover:bg-gray-800'
-                      }`}
-                    >
-                      {pageNumber}
-                    </Button>
-                  );
-                } else if (
-                  pageNumber === currentPage - 2 ||
-                  pageNumber === currentPage + 2
-                ) {
-                  return <span key={pageNumber} className="px-1 dark:text-gray-400">...</span>;
-                }
-                return null;
-              })}
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-1 dark:border-gray-700 dark:hover:bg-primary"
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+        
       </div>
+      {path==='/'&&(
+      <Link href={'/blogs'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>All Blogs</Button></div>
+          </Link>
+          )}
     </div>
   );
 };
 
-export default BlogSection;
+export default HomeBlogSection;

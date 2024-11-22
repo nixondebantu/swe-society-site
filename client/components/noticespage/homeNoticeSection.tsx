@@ -1,6 +1,3 @@
-
-
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -21,23 +18,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BACKENDURL } from '@/data/urls';
 
 const NoticeCard = ({ notice }) => {
@@ -88,7 +70,7 @@ const NoticeCard = ({ notice }) => {
     const fileName = getFileName(fileUrl);
 
     return (
-      <div className="mt-4 border rounded-lg p-4 bg-gray-100 dark:bg-gray-800">
+      <div className="mt-4 border rounded-lg p-4 bg-gray-100 dark:bg-gray-800 w-full">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isImageFile(fileUrl) ? (
@@ -159,7 +141,6 @@ const NoticeCard = ({ notice }) => {
               <Clock className="h-4 w-4" />
               <span>Expires: {formatDate(notice.expire_date)}</span>
             </div>
-            
           </CardFooter>
         </Card>
       </DialogTrigger>
@@ -189,14 +170,11 @@ const NoticeCard = ({ notice }) => {
   );
 };
 
-const NoticeBoard = () => {
+const HomeNoticeSection = () => {
+    const path = usePathname()
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -206,8 +184,8 @@ const NoticeBoard = () => {
           throw new Error('Failed to fetch notices');
         }
         const data = await response.json();
-        setNotices(data);
-        setTotalPages(Math.ceil(data.length / itemsPerPage));
+        // Take only the first 6 notices
+        setNotices(data.slice(0, 6));
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -216,39 +194,7 @@ const NoticeBoard = () => {
     };
 
     fetchNotices();
-  }, [itemsPerPage]);
-
-  const indexOfLastNotice = currentPage * itemsPerPage;
-  const indexOfFirstNotice = indexOfLastNotice - itemsPerPage;
-  const currentNotices = notices.slice(indexOfFirstNotice, indexOfLastNotice);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1);
-    setTotalPages(Math.ceil(notices.length / Number(value)));
-  };
-
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPagesToShow = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-
-    return pageNumbers;
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -267,46 +213,27 @@ const NoticeBoard = () => {
   }
 
   return (
+    <div>
     <div className="flex flex-col items-center justify-center mt-8">
-              <h1 className="text-3xl font-bold text-center mb-8 text-primary">
-        Swe Notices
-       </h1>
-      {/* <div className="w-full flex items-center justify-end mb-4 gap-2">
-        <label htmlFor="itemsPerPage" className="text-gray-800 dark:text-gray-300">Items per page:</label>
-        <Select value={itemsPerPage} onValueChange={handleItemsPerPageChange}>
-          <SelectTrigger>
-            <SelectValue>{itemsPerPage}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="6">6</SelectItem>
-            <SelectItem value="12">12</SelectItem>
-            <SelectItem value="18">18</SelectItem>
-            <SelectItem value="24">24</SelectItem>
-          </SelectContent>
-        </Select>
-      </div> */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
-        {currentNotices.map((notice) => (
+      <h1 className="text-3xl font-bold text-center mb-8 text-primary">
+        Latest Notices
+      </h1>
+      <div className='w-full flex justify-center  max-w-[1400px]'>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3   mx-0 md:mx-10">
+        {notices.map((notice) => (
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>
-      <Pagination className="mt-8">
-        <PaginationPrevious className='hover:bg-primary' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-        {getPageNumbers().map((pageNumber) => (
-          <PaginationItem key={pageNumber}>
-            <PaginationLink
-              onClick={() => handlePageChange(pageNumber)}
-              active={pageNumber === currentPage}
-             
-            >
-              {pageNumber}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-        <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}  className='hover:bg-primary' />
-      </Pagination>
+      </div>
+    </div>
+    {path==='/'&&(
+      <Link href={'/notices'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>All Notices</Button></div>
+          </Link>
+          )}
     </div>
   );
 };
 
-export default NoticeBoard;
+export default HomeNoticeSection;

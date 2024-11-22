@@ -18,6 +18,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { upload_img } from "./uploadImage";
+import { BACKENDURL } from "@/data/urls";
 // import { cookies } from 'next/headers';
 
 type AddNoticeProps = {
@@ -82,7 +83,7 @@ function AddNotice({ fetch_notices }: AddNoticeProps) {
 
     try {
       axios
-        .post("http://localhost:5050/notice/create", updatedNotice)
+        .post(`${BACKENDURL}notice/create`, updatedNotice)
         .then((res) => {
           console.log(res);
           fetch_notices();

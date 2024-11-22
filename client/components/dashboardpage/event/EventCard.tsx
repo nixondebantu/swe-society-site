@@ -46,11 +46,11 @@ const EventCard: React.FC<EventType> = ({
       </span>
 
       <div className="relative h-48 w-full">
-        <Image
+        <img
           src={coverphoto}
           alt={`${headline} cover photo`}
-          layout="fill"
-          objectFit="cover"
+          // layout="fill"
+          // objectFit="cover"
           className="rounded-t-lg"
         />
       </div>

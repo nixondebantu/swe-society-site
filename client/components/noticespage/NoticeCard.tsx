@@ -1,16 +1,17 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { HoverEffect } from "../ui/card-hover-effect";
+import { BACKENDURL } from '@/data/urls';
 export function NoticeCard() {
   const [notices, setNotices] = useState([]);
 
   // Fetch notices from API
   useEffect(() => {
-    fetch('http://localhost:5050/notice')
+    fetch(`${BACKENDURL}notice`)
       .then((response) => response.json())
       .then((data) => {
         // Map the API data to match the structure needed for HoverEffect and limit to 6 items
-        const formattedNotices = data.slice(0, 6).map((notice) => ({
+        const formattedNotices = data.slice(0, 6).map((notice: any) => ({
           title: notice.headline,
           description: notice.notice_body,
           link: notice.file || '#', 

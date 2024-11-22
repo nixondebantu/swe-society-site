@@ -7,7 +7,7 @@ import Achievement from "./_pages/Achievement";
 import Members from "./_pages/Members";
 import Notice from "./_pages/Notice";
 import Profile from "./_pages/Profile";
-import Event from "./_pages/event";
+import Event from "./_pages/Event";
 
 import ElectionCommittee from "./_pages/ElectionCommittee";
 import BlogForUsers from "./_pages/Blog";

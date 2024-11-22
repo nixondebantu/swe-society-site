@@ -79,6 +79,7 @@ export const APIENDPOINTS = {
     getEventbyID: `${BACKENDURL}event`,
   },
 
+
   role: {
     getRole: `${BACKENDURL}role`,
     createRole: `${BACKENDURL}role`,
@@ -88,4 +89,5 @@ export const APIENDPOINTS = {
     getRoleInfo: `${BACKENDURL}role/info`,
     assignRole: `${BACKENDURL}role/assign`,
   },
+
 };

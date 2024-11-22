@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react'
 import { WavyBackground } from '../ui/wavy-background'
 import { AnimatedTooltip } from '../ui/animated-tooltip'
+import { BACKENDURL } from '@/data/urls';
 
 interface Member {
   fullname: string;
@@ -26,7 +27,7 @@ const ECMemberCarousel = () => {
   useEffect(() => {
     async function fetchMembers() {
       try {
-        const response = await fetch('http://localhost:5050/election/allmembers/1');
+        const response = await fetch(`${BACKENDURL}election/allmembers/1`);
         if (!response.ok) {
           throw new Error('Failed to fetch members');
         }
