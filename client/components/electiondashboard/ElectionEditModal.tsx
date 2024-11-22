@@ -11,6 +11,7 @@ interface ElectionModalProps {
   onClose: () => void;
   prevformData: ElectionFormData;
   electionId: number;
+  fetchData: () => void;
 }
 
 interface UserResponse {
@@ -34,7 +35,7 @@ interface ElectionFormData {
   assistant_commissioner?: number;
 }
 
-const ElectionEditModal: React.FC<ElectionModalProps> = ({ onClose, prevformData, electionId }) => {
+const ElectionEditModal: React.FC<ElectionModalProps> = ({fetchData, onClose, prevformData, electionId }) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
   const [isEditingCommissioner, setIsEditingCommissioner] = useState(false);
 const [isEditingAssistant, setIsEditingAssistant] = useState(false);
@@ -84,7 +85,7 @@ const [assistantCommissionerName, setassistantCommissionerName]= useState("");
       if (response.status === 200 || response.status === 201) {
         notify();
         onClose();
-        window.location.reload();
+        fetchData();
       }
     } catch (error) {
       console.error("Error creating election:", error);
