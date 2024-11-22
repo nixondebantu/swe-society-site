@@ -14,6 +14,7 @@ import { SearchBar } from "./SearchBar";
 import { getTableColumns } from "./TableColumns";
 import { UserTable } from "./UserTable";
 import { RoleUpdateDialog } from "./RoleUpdateDialog";
+import { UserDetailsDialog } from "./UserDetailsDialog";
 
 const FindMember: React.FC = () => {
   const {
@@ -25,8 +26,10 @@ const FindMember: React.FC = () => {
     handleRoleUpdate,
   } = useUsers();
   const [search, setSearch] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const filteredData = useMemo(
     () =>
@@ -34,7 +37,8 @@ const FindMember: React.FC = () => {
         (user) =>
           user.fullname?.toLowerCase().includes(search.toLowerCase()) ||
           user.email.toLowerCase().includes(search.toLowerCase()) ||
-          user.regno.includes(search)
+          user.regno.includes(search) ||
+          user.role.toLowerCase().includes(search.toLowerCase())
       ),
     [data, search]
   );
@@ -50,11 +54,18 @@ const FindMember: React.FC = () => {
     );
   };
 
+  const handleViewDetails = (userId: number) => {
+    setSelectedUserId(userId);
+    setShowUserDetails(true);
+  };
+
   const columns = getTableColumns(
     selectedUserIds,
     handleSelectUser,
-    handleSelectAllVisible
+    handleSelectAllVisible,
+    handleViewDetails
   );
+
   const table = useReactTable({
     data: filteredData,
     columns,
@@ -105,6 +116,11 @@ const FindMember: React.FC = () => {
         onOpenChange={setShowRoleDialog}
         userIds={selectedUserIds}
         onRoleUpdate={handleRoleUpdate}
+      />
+      <UserDetailsDialog
+        open={showUserDetails}
+        onOpenChange={setShowUserDetails}
+        userId={selectedUserId}
       />
     </div>
   );

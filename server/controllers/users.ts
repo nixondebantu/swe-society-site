@@ -94,9 +94,36 @@ const getAllUsers = errorWrapper(
 const getUserById = errorWrapper(
   async (req: Request, res: Response) => {
     const { userId } = req.params;
-    const { rows } = await pool.query("SELECT * FROM Users WHERE userId = $1", [
-      userId,
-    ]);
+    const { rows } = await pool.query(
+      `
+      SELECT 
+          u.userid,
+          u.fullname,
+          u.email,
+          u.regno,
+          u.session,
+          r.roletitle AS role,
+          u.profile_picture,
+          u.bio,
+          u.linkedin_id,
+          u.github_id,
+          u.stop_stalk_id,
+          u.whatsapp,
+          u.facebook_id,
+          u.blood_group,
+          u.school,
+          u.college,
+          u.hometown,
+          u.cv,
+          u.experience,
+          u.projects,
+          u.skills,
+          u.is_alumni
+        FROM Users u
+        LEFT JOIN Roles r
+        ON u.roleid = r.roleid WHERE userId = $1`,
+      [userId]
+    );
 
     if (rows.length === 0) {
       throw new CustomError("User not found", 404);

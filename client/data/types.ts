@@ -74,7 +74,6 @@ export interface TableProps {
 export interface UserProfile {
   userid: number;
   fullname: string;
-  password: string;
   email: string;
   profile_picture: string;
   regno: string;
