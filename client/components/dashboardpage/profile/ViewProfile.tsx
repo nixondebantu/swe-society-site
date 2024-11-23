@@ -143,7 +143,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
           <div className="flex gap-2">
             {values?.linkedin_id ? (
               <Link href={values?.linkedin_id} target="_blank">
-                <Button variant={"outline_red"} size={"icon"}>
+                <Button variant={"outline"} size={"icon"}>
                   <LinkedinIcon />
                 </Button>
               </Link>
@@ -154,7 +154,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
             )}
             {values?.github_id ? (
               <Link href={values?.github_id} target="_blank">
-                <Button variant={"outline_red"} size={"icon"}>
+                <Button variant={"outline"} size={"icon"}>
                   <GithubIcon />
                 </Button>
               </Link>
@@ -165,7 +165,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
             )}
             {values?.stop_stalk_id ? (
               <Link href={values?.stop_stalk_id} target="_blank">
-                <Button variant={"outline_red"} size={"icon"}>
+                <Button variant={"outline"} size={"icon"}>
                   <CircleSlash />
                 </Button>
               </Link>
@@ -176,7 +176,7 @@ const ViewProfile: React.FC<ViewProfileProps> = ({ values }) => {
             )}
             {values?.facebook_id ? (
               <Link href={values?.facebook_id} target="_blank">
-                <Button variant={"outline_red"} size={"icon"}>
+                <Button variant={"outline"} size={"icon"}>
                   <Facebook />
                 </Button>
               </Link>

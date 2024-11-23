@@ -17,7 +17,7 @@ The Software Society at SUST is a student-led organization that fosters skill de
     
       </p>
       <div className='mt-4 flex flex-col items-center justify-center gap-4 md:
-      flex-row md:gap-8 md:justify-start md:items-start'>
+     md:gap-8 md:justify-start md:items-start'>
       {/* <GlobeDemo/> */}
       {/* <Carousel/> */}
       </div>
