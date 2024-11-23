@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "../ui/navbar-menu";
 import Link from "next/link";
+import { usePathname } from 'next/navigation';
 import { cn } from "@/utils/cn";
 import { Menu as MenuIcon, X } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -39,9 +40,10 @@ const useAuth = () => useContext(AuthContext);
 
 function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { isAuthenticated, signOut } = useAuth();
   const { theme } = useTheme();
+  const pathname = usePathname();
 
   // Close mobile menu when screen size changes
   useEffect(() => {
@@ -53,7 +55,7 @@ function Navbar({ className }: { className?: string }) {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [pathname]);
 
   const menuItems = [
     { href: '/', label: 'Home' },
@@ -68,7 +70,7 @@ function Navbar({ className }: { className?: string }) {
       {/* Navbar */}
       <div 
         className={cn(
-          "fixed top-0 inset-x-0 z-50 backdrop-blur-sm border-b h-16",
+          "fixed top-0 inset-x-0 z-50 backdrop-blur-sm border-b h-20",
           "dark:bg-gray-900/80 dark:border-gray-800",
           "light:bg-white/80 light:border-gray-200",
           className
@@ -173,7 +175,7 @@ function Navbar({ className }: { className?: string }) {
       )}
 
       {/* Spacer to prevent content from going under navbar */}
-      <div className="h-16" />
+      <div className="h-20" />
     </>
   );
 }
