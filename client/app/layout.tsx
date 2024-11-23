@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import Navbar, { AuthProvider } from "@/components/global/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,15 +20,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+   
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
+               <AuthProvider>
+               <Navbar/>
           {children}
+          </AuthProvider>
         </ThemeProvider>
         <Toaster />
+        
       </body>
     </html>
   );
