@@ -49,8 +49,8 @@ const EventCard: React.FC<EventType> = ({
         <img
           src={coverphoto}
           alt={`${headline} cover photo`}
-          layout="fill"
-          objectFit="cover"
+          // layout="fill"
+          // objectFit="cover"
           className="rounded-t-lg"
         />
       </div>

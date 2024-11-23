@@ -8,7 +8,6 @@ import ECMemberCarousel from "@/components/homepage/ECMemberCarousel";
 import EventSection from "@/components/homepage/EventSection";
 import Hero from "@/components/homepage/Hero";
 import NoticeSection from "@/components/homepage/NoticeSection";
-import TweetCard from "@/components/Tweet/tweetCard";
 import BlogSection from "@/components/blogspage/blogSection";
 import HomeBlogSection from "@/components/blogspage/homeBlogSection";
 import HomeNoticeSection from "@/components/noticespage/homeNoticeSection";

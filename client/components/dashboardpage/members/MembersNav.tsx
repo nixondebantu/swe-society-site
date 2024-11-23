@@ -15,14 +15,14 @@ const MembersNav: React.FC<MembersNavProps> = ({
   return (
     <div className="flex gap-2">
       <Button
-        variant={membersOption === "find" ? "default" : "outline_red"}
+        variant={membersOption === "find" ? "default" : "outline"}
         onClick={() => setMembersOption("find")}
       >
         <UserRoundSearch />
         <p className="hidden sm:contents">Members</p>
       </Button>
       <Button
-        variant={membersOption === "add" ? "default" : "outline_red"}
+        variant={membersOption === "add" ? "default" : "outline"}
         onClick={() => setMembersOption("add")}
       >
         <UserPlus />

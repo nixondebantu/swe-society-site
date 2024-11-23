@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
 import { upload_img } from "./uploadImage";
+import { BACKENDURL } from "@/data/urls";
 
 function EditNotice(props: any) {
   const [notice, setNotice] = useState({

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { SlCalender } from "react-icons/sl";
+
 import { format } from "date-fns"
 
 import { cn } from "@/lib/utils"
@@ -29,7 +30,7 @@ export function DatePickerDemo(props: { date: Date | undefined; setDate: (date: 
                         !props.date && "text-muted-foreground"
                     )}
                 >
-                    <CalendarIcon className="mr-2" />
+                    <SlCalender className="mr-2" />
                     {props.date ? format(props.date, "PPP") : <span>Pick a date</span>}
                 </Button>
             </PopoverTrigger>
