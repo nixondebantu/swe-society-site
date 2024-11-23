@@ -122,7 +122,7 @@ const HomeBlogSection = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(`${BACKENDURL}blog`);
+        const response = await fetch(`${BACKENDURL}blog/landing/approved`);
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
