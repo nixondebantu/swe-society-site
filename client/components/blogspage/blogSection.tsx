@@ -10,12 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, User, Calendar, Clock } from 'lucide-react';
 import { BACKENDURL } from '@/data/urls';
+
 import { extractText } from '@/utils/TextManupulate';
 import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
 
-const BlogCard = ({ blog }) => {
+
+const BlogCard = ({ blog }:any) => {
   // Function to get first image from photos array
-  const getFirstImage = (photos) => {
+  const getFirstImage = (photos:any) => {
     if (photos && photos.length > 0) {
       return `/api/placeholder/400/250`; // Using placeholder for demo
     }
@@ -110,23 +112,25 @@ const BlogCard = ({ blog }) => {
 };
 
 const BlogSection = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [blogs, setBlogs] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const blogsPerPage = 6;
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
+
         const response = await fetch(`${BACKENDURL}blog/landing/approved`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
         const data = await response.json();
         setBlogs(data);
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
         setLoading(false);
       }
@@ -141,7 +145,7 @@ const BlogSection = () => {
   const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
-  const paginate = (pageNumber) => {
+  const paginate = (pageNumber:number) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,7 +179,7 @@ const BlogSection = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {currentBlogs.map((blog) => (
+          {currentBlogs.map((blog:any) => (
             <BlogCard key={blog.blogid} blog={blog} />
           ))}
         </div>

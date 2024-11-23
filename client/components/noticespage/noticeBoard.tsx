@@ -40,8 +40,8 @@ import {
 import Link from 'next/link';
 import { BACKENDURL } from '@/data/urls';
 
-const NoticeCard = ({ notice }) => {
-  const formatDate = (dateString) => {
+const NoticeCard = ({ notice }:any) => {
+  const formatDate = (dateString:any) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -49,22 +49,22 @@ const NoticeCard = ({ notice }) => {
     });
   };
 
-  const isImageFile = (url) => {
+  const isImageFile = (url: string) => {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
     return imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
   };
 
-  const isPDFFile = (url) => {
+  const isPDFFile = (url: string) => {
     return url.toLowerCase().endsWith('.pdf');
   };
 
-  const getFileName = (url) => {
+  const getFileName = (url: string) => {
     if (!url) return '';
     const parts = url.split('/');
     return parts[parts.length - 1];
   };
 
-  const handleDownload = async (url, filename) => {
+  const handleDownload = async (url: string | URL | Request, filename: string) => {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
@@ -82,7 +82,7 @@ const NoticeCard = ({ notice }) => {
     }
   };
 
-  const FileSection = ({ fileUrl }) => {
+  const FileSection = ({ fileUrl }:any) => {
     if (!fileUrl) return null;
 
     const fileName = getFileName(fileUrl);
@@ -190,13 +190,13 @@ const NoticeCard = ({ notice }) => {
 };
 
 const NoticeBoard = () => {
-  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [notices, setNotices] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(6);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -209,7 +209,7 @@ const NoticeBoard = () => {
         setNotices(data);
         setTotalPages(Math.ceil(data.length / itemsPerPage));
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
         setLoading(false);
       }
@@ -222,12 +222,12 @@ const NoticeBoard = () => {
   const indexOfFirstNotice = indexOfLastNotice - itemsPerPage;
   const currentNotices = notices.slice(indexOfFirstNotice, indexOfLastNotice);
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: React.SetStateAction<number>) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleItemsPerPageChange = (value) => {
+  const handleItemsPerPageChange = (value: any) => {
     setItemsPerPage(Number(value));
     setCurrentPage(1);
     setTotalPages(Math.ceil(notices.length / Number(value)));
@@ -286,24 +286,24 @@ const NoticeBoard = () => {
         </Select>
       </div> */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
-        {currentNotices.map((notice) => (
+        {currentNotices.map((notice:any) => (
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>
       <Pagination className="mt-8">
-        <PaginationPrevious className='hover:bg-primary' onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+        <PaginationPrevious className='hover:bg-primary' onClick={() => handlePageChange(currentPage - 1)}  />
         {getPageNumbers().map((pageNumber) => (
           <PaginationItem key={pageNumber}>
             <PaginationLink
               onClick={() => handlePageChange(pageNumber)}
-              active={pageNumber === currentPage}
+              isActive={pageNumber === currentPage}
              
             >
               {pageNumber}
             </PaginationLink>
           </PaginationItem>
         ))}
-        <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}  className='hover:bg-primary' />
+        <PaginationNext onClick={() => handlePageChange(currentPage + 1)}   className='hover:bg-primary' />
       </Pagination>
     </div>
   );

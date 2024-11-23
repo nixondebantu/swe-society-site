@@ -1,8 +1,9 @@
-"use client";
+// "use client";
 
-import Image from "next/image";
-import React from "react";
-import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
+// import Image from "next/image";
+// import React from "react";
+// import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
+
 
 export function GalleryCard () {
   return (
@@ -57,3 +58,4 @@ export function GalleryCard () {
     </CardContainer>
   );
 }
+

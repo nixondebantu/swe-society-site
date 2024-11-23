@@ -12,14 +12,13 @@ import { usePathname } from 'next/navigation';
 import { BACKENDURL } from '@/data/urls';
 import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
 
-const BlogCard = ({ blog }) => {
+const BlogCard = ({ blog }:any) => {
    
-  // Function to get first image from photos array
-  const getFirstImage = (photos) => {
-    if (photos && photos.length > 0) {
-      return `/api/placeholder/400/250`; // Using placeholder for demo
-    }
-    return `/api/placeholder/400/250`;
+
+
+  const extractText = (html: string): string => {
+    const plainText = html.replace(/<\/?[^>]+(>|$)/g, "").trim();
+    return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
   };
 
   const extractText = (html: string): string => {
@@ -115,14 +114,16 @@ const BlogCard = ({ blog }) => {
 };
 
 const HomeBlogSection = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [blogs, setBlogs] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
   const path = usePathname();
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
+
         const response = await fetch(`${BACKENDURL}blog/landing/approved`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
@@ -130,7 +131,7 @@ const HomeBlogSection = () => {
         // Take only the first 6 blogs
         setBlogs(data.slice(0, 6));
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
         setLoading(false);
       }
@@ -166,7 +167,7 @@ const HomeBlogSection = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogs.map((blog) => (
+          {blogs.map((blog:any) => (
             <BlogCard key={blog.blogid} blog={blog} />
           ))}
         </div>

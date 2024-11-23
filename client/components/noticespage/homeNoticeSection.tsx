@@ -22,8 +22,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BACKENDURL } from '@/data/urls';
 
-const NoticeCard = ({ notice }) => {
-  const formatDate = (dateString) => {
+const NoticeCard = ({ notice }:any) => {
+  const formatDate = (dateString:any) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -31,22 +31,22 @@ const NoticeCard = ({ notice }) => {
     });
   };
 
-  const isImageFile = (url) => {
+  const isImageFile = (url: string) => {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
     return imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
   };
 
-  const isPDFFile = (url) => {
+  const isPDFFile = (url: string) => {
     return url.toLowerCase().endsWith('.pdf');
   };
 
-  const getFileName = (url) => {
+  const getFileName = (url: string) => {
     if (!url) return '';
     const parts = url.split('/');
     return parts[parts.length - 1];
   };
 
-  const handleDownload = async (url, filename) => {
+  const handleDownload = async (url: string | URL | Request, filename: string) => {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
@@ -64,7 +64,7 @@ const NoticeCard = ({ notice }) => {
     }
   };
 
-  const FileSection = ({ fileUrl }) => {
+  const FileSection = ({ fileUrl }:any) => {
     if (!fileUrl) return null;
 
     const fileName = getFileName(fileUrl);
@@ -172,9 +172,9 @@ const NoticeCard = ({ notice }) => {
 
 const HomeNoticeSection = () => {
     const path = usePathname()
-  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [notices, setNotices] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -187,7 +187,7 @@ const HomeNoticeSection = () => {
         // Take only the first 6 notices
         setNotices(data.slice(0, 6));
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
         setLoading(false);
       }
@@ -220,7 +220,9 @@ const HomeNoticeSection = () => {
       </h1>
       <div className='w-full flex justify-center  max-w-[1400px]'>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3   mx-0 md:mx-10">
-        {notices.map((notice) => (
+
+        {notices.map((notice:any) => (
+
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>
