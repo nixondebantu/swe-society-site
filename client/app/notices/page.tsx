@@ -1,7 +1,9 @@
-import NoticeSection from "@/components/homepage/NoticeSection";
+
+import NoticeBoard from "@/components/noticespage/noticeBoard";
 
 export default function page() {
   return <div>
-    <NoticeSection/>
+    <NoticeBoard/>
   </div>;
 }
+

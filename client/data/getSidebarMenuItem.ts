@@ -1,4 +1,5 @@
 import { RoleAccessType, SidebarItems } from "@/data/types";
+import { headerConfig } from "@/lib/header_config";
 import {
   Award,
   BarChart2,
@@ -13,30 +14,30 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
-import { roleAccess } from "./dummy/roleresponse";
+import { APIENDPOINTS } from "./urls";
 
 const getItem = (roleAccess: RoleAccessType): SidebarItems => {
   const links = [
     { label: "Profile", href: "/dashboard/profile", Icon: User },
     { label: "Billing", href: "/dashboard/billing", Icon: CreditCard },
+    { label: "Achievement", href: "/dashboard/achievement", Icon: Award },
+    { label: "Write Blog", href: "/dashboard/usersblog", Icon: NotebookPen },
   ];
 
-  if (roleAccess.achievement) {
-    links.push({
-      label: "Achievement",
-      href: "/dashboard/achievement",
-      Icon: Award,
-    });
-  }
-  if (roleAccess.achievement) {
+  if (roleAccess.achievementmanage) {
     links.push({
       label: "Achievement Manage",
       href: "/dashboard/achievement_manage",
       Icon: Award,
     });
   }
+
   if (roleAccess.blog) {
-    links.push({ label: "Blog", href: "/dashboard/blog", Icon: NotebookPen });
+    links.push({
+      label: "Blog Manage",
+      href: "/dashboard/blog",
+      Icon: NotebookPen,
+    });
   }
   if (roleAccess.bulkmail) {
     links.push({ label: "Bulk Mail", href: "/dashboard/bulkmail", Icon: Send });
@@ -78,17 +79,26 @@ const getItem = (roleAccess: RoleAccessType): SidebarItems => {
       Icon: BarChart2,
     });
   }
-  if (roleAccess.usersblog) {
-    links.push({
-      label: "Users Blog",
-      href: "/dashboard/usersblog",
-      Icon: NotebookPen,
-    });
-  }
+  // if (roleAccess.usersblog) {
+  //   links.push({
+  //     label: "Users Blog",
+  //     href: "/dashboard/usersblog",
+  //     Icon: NotebookPen,
+  //   });
+  // }
 
   return { links };
 };
 
-const sidebarItems = getItem(roleAccess);
+export const fetchRoleAccess = async (): Promise<RoleAccessType> => {
+  const response = await fetch(
+    APIENDPOINTS.users.getRoleAccess,
+    headerConfig()
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch role access data");
+  }
+  return response.json();
+};
 
-export default sidebarItems;
+export default getItem;

@@ -14,6 +14,7 @@ export const APIENDPOINTS = {
     getUserbyID: `${BACKENDURL}users`,
     DelUserbyID: `${BACKENDURL}users`,
     DelMultiUser: `${BACKENDURL}users`,
+    getRoleAccess: `${BACKENDURL}users/roleaccess`,
   },
   notice: {
     getAllNotice: `${BACKENDURL}notice`,
@@ -69,6 +70,16 @@ export const APIENDPOINTS = {
     getPositionbyID: `${BACKENDURL}election/positions`,
     deletePosition: `${BACKENDURL}election/positions`,
   },
+
+  events: {
+    getEvents: `${BACKENDURL}event`,
+    createEvent: `${BACKENDURL}event/create`,
+    updateEvent: `${BACKENDURL}event`,
+    deleteEvent: `${BACKENDURL}event`,
+    getEventbyID: `${BACKENDURL}event`,
+  },
+
+
   role: {
     getRole: `${BACKENDURL}role`,
     createRole: `${BACKENDURL}role`,
@@ -76,5 +87,7 @@ export const APIENDPOINTS = {
     deleteRole: `${BACKENDURL}role`,
     updateDefaultRole: `${BACKENDURL}role/default`,
     getRoleInfo: `${BACKENDURL}role/info`,
+    assignRole: `${BACKENDURL}role/assign`,
   },
+
 };

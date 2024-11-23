@@ -143,7 +143,7 @@ const Profile: React.FC = () => {
           <div className="flex w-full justify-end gap-3 mb-3">
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline_red" className="gap-2">
+                <Button variant="outline" className="gap-2 bg-red-600 text-white">
                   <KeyRound /> Change Password
                 </Button>
               </DialogTrigger>
@@ -210,8 +210,8 @@ const Profile: React.FC = () => {
               </DialogContent>
             </Dialog>
             <Button
-              variant="outline_red"
-              className="gap-2"
+              
+              className="gap-2 bg-red-600 text-white"
               onClick={() => setUpdating(true)}
             >
               <PencilLine /> Edit

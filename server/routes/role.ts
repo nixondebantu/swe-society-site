@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  assignRole,
   createRole,
   deleteRole,
   getAllRole,
@@ -11,6 +12,7 @@ import {
 import { validateBearerToken } from "../middlewares/validateBearerToken";
 const roleRoute = express.Router();
 
+roleRoute.put("/assign", validateBearerToken, assignRole);
 roleRoute.post("/", validateBearerToken, createRole);
 roleRoute.put("/:roleid", validateBearerToken, updateRole);
 roleRoute.delete("/:roleid", validateBearerToken, deleteRole);
