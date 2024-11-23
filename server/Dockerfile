@@ -22,3 +22,7 @@ EXPOSE 5050
 # Start the application in production mode
 # CMD ["npm", "run", "dev"]
 CMD ["npm", "start"]
+
+
+#sudo docker build -t society-site .
+# docker run -p 5050:5050 --env-file .env society-site

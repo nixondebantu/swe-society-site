@@ -13,16 +13,17 @@ const ElectionCommittee: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isShowFullCommitteee, setShowFullCommitteee] = useState(false);
     const [selectedElectionId, setSelectedElectionId] = useState<number | null>(null);
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${APIENDPOINTS.election.getAllElection}`);
+            const data = await response.json();
+            setElectionCommittees(data);
+        } catch (error) {
+            console.error('Error fetching data: ', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${APIENDPOINTS.election.getAllElection}`);
-                const data = await response.json();
-                setElectionCommittees(data);
-            } catch (error) {
-                console.error('Error fetching data: ', error);
-            }
-        };
 
         fetchData();
     }, []);
@@ -41,9 +42,9 @@ const ElectionCommittee: React.FC = () => {
           onClick={() => setIsModalOpen(true)}
          className="bg-red-700 rounded-lg px-4 mr-2">+ Add Election</button>
           </div>
-       <ElectionCommitteeComponent electionCommittees={electionCommittees} setShowFullCommitteee={setShowFullCommitteee} setSelectedElectionId={setSelectedElectionId}/>
+       <ElectionCommitteeComponent fetchData={fetchData} electionCommittees={electionCommittees} setShowFullCommitteee={setShowFullCommitteee} setSelectedElectionId={setSelectedElectionId}/>
       {isModalOpen && (
-         <ElectionModal onClose={() => setIsModalOpen(false)}  />
+         <ElectionModal onClose={() => setIsModalOpen(false)} fetchData={fetchData} />
       )}
       </>}
 

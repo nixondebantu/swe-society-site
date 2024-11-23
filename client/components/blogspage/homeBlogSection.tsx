@@ -9,15 +9,16 @@ import { User } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import { usePathname } from 'next/navigation';
+import { BACKENDURL } from '@/data/urls';
+import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
 
-const BlogCard = ({ blog }) => {
+const BlogCard = ({ blog }:any) => {
    
-  // Function to get first image from photos array
-  const getFirstImage = (photos) => {
-    if (photos && photos.length > 0) {
-      return `/api/placeholder/400/250`; // Using placeholder for demo
-    }
-    return `/api/placeholder/400/250`;
+
+
+  const extractText = (html: string): string => {
+    const plainText = html.replace(/<\/?[^>]+(>|$)/g, "").trim();
+    return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
   };
 
   return (
@@ -26,7 +27,7 @@ const BlogCard = ({ blog }) => {
         <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:border-gray-700 cursor-pointer">
           <CardHeader className="p-0">
             <img
-              src={getFirstImage(blog.photos)}
+              src={blog.photos[0]}
               alt={blog.headline}
               className="w-full h-48 object-cover"
             />
@@ -34,14 +35,14 @@ const BlogCard = ({ blog }) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Badge variant="outline" className="bg-primary">
-                {blog.blogtype}
+                {blog.blogtype} 
               </Badge>
             </div>
             <h3 className="text-xl font-semibold mb-2 line-clamp-2 dark:text-gray-100">
               {blog.headline}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mb-4">
-              {blog.article}
+            {extractText(blog.article)}
             </p>
             <div className="flex items-center gap-3">
               <Avatar className="w-10 h-10 dark:bg-gray-700">
@@ -60,7 +61,7 @@ const BlogCard = ({ blog }) => {
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl bg-white dark:bg-gray-900">
+      <DialogContent className="max-w-3xl bg-white dark:bg-gray-900 max-h-[80vh] overflow-y-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             {blog.headline}
@@ -69,7 +70,7 @@ const BlogCard = ({ blog }) => {
         
         <div className="mt-4">
           <img
-            src={getFirstImage(blog.photos)}
+            src={blog.photos[0]}
             alt={blog.headline}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
@@ -82,7 +83,7 @@ const BlogCard = ({ blog }) => {
 
           <div className="prose dark:prose-invert max-w-none">
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-              {blog.article}
+              <HtmlContent content={blog.article}/>
             </p>
           </div>
 
@@ -108,14 +109,14 @@ const BlogCard = ({ blog }) => {
 };
 
 const HomeBlogSection = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [blogs, setBlogs] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
   const path = usePathname();
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:5050/blog');
+        const response = await fetch(`${BACKENDURL}blog`);
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
@@ -123,7 +124,7 @@ const HomeBlogSection = () => {
         // Take only the first 6 blogs
         setBlogs(data.slice(0, 6));
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(err.message);
         setLoading(false);
       }
@@ -159,17 +160,18 @@ const HomeBlogSection = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogs.map((blog) => (
+          {blogs.map((blog:any) => (
             <BlogCard key={blog.blogid} blog={blog} />
           ))}
         </div>
-        {path==='/'&&(
+        
+      </div>
+      {path==='/'&&(
       <Link href={'/blogs'}>
       <div className='flex flex-col items-end justify-end p-10'>    
           <Button className='flex flex-col justify-center items-end'>All Blogs</Button></div>
           </Link>
           )}
-      </div>
     </div>
   );
 };

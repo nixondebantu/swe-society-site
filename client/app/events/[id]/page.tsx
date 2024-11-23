@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { IconHeart, IconMessageCircle, IconRepeat, IconShare, IconCalendar, IconClock } from "@tabler/icons-react";
 import { format, isBefore, isAfter } from "date-fns";
+import { BACKENDURL } from "@/data/urls";
 
 const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getStatus = (start_time, end_time) => {
+  const getStatus = (start_time: any, end_time: any) => {
     const now = new Date();
     if (isBefore(now, new Date(start_time))) {
       return "Upcoming";
@@ -23,14 +24,14 @@ const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/event/${params.id}`);
+        const response = await fetch(`${BACKENDURL}event/${params.id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch event details");
         }
         const data = await response.json();
         setEvent(data);
       } catch (err) {
-        setError(err.message);
+        console.log(err);
       } finally {
         setLoading(false);
       }

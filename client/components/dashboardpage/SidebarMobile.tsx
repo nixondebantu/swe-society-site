@@ -53,8 +53,8 @@ function SidebarMobile(props: SidebarMobileProps) {
         <div className="h-full px-3 py-4 snap-y">
           <div className="flex flex-col gap-1 overflow-y-auto h-5/6 max-h-5/6">
             {props.sidebarItems.links.map((link, index) => (
-              <SheetClose asChild>
-                <Link key={index} href={link.href}>
+              <SheetClose asChild key={index}>
+                <Link href={link.href}>
                   <SidebarButton
                     variant={pathname === link.href ? "default" : "ghost"}
                     Icon={link.Icon}

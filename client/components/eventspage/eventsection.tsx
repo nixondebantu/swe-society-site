@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -10,21 +9,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 // Utility Functions
-const formatDate = (dateString) => format(new Date(dateString), 'MMM dd, yyyy');
-const formatTime = (dateString) => format(new Date(dateString), 'hh:mm a');
+const formatDate = (dateString:any) => format(new Date(dateString), 'MMM dd, yyyy');
+const formatTime = (dateString:any) => format(new Date(dateString), 'hh:mm a');
 
 // Event Card Component
-const EventCard = ({ event, isHomePage = false }) => {
+const EventCard = ({ event, isHomePage = false }:any) => {
   const { headline, event_details, start_time, end_time, coverphoto } = event;
 
   return (
     <Card className={`w-full ${isHomePage ? 'h-[350px]' : 'h-[400px]'} flex flex-col`}>
       {coverphoto && (
         <div className="relative w-full h-48 overflow-hidden">
-          <Image 
+          <img 
             src={coverphoto || '/placeholder.jpg'} 
             alt={headline} 
-            fill 
             className="object-cover"
           />
         </div>
@@ -52,18 +50,18 @@ const EventCard = ({ event, isHomePage = false }) => {
 };
 
 // Home Events Section
-export const HomeEvents = ({ events }) => {
+export const HomeEvents = ({ events }:any) => {
     const path = usePathname();
   const topEvents = events.slice(0, 6);
 
   return (
-    
-    <div className="container mx-auto py-10">
+    <>
+        <div className="container mx-auto py-10 ">
        <h1 className="text-3xl font-bold text-center mb-8 text-primary">
           Latest Events
         </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {topEvents.map(event => (
+        {topEvents.map((event: { eventid: any }) => (
             <Link key={event.eventid} href={`/events/${event.eventid}`}>
             
           <EventCard 
@@ -77,19 +75,24 @@ export const HomeEvents = ({ events }) => {
         
         ))}
       </div>
-      {path==='/'&&(
+     
+    </div>
+    <>
+    {path==='/'&&(
       <Link href={'/events'}>
       <div className='flex flex-col items-end justify-end p-10'>    
           <Button className='flex flex-col justify-center items-end'>All Events</Button></div>
           </Link>
           )}
-    </div>
+          </>
+    </>
+
 
   );
 };
 
 // Paginated Events Component
-export const PaginatedEvents = ({ events, itemsPerPage = 6 }) => {
+export const PaginatedEvents = ({ events, itemsPerPage = 6 }:any) => {
   const [currentPage, setCurrentPage] = useState(1);
   
   // Pagination Logic
@@ -99,7 +102,7 @@ export const PaginatedEvents = ({ events, itemsPerPage = 6 }) => {
   
   const totalPages = Math.ceil(events.length / itemsPerPage);
 
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = (pageNumber:number) => {
     setCurrentPage(pageNumber);
   };
 
@@ -111,7 +114,7 @@ export const PaginatedEvents = ({ events, itemsPerPage = 6 }) => {
       
       {/* Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {currentEvents.map(event => (
+        {currentEvents.map((event: { eventid: any }) => (
             <Link key={event.eventid} href={`/events/${event.eventid}`}>
           <EventCard  event={event} />
           </Link>

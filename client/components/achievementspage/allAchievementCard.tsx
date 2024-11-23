@@ -2,22 +2,23 @@
 import React, { useState, useEffect } from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import Image from "next/image";
+import { BACKENDURL } from "@/data/urls";
 
 export function AllAchievementCard() {
-    const [achievements, setAchievements] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [achievements, setAchievements] = useState<any>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<any>(null);
   
     useEffect(() => {
       const fetchAchievements = async () => {
         try {
-          const response = await fetch('http://localhost:5050/achievement/post');
+          const response = await fetch(`${BACKENDURL}achievement/post`);
           if (!response.ok) {
             throw new Error('Failed to fetch achievements');
           }
           const data = await response.json();
           setAchievements(data.achievements);
-        } catch (err) {
+        } catch (err:any) {
           setError(err.message);
         } finally {
           setLoading(false);
@@ -38,10 +39,10 @@ export function AllAchievementCard() {
     return (
       <div className="flex flex-wrap justify-center">
      
-        {achievements.map((achievement, index) => (
+        {achievements.map((achievement:any, index:any) => (
           <div key={index} className="p-8">
             <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
-              <Image
+              <img
                 src={achievement.image || '/https://t4.ftcdn.net/jpg/03/88/30/69/360_F_388306986_HNTycrIKQQ3aSkce0Vod4WoESHedMmHT.jpg'}
                 alt={achievement.eventname || "achievement image"}
                 height="400"

@@ -1,4 +1,5 @@
-export const BACKENDURL: string = "http://localhost:5050/";
+// export const BACKENDURL: string = "http://localhost:5050/";
+export const BACKENDURL: string = "http://54.90.187.73:5050/";
 
 export const APIENDPOINTS = {
   auth: {
@@ -13,6 +14,7 @@ export const APIENDPOINTS = {
     getUserbyID: `${BACKENDURL}users`,
     DelUserbyID: `${BACKENDURL}users`,
     DelMultiUser: `${BACKENDURL}users`,
+    getRoleAccess: `${BACKENDURL}users/roleaccess`,
   },
   notice: {
     getAllNotice: `${BACKENDURL}notice`,
@@ -85,6 +87,7 @@ export const APIENDPOINTS = {
     deleteRole: `${BACKENDURL}role`,
     updateDefaultRole: `${BACKENDURL}role/default`,
     getRoleInfo: `${BACKENDURL}role/info`,
+    assignRole: `${BACKENDURL}role/assign`,
   },
 
 };

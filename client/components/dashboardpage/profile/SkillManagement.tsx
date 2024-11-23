@@ -35,7 +35,7 @@ const SkillManagement: React.FC<SkillManagementProps> = ({
     if (input.length > 0) {
       const fetchSuggestions = async () => {
         try {
-        //   const response = await axios.get(`http://localhost:5050/skills/`);
+        
         const response = await axios.get(APIENDPOINTS.skill.getAllSkill, headerConfig());
           const filteredSuggestions = response.data.filter((skill: Skill) =>
             skill.skill.toLowerCase().includes(input.toLowerCase())
