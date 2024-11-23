@@ -6,9 +6,9 @@ import { format, isBefore, isAfter } from "date-fns";
 import { BACKENDURL } from "@/data/urls";
 
 const EventDetailsPage = ({ params }: { params: { id: string } }) => {
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
   const getStatus = (start_time: any, end_time: any) => {
     const now = new Date();
