@@ -42,7 +42,7 @@ import {
   router.route("/post/create").post(createAchievement);
   router.route("/post/:achieveid").get(getAchievementById);
   router.route("/post").get(getAchievementsAll);
-  router.route("/approved").get(getApprovedAchievements);
+  router.route("/landing/approved").get(getApprovedAchievements);
   router.route("/post/:achieveid").put(updateAchievement);
   router.route("/post/:achieveid").delete(deleteAchievement);
 
