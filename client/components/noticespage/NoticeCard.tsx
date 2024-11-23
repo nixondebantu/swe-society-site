@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { HoverEffect } from "../ui/card-hover-effect";
 import { BACKENDURL } from '@/data/urls';
 export function NoticeCard() {
-  const [notices, setNotices] = useState([]);
+  const [notices, setNotices] = useState<any>([]);
 
   // Fetch notices from API
   useEffect(() => {
