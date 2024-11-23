@@ -15,7 +15,6 @@ import HomeEvent from "@/components/homepage/EventSection";
 export default function Home() {
   return (
     <main>
-      <Navbar/>
       <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
       <Hero />
      
