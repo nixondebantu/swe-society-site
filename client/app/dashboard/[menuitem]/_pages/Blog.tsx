@@ -13,6 +13,7 @@ import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import BlogEditModal from "@/components/blogdashboard/BlogComp/BlogEditModal";
 import FullBlogCard from "@/components/blogdashboard/BlogComp/FullBlog";
+import { FaPray } from "react-icons/fa";
 
 interface Blog {
     blogid: number;
@@ -110,7 +111,26 @@ const BlogForUsers: React.FC = () => {
         }
         console.log("Selected full blog", selectedFUllBlog)
       }, [selecteBlogId]);
-
+      let formingEditData: FormData | null = null;
+      if (selecteBlogId) {
+        const matchedBlogEdit = blogs.find((blog) => blog.blogid === selecteBlogId);
+      
+        if (!matchedBlogEdit) {
+          throw new Error("Blog with the selected ID not found.");
+        }
+      
+        formingEditData = {
+          blogid: matchedBlogEdit.blogid,
+          userid: matchedBlogEdit.userid,
+          headline: matchedBlogEdit.headline,
+          designation: matchedBlogEdit.designation || "", // Ensure non-null value
+          current_institution: matchedBlogEdit.current_institution || "", // Ensure non-null value
+          article: matchedBlogEdit.article,
+          photos: matchedBlogEdit.photos,
+          blogtype: matchedBlogEdit.blogtype,
+          approval_status: matchedBlogEdit.approval_status,
+        };
+      }
      
       
 
@@ -214,7 +234,8 @@ const BlogForUsers: React.FC = () => {
           <BlogEditModal
           onClose={()=>{setOpenEditModal(false)}}
           fetchDataAll={fetchBlogs}
-          formDataPrev={selectedBlog}
+          formDataPrev={formingEditData? formingEditData : selectedBlog}
+          
           />
         )}
     </div>

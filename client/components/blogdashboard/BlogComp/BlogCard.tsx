@@ -90,7 +90,7 @@ const Card: React.FC<CardProps> = ({
      
       <div className=" w-3/5">
         
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-lg md:text-2xl font-bold">{title}</h2>
         <p className="text-gray-300">{extractText(description)}</p>
         <button
           onClick={()=>{

@@ -176,6 +176,27 @@ const AdminBlogManage: React.FC = () => {
           console.error("Error creating election:", error);
         }
       };
+
+      let formingEditData: FormData | null = null;
+      if (selecteBlogId) {
+        const matchedBlogEdit = blogs.find((blog) => blog.blogid === selecteBlogId);
+      
+        if (!matchedBlogEdit) {
+          throw new Error("Blog with the selected ID not found.");
+        }
+      
+        formingEditData = {
+          blogid: matchedBlogEdit.blogid,
+          userid: matchedBlogEdit.userid,
+          headline: matchedBlogEdit.headline,
+          designation: matchedBlogEdit.designation || "", // Ensure non-null value
+          current_institution: matchedBlogEdit.current_institution || "", // Ensure non-null value
+          article: matchedBlogEdit.article,
+          photos: matchedBlogEdit.photos,
+          blogtype: matchedBlogEdit.blogtype,
+          approval_status: matchedBlogEdit.approval_status,
+        };
+      }
       
 
     
@@ -259,7 +280,7 @@ const AdminBlogManage: React.FC = () => {
           <BlogEditModal
           onClose={()=>{setOpenEditModal(false)}}
           fetchDataAll={fetchBlogs}
-          formDataPrev={selectedBlog}
+          formDataPrev={formingEditData? formingEditData : selectedBlog}
           />
         )}
     </div>
