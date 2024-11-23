@@ -220,7 +220,9 @@ const HomeNoticeSection = () => {
       </h1>
       <div className='w-full flex justify-center  max-w-[1400px]'>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3   mx-0 md:mx-10">
+
         {notices.map((notice:any) => (
+
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
       </div>

@@ -21,6 +21,11 @@ const BlogCard = ({ blog }:any) => {
     return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
   };
 
+  const extractText = (html: string): string => {
+    const plainText = html.replace(/<\/?[^>]+(>|$)/g, "").trim();
+    return plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -116,7 +121,9 @@ const HomeBlogSection = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(`${BACKENDURL}blog`);
+
+        const response = await fetch(`${BACKENDURL}blog/landing/approved`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }

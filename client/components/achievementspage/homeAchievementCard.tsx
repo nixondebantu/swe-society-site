@@ -17,7 +17,9 @@ export function HomeAchievementCard() {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const response = await fetch(`${BACKENDURL}achievement/post`);
+
+        const response = await fetch(`${BACKENDURL}achievement/landing/approved`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch achievements');
         }

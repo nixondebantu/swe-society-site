@@ -11,6 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ChevronLeft, ChevronRight, User, Calendar, Clock } from 'lucide-react';
 import { BACKENDURL } from '@/data/urls';
 
+import { extractText } from '@/utils/TextManupulate';
+import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
+
+
 const BlogCard = ({ blog }:any) => {
   // Function to get first image from photos array
   const getFirstImage = (photos:any) => {
@@ -41,7 +45,7 @@ const BlogCard = ({ blog }:any) => {
               {blog.headline}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mb-4">
-              {blog.article}
+              {extractText(blog.article)}
             </p>
             <div className="flex items-center gap-3">
               <Avatar className="w-10 h-10 dark:bg-gray-700">
@@ -82,7 +86,7 @@ const BlogCard = ({ blog }:any) => {
 
           <div className="prose dark:prose-invert max-w-none">
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-              {blog.article}
+              <HtmlContent  content={blog.article}/>
             </p>
           </div>
 
@@ -117,7 +121,9 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(`${BACKENDURL}blog`);
+
+        const response = await fetch(`${BACKENDURL}blog/landing/approved`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
