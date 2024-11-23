@@ -21,6 +21,7 @@ interface BlogFormProps {
   onClose: () => void;
   fetchDataAll: () => void;
   formDataPrev: FormData;
+  
 }
 
 interface FormData {
@@ -132,7 +133,7 @@ const BlogEditModal: React.FC<BlogFormProps> = ({ onClose, fetchDataAll, formDat
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-black text-white p-8 rounded-lg w-full max-w-5xl">
+      <div className="bg-black text-white p-8 rounded-lg w-full lg:max-w-2xl  xl:max-w-4xl 2xl:max-w-5xl ">
         <div className="flex justify-between">
           <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
           <button
