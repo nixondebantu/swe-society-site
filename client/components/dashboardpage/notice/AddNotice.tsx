@@ -8,17 +8,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import React, { useState } from "react";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getUserID } from "@/data/cookies/getCookies";
+import { BACKENDURL } from "@/data/urls";
+import { uploadAssetsToCloud } from "@/utils/ImageUploadService";
 import axios from "axios";
 import { format } from "date-fns";
+import React, { useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { upload_img } from "./uploadImage";
-import { BACKENDURL } from "@/data/urls";
 // import { cookies } from 'next/headers';
 
 type AddNoticeProps = {
@@ -27,7 +26,7 @@ type AddNoticeProps = {
 
 function AddNotice({ fetch_notices }: AddNoticeProps) {
   const [notice, setNotice] = useState({
-    notice_provider: 0,
+    notice_provider: 3,
     notice_date: "",
     expire_date: "",
     headline: "",
@@ -49,20 +48,37 @@ function AddNotice({ fetch_notices }: AddNoticeProps) {
     }));
   };
 
+  const clearNotice = () => {
+    const userId = getUserID() || 3;
+    setNotice({
+      notice_provider: typeof userId === "number" ? userId : 3,
+      notice_date: "",
+      expire_date: "",
+      headline: "",
+      notice_body: "",
+      picture: "",
+      file: "",
+    });
+    setUploadingStatus("idle");
+    setNotice_date(undefined);
+    setExpire_date(undefined);
+  };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setUploadingStatus("uploading");
     const file = event.target.files?.[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
       try {
-        const fileUrl = await upload_img(formData);
-        handleNoticeChange("file", fileUrl);
-        console.log("Uploaded file URL:", fileUrl);
-
+        const cloudinary_resonse = await uploadAssetsToCloud(file);
+        console.log(cloudinary_resonse);
+        if (!cloudinary_resonse) {
+          console.log("File upload failed");
+          setUploadingStatus("error");
+          throw new Error("File upload failed");
+        }
+        handleNoticeChange("file", cloudinary_resonse);
         setUploadingStatus("success");
       } catch (error) {
         console.error("File upload failed:", error);
@@ -73,7 +89,6 @@ function AddNotice({ fetch_notices }: AddNoticeProps) {
 
   const handleSubmit = async (e: any) => {
     const userId = getUserID();
-    console.log(userId);
     const updatedNotice = {
       ...notice,
       notice_provider: userId || 3,
@@ -82,12 +97,11 @@ function AddNotice({ fetch_notices }: AddNoticeProps) {
     };
 
     try {
-      axios
-        .post(`${BACKENDURL}notice/create`, updatedNotice)
-        .then((res) => {
-          console.log(res);
-          fetch_notices();
-        });
+      axios.post(`${BACKENDURL}notice/create`, updatedNotice).then((res) => {
+        console.log(updatedNotice);
+        fetch_notices();
+        clearNotice();
+      });
     } catch (error) {
       console.error("Error submitting notice:", error);
     }

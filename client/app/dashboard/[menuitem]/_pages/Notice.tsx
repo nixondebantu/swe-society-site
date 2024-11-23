@@ -11,23 +11,6 @@ import React, { useEffect, useState } from "react";
 const Notice: React.FC = () => {
   const [notices, setNotices] = useState<any[]>([]);
   const [onlyMyNotices, setOnlyMyNotices] = useState<boolean>(false);
-  const userId: string | undefined = getUserID();
-  const noticeData = {
-    noticeid: 18,
-    notice_provider: 2,
-    notice_date: "2024-02-13T18:00:00.000Z",
-    expire_date: "2025-06-03T18:00:00.000Z",
-    headline: "Monthly fee for freshers",
-    notice_body: "You guyz have to give fee",
-    picture: "https://example.com/image.jpg",
-    file: null,
-  };
-  const truncateText = (text: any, maxLength: any) => {
-    if (text.length <= maxLength) {
-      return text;
-    }
-    return text.slice(0, maxLength) + "...";
-  };
 
   const fetch_notices = () => {
     axios.get(`${BACKENDURL}notice/`).then((res) => {
