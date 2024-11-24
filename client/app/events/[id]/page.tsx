@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { IconHeart, IconMessageCircle, IconRepeat, IconShare, IconCalendar, IconClock } from "@tabler/icons-react";
 import { format, isBefore, isAfter } from "date-fns";
 import { BACKENDURL } from "@/data/urls";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const EventDetailsPage = ({ params }: { params: { id: string } }) => {
   const [event, setEvent] = useState<any>(null);
@@ -126,6 +128,10 @@ const EventDetailsPage = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       </div>
+      <Link href={'/events'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
     </div>
   );
 };

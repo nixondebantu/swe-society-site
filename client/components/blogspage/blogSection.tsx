@@ -13,6 +13,7 @@ import { BACKENDURL } from '@/data/urls';
 
 import { extractText } from '@/utils/TextManupulate';
 import HtmlContent from '../blogdashboard/BlogComp/HtmlContent';
+import Link from 'next/link';
 
 
 const BlogCard = ({ blog }:any) => {
@@ -244,6 +245,10 @@ const BlogSection = () => {
           </div>
         )}
       </div>
+      <Link href={'/'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
     </div>
   );
 };

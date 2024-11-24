@@ -267,6 +267,7 @@ const NoticeBoard = () => {
   }
 
   return (
+    <div>
     <div className="flex flex-col items-center justify-center mt-8">
               <h1 className="text-3xl font-bold text-center mb-8 text-primary">
         Swe Notices
@@ -285,7 +286,7 @@ const NoticeBoard = () => {
           </SelectContent>
         </Select>
       </div> */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-[1400px]">
         {currentNotices.map((notice:any) => (
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
@@ -305,6 +306,11 @@ const NoticeBoard = () => {
         ))}
         <PaginationNext onClick={() => handlePageChange(currentPage + 1)}   className='hover:bg-primary' />
       </Pagination>
+    </div>
+    <Link href={'/'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
     </div>
   );
 };

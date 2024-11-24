@@ -3,7 +3,6 @@ import AddNotice from "@/components/dashboardpage/notice/AddNotice";
 import Notice_Card from "@/components/dashboardpage/notice/notice_card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { getUserID } from "@/data/cookies/getCookies";
 import { BACKENDURL } from "@/data/urls";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -69,39 +68,6 @@ const Notice: React.FC = () => {
         ) : (
           <p className="text-white">No matching notices found.</p>
         )}
-      </div>
-      <div className="w-full h-full flex justify-center items-start ">
-        {/* <div className="flex flex-wrap gap-4 justify-start ">
-          {filteredNotices.length > 0 ? (
-            filteredNotices.map((notice, index) => (
-              <Notice_Card
-                key={index}
-                notice={notice}
-                handle_dlt={handle_dlt}
-              />
-              // <div
-              //   key={index}
-              //   className="w-full flex justify-center gap-2 text-white"
-              // >
-              //   <p className="w-3/12 ">{notice.headline}</p>
-              //   <p className="w-6/12  ">{truncateText(notice.notice_body, 40)}</p>
-              //   <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-
-              //   </Button>
-              //   <Button className="bg-transparent text-primary hover:text-white hover:bg-transparent">
-              //     <AiFillDelete
-              //       onClick={() => {
-              //         handle_dlt(notice.noticeid);
-              //       }}
-              //       className="h-full w-10"
-              //     />
-              //   </Button>
-              // </div>
-            ))
-          ) : (
-            <p className="text-white">No matching notices found.</p>
-          )}
-        </div> */}
       </div>
 
       <div className="w-full flex justify-center items-center gap-2 mt-4">

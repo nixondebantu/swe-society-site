@@ -36,7 +36,7 @@ interface MemberFormData {
 
 
 
-const AddCommitteeMemberModal: React.FC<{ electionId: number; onClose: () => void; }> = ({ electionId, onClose }) => {
+const AddCommitteeMemberModal: React.FC<{ electionId: number; onClose: () => void; fetchMembers: () => void; }> = ({ electionId, onClose, fetchMembers }) => {
   const [userList, setUserList] = useState<MappedUser[]>([]);
   const [postList, setPostList] = useState<MappedPost[]>([]);
   const [members, setMembers] = useState<MemberFormData[]>([{ userid: 0, postid: 0, electionid: electionId }]);
@@ -117,7 +117,8 @@ const AddCommitteeMemberModal: React.FC<{ electionId: number; onClose: () => voi
       // Show success message after all requests are completed
       toast.success("Committee Members added successfully.");
       onClose();
-      window.location.reload();
+      fetchMembers();
+      
     } catch (error) {
       console.error("Error adding members:", error);
       toast.error("Failed to add members.");
