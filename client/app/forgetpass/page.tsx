@@ -1,9 +1,17 @@
-function page() {
-  return (
-    <div>
-      <h1>Forget Password Page</h1>
-    </div>
-  );
-}
+"use client";
+import { useSearchParams } from "next/navigation";
+import RegistrationNumberInput from "./RegistrationNumberInput";
+import OTPInput from "./OTPInput";
+const ForgetPassPage = () => {
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab");
+  const reg_no = searchParams.get("reg_no");
 
-export default page;
+  if (tab === "otp" && reg_no) {
+    return <OTPInput reg_no={reg_no} />;
+  } else {
+    return <RegistrationNumberInput />;
+  }
+};
+
+export default ForgetPassPage;

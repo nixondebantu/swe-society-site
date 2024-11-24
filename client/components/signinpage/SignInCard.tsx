@@ -72,7 +72,7 @@ export function SignInCard() {
           response.data.user.userid
         );
         console.log(response.data.user.userid);
-        router.push("/dashboard");
+        router.push("/dashboard/profile");
       }
     } catch (error: any) {
       if (error.response.status === 404) {
