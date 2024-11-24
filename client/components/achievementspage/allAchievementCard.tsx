@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { BackgroundGradient } from "../ui/background-gradient";
 import Image from "next/image";
 import { BACKENDURL } from "@/data/urls";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 export function AllAchievementCard() {
     const [achievements, setAchievements] = useState<any>([]);
@@ -39,6 +41,7 @@ export function AllAchievementCard() {
     }
   
     return (
+      <div>
       <div className="flex flex-wrap justify-center">
      
         {achievements.map((achievement:any, index:any) => (
@@ -70,6 +73,11 @@ export function AllAchievementCard() {
             </BackgroundGradient>
           </div>
         ))}
+      </div>
+      <Link href={'/'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
       </div>
     );
   }

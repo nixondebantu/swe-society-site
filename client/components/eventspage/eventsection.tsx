@@ -146,6 +146,10 @@ export const PaginatedEvents = ({ events, itemsPerPage = 6 }:any) => {
           Next <ChevronRight className="ml-2" />
         </Button>
       </div>
+      <Link href={'/'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
     </div>
   );
 };
