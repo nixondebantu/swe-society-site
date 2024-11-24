@@ -267,6 +267,7 @@ const NoticeBoard = () => {
   }
 
   return (
+    <div>
     <div className="flex flex-col items-center justify-center mt-8">
               <h1 className="text-3xl font-bold text-center mb-8 text-primary">
         Swe Notices
@@ -305,6 +306,11 @@ const NoticeBoard = () => {
         ))}
         <PaginationNext onClick={() => handlePageChange(currentPage + 1)}   className='hover:bg-primary' />
       </Pagination>
+    </div>
+    <Link href={'/'}>
+      <div className='flex flex-col items-end justify-end p-10'>    
+          <Button className='flex flex-col justify-center items-end'>Back</Button></div>
+          </Link>
     </div>
   );
 };
