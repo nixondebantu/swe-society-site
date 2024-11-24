@@ -31,6 +31,14 @@ export async function createTables() {
             FOREIGN KEY (roleid) REFERENCES Roles(roleid) ON DELETE SET NULL
         );
 
+        CREATE TABLE IF NOT EXISTS OTPVerification (
+            id SERIAL PRIMARY KEY,
+            regno VARCHAR(20) NOT NULL,
+            otp VARCHAR(6) NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            FOREIGN KEY (regno) REFERENCES Users(regno) ON DELETE CASCADE
+        );
+
         CREATE TABLE IF NOT EXISTS Roles (
             roleid SERIAL PRIMARY KEY,
             roletitle VARCHAR(50) NOT NULL,

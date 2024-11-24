@@ -1,5 +1,4 @@
-// export const BACKENDURL: string = "http://localhost:5050/";
-export const BACKENDURL: string = "http://54.90.187.73:5050/";
+export const BACKENDURL: string = "http://localhost:5050/";
 
 export const APIENDPOINTS = {
   auth: {
@@ -7,6 +6,8 @@ export const APIENDPOINTS = {
     createMultiuser: `${BACKENDURL}auth/multiUserCreate`,
     updatePassword: `${BACKENDURL}auth/updatePassword`,
     changePassword: `${BACKENDURL}auth/changePassword`,
+    generateOTP: `${BACKENDURL}auth/generate-otp`,
+    verifyOTP: `${BACKENDURL}auth/verify-otp`,
   },
   users: {
     getAllUsers: `${BACKENDURL}users`,
@@ -79,7 +80,6 @@ export const APIENDPOINTS = {
     getEventbyID: `${BACKENDURL}event`,
   },
 
-
   role: {
     getRole: `${BACKENDURL}role`,
     createRole: `${BACKENDURL}role`,
@@ -89,5 +89,4 @@ export const APIENDPOINTS = {
     getRoleInfo: `${BACKENDURL}role/info`,
     assignRole: `${BACKENDURL}role/assign`,
   },
-
 };

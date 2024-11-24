@@ -6,8 +6,9 @@ import {
   createMultiUsersWithMailSend,
   createUser,
   createUserWithMailSend,
+  generateOTPForUser,
   login,
-  updateUserPassword,
+  verifyOTP,
 } from "../controllers/auth";
 import { validateBearerToken } from "../middlewares/validateBearerToken";
 
@@ -18,7 +19,8 @@ router
 router
   .route("/multiUserCreate")
   .post(validateBearerToken, createMultiUsersWithMailSend);
-router.route("/updatePassword").post(updateUserPassword); // for forget pass in login page
+router.route("/generate-otp").post(generateOTPForUser);
+router.route("/verify-otp").post(verifyOTP);
 router.route("/login").post(login);
 router.route("/changePassword").put(validateBearerToken, changePass); // for change pass in dashboard profile page
 

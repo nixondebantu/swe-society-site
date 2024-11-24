@@ -31,6 +31,10 @@ const EventCard: React.FC<EventType> = ({
 
   const status = getStatus();
 
+  // Fallback image URL
+  const fallbackImage =
+    "https://res.cloudinary.com/djx7nzzzq/image/upload/v1732434266/bazi1kzgltwyahxlozqp.webp";
+
   return (
     <Card className="w-full max-w-md bg-card shadow-md border border-border rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-lg relative">
       <span
@@ -46,11 +50,11 @@ const EventCard: React.FC<EventType> = ({
       </span>
 
       <div className="relative h-48 w-full">
-        <img
-          src={coverphoto}
+        <Image
+          src={coverphoto || fallbackImage} // Use fallback image if coverphoto is not provided
           alt={`${headline} cover photo`}
-          // layout="fill"
-          // objectFit="cover"
+          layout="fill"
+          objectFit="cover"
           className="rounded-t-lg"
         />
       </div>

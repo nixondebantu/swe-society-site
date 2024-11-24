@@ -3,7 +3,7 @@ import errorWrapper from "../middlewares/errorWrapper";
 import CustomError from "../services/CustomError";
 import { generateToken } from "../services/Token";
 import { sendMail } from "../services/mailService";
-import { generateRandomPassword } from "../services/utils";
+import { generateRandomPassword, generateOTP } from "../services/utils";
 
 import bcrypt from "bcrypt";
 import pool from "../db/dbconnect";
@@ -269,6 +269,148 @@ const changePass = errorWrapper(
   { statusCode: 500, message: `Can't changed password` }
 );
 
+const generateOTPForUser = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { regno } = req.body;
+
+    try {
+      // Check if user exists
+      const userResult = await pool.query(
+        "SELECT email FROM Users WHERE regno = $1",
+        [regno]
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const userEmail = userResult.rows[0].email;
+      const otp = generateOTP();
+      const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes from now
+
+      // Check if OTP already exists for this regno
+      const existingOTP = await pool.query(
+        "SELECT id FROM OTPVerification WHERE regno = $1",
+        [regno]
+      );
+
+      if (existingOTP.rows.length > 0) {
+        // Update existing OTP
+        await pool.query(
+          "UPDATE OTPVerification SET otp = $1, expires_at = $2 WHERE regno = $3",
+          [otp, expiresAt, regno]
+        );
+      } else {
+        // Create new OTP record
+        await pool.query(
+          "INSERT INTO OTPVerification (regno, otp, expires_at) VALUES ($1, $2, $3)",
+          [regno, otp, expiresAt]
+        );
+      }
+
+      // Send OTP via email
+      await sendMail(
+        regno,
+        userEmail,
+        "Password Reset OTP",
+        "Your password reset OTP is:",
+        `OTP: ${otp}<br>This OTP will expire in 5 minutes.<br><br>If you didn't request this, please ignore this email.<br><br>Regards,<br>SWE Society Committee`
+      );
+
+      res.status(201).json({
+        message: "OTP generated and sent successfully",
+      });
+    } catch (error) {
+      console.error("Error generating OTP:", error);
+      res.status(500).json({
+        message: "An error occurred while generating OTP",
+      });
+    }
+  },
+  { statusCode: 500, message: "Couldn't generate OTP" }
+);
+
+const verifyOTP = errorWrapper(
+  async (req: Request, res: Response) => {
+    const { regno, otp } = req.body;
+
+    if (!regno || !otp) {
+      return res.status(400).json({
+        message: "Registration number and OTP are required",
+      });
+    }
+
+    try {
+      // Get OTP record
+      const otpResult = await pool.query(
+        "SELECT expires_at FROM OTPVerification WHERE regno = $1 AND otp = $2",
+        [regno, otp]
+      );
+
+      if (otpResult.rows.length === 0) {
+        return res.status(400).json({
+          message: "Invalid OTP",
+        });
+      }
+
+      const expiresAt = new Date(otpResult.rows[0].expires_at);
+      if (expiresAt < new Date()) {
+        // Delete expired OTP
+        await pool.query("DELETE FROM OTPVerification WHERE regno = $1", [
+          regno,
+        ]);
+        return res.status(400).json({
+          message: "OTP has expired",
+        });
+      }
+      // Get user details
+      const userResult = await pool.query(
+        "SELECT userid, email FROM Users WHERE regno = $1",
+        [regno]
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      const { userid, email } = userResult.rows[0];
+
+      // Delete verified OTP
+      await pool.query("DELETE FROM OTPVerification WHERE regno = $1", [regno]);
+
+      // Generate and update new password
+      const newPassword = generateRandomPassword(8);
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update the user's password in the database
+      await pool.query("UPDATE Users SET password = $1 WHERE userid = $2", [
+        hashedPassword,
+        userid,
+      ]);
+
+      // Send email with the new credentials
+      await sendMail(
+        regno,
+        email,
+        `Your Password Has Been Reset`,
+        `Your password has been reset successfully. Here are your new credentials:`,
+        `Registration Number: ${regno}<br>Email: ${email}<br>New Password: ${newPassword}<br><br>Please change your password after logging in.<br><br>Regards,<br>SWE Society Committee`
+      );
+
+      res.status(200).json({
+        message:
+          "Password reset successful. Please check your email for the new password",
+      });
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      throw error;
+    }
+  },
+  { statusCode: 500, message: "Couldn't verify OTP and reset password" }
+);
+
 export {
   changePass,
   createMultiUsersWithMailSend,
@@ -276,4 +418,6 @@ export {
   createUserWithMailSend,
   login,
   updateUserPassword,
+  generateOTPForUser,
+  verifyOTP,
 };
