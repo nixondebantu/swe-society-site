@@ -1,20 +1,13 @@
 "use client";
-
-// import { useSearchParams } from "next/navigation";
-import RegistrationNumberInput from "./RegistrationNumberInput";
-import OTPInput from "./OTPInput";
+import { Suspense } from "react";
+import ForgetPassPageContent from "./ForgetPassPageContent";
 
 const ForgetPassPage = () => {
-  // const searchParams = useSearchParams();
-  // const tab = searchParams.get("tab");
-  // const reg_no = searchParams.get("reg_no");
-
-  // if (tab === "otp" && reg_no) {
-  //   return <OTPInput reg_no={reg_no} />;
-  // } else {
-  //   return <RegistrationNumberInput />;
-  // }
-  return <RegistrationNumberInput />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ForgetPassPageContent />
+    </Suspense>
+  );
 };
 
 export default ForgetPassPage;
