@@ -86,6 +86,7 @@ const createMultiUsersWithMailSend = errorWrapper(
   async (req: Request, res: Response) => {
     const users = req.body;
     const failedUsers = [];
+    console.log(req.jwtPayload.userid);
 
     try {
       const { rows: accessCheckRows } = await pool.query(
@@ -95,8 +96,9 @@ const createMultiUsersWithMailSend = errorWrapper(
        WHERE Users.userid = $1`,
         [req.jwtPayload.userid]
       );
+      console.log(accessCheckRows);
 
-      if (accessCheckRows.length === 0 || !accessCheckRows[0].rolesaccess) {
+      if (accessCheckRows.length === 0 || !accessCheckRows[0].membersaccess) {
         return res.status(403).json({
           message: "Access denied. You do not have permission to add member.",
         });
