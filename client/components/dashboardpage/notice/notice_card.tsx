@@ -2,6 +2,8 @@
 
 import EditNotice from "@/components/dashboardpage/notice/EditNotice";
 import { Button } from "@/components/ui/button";
+import { MdOutlineImage } from "react-icons/md";
+
 import {
   Card,
   CardContent,
@@ -10,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Calendar, Clock, FileText, Image, Trash2 } from "lucide-react";
+import { Calendar, Clock, FileText, Trash2 } from "lucide-react";
 interface NoticeData {
   noticeid: number;
   notice_provider: number;
@@ -98,7 +100,7 @@ export default function Component({
               className="text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-300"
               onClick={() => window.open(notice.picture!, "_blank")}
             >
-              <img className="h-3 w-3 mr-1" />
+              <MdOutlineImage className="h-3 w-3 mr-1" />
               Image
             </Button>
           )}

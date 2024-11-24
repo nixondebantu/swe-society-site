@@ -14,12 +14,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getUserID } from "@/data/cookies/getCookies";
 import { BACKENDURL } from "@/data/urls";
-import { uploadAssetsToCloud } from "@/utils/ImageUploadService";
+import {
+  uploadAssetsToCloud,
+  uploadImageToCloud,
+} from "@/utils/ImageUploadService";
 import axios from "axios";
 import { format } from "date-fns";
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
-
+import { BsCheck2All } from "react-icons/bs";
+import { MdOutlineErrorOutline } from "react-icons/md";
+import { IoIosAddCircleOutline } from "react-icons/io";
 function EditNotice(props: any) {
   const [notice, setNotice] = useState({
     notice_provider: props.notice_provider,
@@ -38,12 +43,40 @@ function EditNotice(props: any) {
   const [uploadingStatus, setUploadingStatus] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle");
+  const [Img_uploadingStatus, set_Img_uploadingStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
 
   const handleNoticeChange = (field: string, value: any) => {
     setNotice((prevNotice) => ({
       ...prevNotice,
       [field]: value,
     }));
+  };
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    set_Img_uploadingStatus("uploading");
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const cloudinary_resonse = await uploadImageToCloud(file);
+        console.log(cloudinary_resonse);
+        if (!cloudinary_resonse) {
+          console.log("File upload failed");
+          set_Img_uploadingStatus("error");
+          throw new Error("File upload failed");
+        }
+        handleNoticeChange("picture", cloudinary_resonse);
+        set_Img_uploadingStatus("success");
+        setTimeout(() => {
+          set_Img_uploadingStatus("idle");
+        }, 2000);
+      } catch (error) {
+        console.error("File upload failed:", error);
+        set_Img_uploadingStatus("error");
+      }
+    }
   };
 
   const handleFileChange = async (
@@ -62,6 +95,9 @@ function EditNotice(props: any) {
         }
         handleNoticeChange("file", cloudinary_resonse);
         setUploadingStatus("success");
+        setTimeout(() => {
+          setUploadingStatus("idle");
+        }, 2000);
       } catch (error) {
         console.error("File upload failed:", error);
         setUploadingStatus("error");
@@ -102,9 +138,9 @@ function EditNotice(props: any) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="mb-5">Add Notice</AlertDialogTitle>
+          <AlertDialogTitle className="mb-5">Edit Notice</AlertDialogTitle>
           <form className="flex flex-col space-y-5">
-            <Label>Enter notice details</Label>
+            <Label>Edit notice details</Label>
 
             <div className="flex flex-col space-y-2">
               <Label className="font-bold">Title</Label>
@@ -117,12 +153,12 @@ function EditNotice(props: any) {
 
             <div className="flex flex-col space-y-2">
               <Label className="font-bold">Description</Label>
-              <Input
+              <textarea
                 value={notice.notice_body}
                 onChange={(e) =>
                   handleNoticeChange("notice_body", e.target.value)
                 }
-                className="w-full h-32 border-2 border-input"
+                className="flex h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
@@ -155,25 +191,63 @@ function EditNotice(props: any) {
               </div>
             </div>
 
-            <div className="flex flex-col space-y-2">
-              <Label className="font-bold">Upload a file</Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full border-2 border-input"
-                />
-                {uploadingStatus === "uploading" && (
-                  <span className="text-yellow-600 font-bold">
-                    Uploading...
-                  </span>
-                )}
-                {uploadingStatus === "success" && (
-                  <span className="text-green-600 font-bold">Uploaded</span>
-                )}
-                {uploadingStatus === "error" && (
-                  <span className="text-red-600 font-bold">Upload failed</span>
-                )}
+            <div className="flex space-x-5">
+              <div className="flex flex-col space-y-2">
+                <Label className="font-bold">Upload an image</Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="file"
+                    onChange={handleImageChange}
+                    className="w-full border-2 border-input"
+                  />
+                  {Img_uploadingStatus === "uploading" && (
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="h-5 w-5 border-4 border-yellow-600 border-t-transparent rounded-full animate-spin"
+                        role="status"
+                      ></div>
+                    </div>
+                  )}
+
+                  {Img_uploadingStatus === "success" && (
+                    <div className="flex items-center space-x-2">
+                      <BsCheck2All className="text-green-600 w-6 h-6" />
+                    </div>
+                  )}
+                  {Img_uploadingStatus === "error" && (
+                    <div className="flex items-center space-x-2">
+                      <MdOutlineErrorOutline className="text-red-600 w-6 h-6" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label className="font-bold">Upload a file</Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="file"
+                    onChange={handleFileChange}
+                    className="w-full border-2 border-input"
+                  />
+                  {uploadingStatus === "uploading" && (
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="h-5 w-5 border-4 border-yellow-600 border-t-transparent rounded-full animate-spin"
+                        role="status"
+                      ></div>
+                    </div>
+                  )}
+                  {uploadingStatus === "success" && (
+                    <div className="flex items-center space-x-2">
+                      <BsCheck2All className="text-green-600 w-6 h-6" />
+                    </div>
+                  )}
+                  {uploadingStatus === "error" && (
+                    <div className="flex items-center space-x-2">
+                      <MdOutlineErrorOutline className="text-red-600 w-6 h-6" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
