@@ -1,4 +1,4 @@
-export const BACKENDURL: string = "http://localhost:5050/";
+export const BACKENDURL: string = "http://54.90.187.73:5050/";
 
 export const APIENDPOINTS = {
   auth: {

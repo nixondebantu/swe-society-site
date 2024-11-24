@@ -286,7 +286,7 @@ const NoticeBoard = () => {
           </SelectContent>
         </Select>
       </div> */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 w-full max-w-[1400px]">
         {currentNotices.map((notice:any) => (
           <NoticeCard key={notice.noticeid} notice={notice} />
         ))}
