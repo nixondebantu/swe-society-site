@@ -1,17 +1,20 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+
+// import { useSearchParams } from "next/navigation";
 import RegistrationNumberInput from "./RegistrationNumberInput";
 import OTPInput from "./OTPInput";
-const ForgetPassPage = () => {
-  const searchParams = useSearchParams();
-  const tab = searchParams.get("tab");
-  const reg_no = searchParams.get("reg_no");
 
-  if (tab === "otp" && reg_no) {
-    return <OTPInput reg_no={reg_no} />;
-  } else {
-    return <RegistrationNumberInput />;
-  }
+const ForgetPassPage = () => {
+  // const searchParams = useSearchParams();
+  // const tab = searchParams.get("tab");
+  // const reg_no = searchParams.get("reg_no");
+
+  // if (tab === "otp" && reg_no) {
+  //   return <OTPInput reg_no={reg_no} />;
+  // } else {
+  //   return <RegistrationNumberInput />;
+  // }
+  return <RegistrationNumberInput />;
 };
 
 export default ForgetPassPage;
