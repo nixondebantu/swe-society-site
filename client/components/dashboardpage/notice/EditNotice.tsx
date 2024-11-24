@@ -13,12 +13,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getUserID } from "@/data/cookies/getCookies";
+import { BACKENDURL } from "@/data/urls";
+import { uploadAssetsToCloud } from "@/utils/ImageUploadService";
 import axios from "axios";
 import { format } from "date-fns";
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
-import { upload_img } from "./uploadImage";
-import { BACKENDURL } from "@/data/urls";
 
 function EditNotice(props: any) {
   const [notice, setNotice] = useState({
@@ -52,13 +52,15 @@ function EditNotice(props: any) {
     setUploadingStatus("uploading");
     const file = event.target.files?.[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
       try {
-        const fileUrl = await upload_img(formData);
-        handleNoticeChange("file", fileUrl);
-
+        const cloudinary_resonse = await uploadAssetsToCloud(file);
+        console.log(cloudinary_resonse);
+        if (!cloudinary_resonse) {
+          console.log("File upload failed");
+          setUploadingStatus("error");
+          throw new Error("File upload failed");
+        }
+        handleNoticeChange("file", cloudinary_resonse);
         setUploadingStatus("success");
       } catch (error) {
         console.error("File upload failed:", error);

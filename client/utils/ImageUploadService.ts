@@ -30,7 +30,7 @@ export const uploadAssetsToCloud = async (file: File): Promise<string> => {
       `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
       formData
     );
-    console.log("Got response", response.data);
+
     return response.data.secure_url;
   } catch (error) {
     console.error("Image upload failed:", error);
